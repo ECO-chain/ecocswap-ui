@@ -10,10 +10,19 @@
     "lint:fix": "eslint --fix --ext .vue,.js,.ts -- src/ tests/"
   },
   "dependencies": {
+    "@types/crypto-js": "^4.0.2",
+    "axios": "^0.21.1",
+    "bignumber.js": "^9.0.1",
+    "bip32": "^2.0.6",
+    "bip39": "^3.0.4",
     "core-js": "^3.6.5",
+    "crypto-js": "^4.1.1",
+    "ecoweb3": "github:ECO-chain/ecoweb3#develop",
+    "qrcode-vue3": "^1.4.17",
     "register-service-worker": "^1.7.1",
     "vue": "^3.0.0",
     "vue-class-component": "^8.0.0-0",
+    "vue-i18n": "^8.25.0",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0"
   },
