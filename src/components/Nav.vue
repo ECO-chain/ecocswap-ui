@@ -1,45 +1,40 @@
 <template>
-  <div v-click-outside="dropdown.close">
+  <div>
     <div class="nav" @click="dropdown.open">
       <img class="img" src="@/assets/img/nav.svg" alt="nav" />
     </div>
 
     <transition name="dropdown">
-      <div
-        class="dropdown__menu shadow"
-        v-bind:class="{ active: dropdown.show }"
-        v-if="dropdown.show"
-      >
-        <ul class="dropdown__menu-nav">
-          <li class="dropdown__menu-item" v-for="item in dropdown.dataList" :key="'menu' + item.id">
-            <a @click="item.handler" class="dropdown__menu-link" :title="item.name">
-              <div class="dropdown__menu-text">
-                {{ item.name }}
-                <span class="dropdown__menu-desc">
-                  {{ item.discription }}
-                </span>
-              </div>
-            </a>
-            <div
-              class="dropdown__menu-submenu inset-shadow"
-              v-if="dropdown.selectedSub === item.id"
-            >
-              <li
-                class="dropdown__menu-item"
-                v-for="submItem in item.subdata"
-                :key="'sub' + submItem.id"
-              >
-                <a
-                  @click="submItem.handler"
-                  class="dropdown__menu-submenu-link"
-                  :title="submItem.name"
+      <div class="dropdown-mask" v-if="dropdown.show">
+        <div
+          class="dropdown shadow"
+          v-bind:class="{ active: dropdown.show }"
+          v-click-outside="dropdown.close"
+        >
+          <ul class="dropdown-nav">
+            <li class="dropdown-item" v-for="item in dropdown.dataList" :key="'menu' + item.id">
+              <a @click="item.handler" class="dropdown-link" :title="item.name">
+                <div class="dropdown-text">
+                  {{ item.name }}
+                  <span class="dropdown-desc">
+                    {{ item.discription }}
+                  </span>
+                </div>
+              </a>
+              <div class="dropdown-submenu inset-shadow" v-if="dropdown.selectedSub === item.id">
+                <li
+                  class="dropdown-item"
+                  v-for="submItem in item.subdata"
+                  :key="'sub' + submItem.id"
                 >
-                  <div class="dropdown__menu-text">{{ submItem.name }}</div>
-                </a>
-              </li>
-            </div>
-          </li>
-        </ul>
+                  <a @click="submItem.handler" class="dropdown-submenu-link" :title="submItem.name">
+                    <div class="dropdown-text">{{ submItem.name }}</div>
+                  </a>
+                </li>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
     </transition>
   </div>
@@ -119,11 +114,11 @@ export default class Nav extends Vue {
   }
 }
 
-.dropdown__menu {
-  top: 100%;
+.dropdown {
+  top: 0%;
   right: 140px;
   position: absolute;
-  z-index: 10;
+  z-index: 10000;
   height: auto;
   min-width: 200px;
   margin-top: 1rem;
@@ -141,7 +136,7 @@ export default class Nav extends Vue {
     display: flex;
     justify-content: flex-start;
     text-decoration: none;
-    color: rgba(0, 0, 0, 0.6);
+    color: rgba(0, 0, 0, 1);
     padding: 10px;
     margin-top: 0rem;
     margin-bottom: 0rem;
@@ -175,7 +170,7 @@ export default class Nav extends Vue {
       display: flex;
       justify-content: flex-start;
       text-decoration: none;
-      color: rgba(0, 0, 0, 0.6);
+      color: rgba(0, 0, 0, 0.9);
       padding: 10px;
       margin-top: 0rem;
       margin-bottom: 0rem;
@@ -188,6 +183,16 @@ export default class Nav extends Vue {
   }
 }
 
+.dropdown-mask {
+  position: fixed;
+  z-index: 9998;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
 // Dropdown Menu Animation
 
 .dropdown-enter-active,
@@ -197,7 +202,7 @@ export default class Nav extends Vue {
 .dropdown-enter,
 .dropdown-leave-to {
   opacity: 0;
-  transform: translateY(30px);
+  transition: visibility 0s 0.2s, opacity 0.2s linear;
 }
 
 .shadow {

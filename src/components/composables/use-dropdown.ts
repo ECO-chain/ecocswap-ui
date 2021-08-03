@@ -17,32 +17,41 @@ export default function useDropdown() {
   const selectedSub = ref(-1)
   const dataList = ref<DataList[]>([])
 
+  const getHandlerWraper = (handler: () => void) => {
+    return () => {
+      handler()
+      close()
+    }
+  }
+
   const addData = (name: string, discription: string, handler: () => void) => {
+    const handlerWraper = getHandlerWraper(handler)
     const id = dataList.value.length <= 0 ? 1 : dataList.value[dataList.value.length - 1].id + 1
     dataList.value.push({
       id,
       name,
       discription,
-      handler,
+      handler: handlerWraper,
     })
   }
 
   const addSubData = (parentName: string, name: string, handler: () => void) => {
     const parent = dataList.value.find((data) => data.name === parentName)
     if (parent) {
+      const handlerWraper = getHandlerWraper(handler)
       if (parent.subdata) {
         const id = parent.subdata.length <= 0 ? 1 : parent.subdata[parent.subdata.length - 1].id + 1
         parent.subdata?.push({
           id,
           name,
-          handler,
+          handler: handlerWraper,
         })
       } else {
         parent.subdata = [
           {
             id: 1,
             name,
-            handler,
+            handler: handlerWraper,
           },
         ]
       }
