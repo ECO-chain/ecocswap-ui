@@ -11,7 +11,7 @@
         v-if="dropdown.show"
       >
         <ul class="dropdown__menu-nav">
-          <li class="dropdown__menu-item" v-for="item in dropdown.dataList" :key="item.id">
+          <li class="dropdown__menu-item" v-for="item in dropdown.dataList" :key="'menu' + item.id">
             <a @click="item.handler" class="dropdown__menu-link" :title="item.name">
               <div class="dropdown__menu-text">
                 {{ item.name }}
@@ -20,18 +20,21 @@
                 </span>
               </div>
             </a>
-            <div class="dropdown__menu-submenu" v-if="dropdown.submenu == item.id">
+            <div
+              class="dropdown__menu-submenu inset-shadow"
+              v-if="dropdown.selectedSub === item.id"
+            >
               <li
                 class="dropdown__menu-item"
-                v-for="submenuItem in item.submenu"
-                :key="submenuItem.id"
+                v-for="submItem in item.subdata"
+                :key="'sub' + submItem.id"
               >
                 <a
-                  @click="$i18n.locale = 'zh'"
-                  class="dropdown__menu-link"
-                  :title="submenuItem.name"
+                  @click="submItem.handler"
+                  class="dropdown__menu-submenu-link"
+                  :title="submItem.name"
                 >
-                  <div class="dropdown__menu-text">{{ submenuItem.name }}</div>
+                  <div class="dropdown__menu-text">{{ submItem.name }}</div>
                 </a>
               </li>
             </div>
@@ -44,11 +47,12 @@
 
 <script lang="ts">
 import { Options, Vue, setup } from 'vue-class-component'
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import vClickOutside from 'click-outside-vue3'
 import { supportedLanguages } from '@/i18n'
+import useDropdown from './composables/use-dropdown'
 
 @Options({
   directives: {
@@ -59,63 +63,36 @@ export default class Nav extends Vue {
   dropdown = setup(() => {
     const i18n = useI18n({ useScope: 'global' })
     const router = useRouter()
-
     const currentLocale = ref(i18n.locale.value)
-    const show = ref(false)
-    const submenu = ref(-1)
-    const dataList = ref([
-      {
-        id: 0,
-        name: 'Languages',
-        discription: currentLocale.value,
-        submenu: supportedLanguages.map((lan, index) => {
-          return {
-            id: index,
-            name: lan.localizedName,
-            handler: () => {
-              i18n.locale.value = lan.key
-              console.log(lan.key)
-              console.log(currentLocale)
-              console.log(i18n.locale)
-            },
-          }
-        }),
-        handler: () => {
-          const menuIndex = 0
-          if (submenu.value != menuIndex) submenu.value = menuIndex
-          else submenu.value = -1
-        },
-      },
-      {
-        id: 1,
-        name: 'Docs/info',
-        discription: '',
-        handler: () => {
-          router.push('/info')
-        },
-      },
-      {
-        id: 2,
-        name: 'Statistics',
-        discription: '',
-        handler: () => {
-          router.push('/stat')
-        },
-      },
-    ])
 
-    const close = () => {
-      show.value = false
-    }
+    const { show, dataList, selectedSub, addData, addSubData, close, open } = useDropdown()
 
-    const open = () => {
-      show.value = true
-    }
+    addData('Languages', currentLocale.value, () => {
+      // do nothing.
+    })
+    addData('Docs/info', '', () => {
+      router.push('/info')
+    })
+    addData('Statistics', '', () => {
+      router.push('/stat')
+    })
+
+    supportedLanguages.forEach((lan) => {
+      addSubData('Languages', lan.localizedName, () => {
+        i18n.locale.value = lan.key
+      })
+    })
+
+    supportedLanguages.forEach((lan) => {
+      addSubData('Languages2', lan.localizedName, () => {
+        i18n.locale.value = lan.key
+      })
+    })
 
     return {
-      dataList: computed(() => dataList.value),
-      submenu: computed(() => submenu.value),
-      show: computed(() => show.value),
+      dataList: dataList,
+      selectedSub: selectedSub,
+      show: show,
       close,
       open,
     }
@@ -160,32 +137,22 @@ export default class Nav extends Vue {
     padding: 0;
   }
 
-  &-submenu {
-    padding: 2px;
-    background-color: #f8f4ff;
-    font-size: 80%;
-
-    &:hover {
-      font-weight: bold;
-      color: #f8f4ff;
-    }
-  }
-
   &-link {
     display: flex;
     justify-content: flex-start;
     text-decoration: none;
     color: rgba(0, 0, 0, 0.6);
     padding: 10px;
-    margin-top: 0.2rem;
-    margin-bottom: 0.2rem;
+    margin-top: 0rem;
+    margin-bottom: 0rem;
     background-clip: padding-box;
 
     &:hover {
-      color: rgba(0, 0, 0, 0.6);
+      color: #691c80;
       background-color: #f8f4ff;
     }
   }
+
   &-text {
     font-weight: 200;
     margin-left: 28px;
@@ -197,6 +164,27 @@ export default class Nav extends Vue {
     text-transform: uppercase;
     margin-left: 28px;
     color: #691c80;
+  }
+
+  &-submenu {
+    padding: 2px;
+    background: #f8f4ff 0% 0% no-repeat padding-box;
+    font-size: 80%;
+
+    &-link {
+      display: flex;
+      justify-content: flex-start;
+      text-decoration: none;
+      color: rgba(0, 0, 0, 0.6);
+      padding: 10px;
+      margin-top: 0rem;
+      margin-bottom: 0rem;
+      background-clip: padding-box;
+
+      &:hover {
+        color: #691c80;
+      }
+    }
   }
 }
 
@@ -216,5 +204,11 @@ export default class Nav extends Vue {
   -webkit-box-shadow: 0px 3px 6px #00000029;
   -moz-box-shadow: 0px 3px 6px #00000029;
   box-shadow: 0px 3px 6px #00000029;
+}
+
+.inset-shadow {
+  -webkit-box-shadow: inset 0px 3px 6px #00000029;
+  -moz-box-shadow: inset 0px 3px 6px #00000029;
+  box-shadow: inset 0px 3px 6px #00000029;
 }
 </style>
