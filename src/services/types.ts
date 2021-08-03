@@ -34,7 +34,7 @@ export interface Crypto {
 // contract type
 export interface Contract {
   address: string
-  abi: []
+  abi: any
 }
 
 export interface Params {

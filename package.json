@@ -15,6 +15,7 @@
     "bignumber.js": "^9.0.1",
     "bip32": "^2.0.6",
     "bip39": "^3.0.4",
+    "click-outside-vue3": "^4.0.1",
     "core-js": "^3.6.5",
     "crypto-js": "^4.1.1",
     "ecoweb3": "github:ECO-chain/ecoweb3#develop",
@@ -22,7 +23,7 @@
     "register-service-worker": "^1.7.1",
     "vue": "^3.0.0",
     "vue-class-component": "^8.0.0-0",
-    "vue-i18n": "^8.25.0",
+    "vue-i18n": "^9.1.7",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0"
   },

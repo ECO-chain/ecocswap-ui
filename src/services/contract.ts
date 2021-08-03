@@ -81,7 +81,7 @@ export class SmartContract implements Contract {
 
   static decodeSearchLog(
     rawOutput: TxReceipt[],
-    contractMetadata: any,
+    contractMetadata: unknown,
     removeHexPrefix = true
   ): Promise<any> {
     return Decoder.decodeSearchLog(rawOutput, contractMetadata, removeHexPrefix)
