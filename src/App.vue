@@ -76,4 +76,35 @@ ul {
   min-height: 100vh;
   overflow-y: auto;
 }
+
+.btn {
+  height: 55px;
+  border-radius: 16px;
+  opacity: 1;
+  color: white;
+  cursor: pointer;
+  z-index: 10 !important;
+
+  .name {
+    position: relative;
+    top: 50%;
+    transform: translate(0, -50%);
+  }
+
+  &-puple {
+    background: #691c80 0% 0% no-repeat padding-box;
+  }
+
+  &-blue {
+    background: #15bacf 0% 0% no-repeat padding-box;
+  }
+
+  &-blue2 {
+    background: #baf7ff 0% 0% no-repeat padding-box;
+  }
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
 </style>

@@ -38,9 +38,11 @@ export default class Info extends Vue {
   display: flex;
 
   .menu-layout {
-    background-color: #fcfaff;
+    background: #211733 0% 0% no-repeat padding-box;
+    border-radius: 5px;
     float: left;
     width: 33%;
+    color: #ffffff;
 
     .menu {
       text-align: left;

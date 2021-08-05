@@ -99,7 +99,7 @@ export default class Nav extends Vue {
 .nav {
   width: 36px;
   height: 36px;
-  background: #f8f4ff 0% 0% no-repeat padding-box;
+  background: #00000030 0% 0% no-repeat padding-box;
   border-radius: 50%;
   cursor: pointer;
 
@@ -107,6 +107,7 @@ export default class Nav extends Vue {
     margin-top: 50%;
     -ms-transform: translateY(-50%);
     transform: translateY(-50%);
+    filter: brightness(0) invert(1);
   }
 
   &:hover {
