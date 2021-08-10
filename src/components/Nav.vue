@@ -5,7 +5,7 @@
     </div>
 
     <transition name="dropdown">
-      <div class="dropdown-mask" v-if="dropdown.show">
+      <div class="mask" v-if="dropdown.show">
         <div
           class="dropdown shadow"
           v-bind:class="{ active: dropdown.show }"
@@ -47,7 +47,7 @@ import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import vClickOutside from 'click-outside-vue3'
 import { supportedLanguages } from '@/i18n'
-import useDropdown from './composables/use-dropdown'
+import useDropdown from '@/components/composables/use-dropdown'
 
 @Options({
   directives: {
@@ -182,39 +182,5 @@ export default class Nav extends Vue {
       }
     }
   }
-}
-
-.dropdown-mask {
-  position: fixed;
-  z-index: 9998;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
-// Dropdown Menu Animation
-
-.dropdown-enter-active,
-.dropdown-leave-active {
-  transition: all 0.5s;
-}
-.dropdown-enter,
-.dropdown-leave-to {
-  opacity: 0;
-  transition: visibility 0s 0.2s, opacity 0.2s linear;
-}
-
-.shadow {
-  -webkit-box-shadow: 0px 3px 6px #00000029;
-  -moz-box-shadow: 0px 3px 6px #00000029;
-  box-shadow: 0px 3px 6px #00000029;
-}
-
-.inset-shadow {
-  -webkit-box-shadow: inset 0px 3px 6px #00000029;
-  -moz-box-shadow: inset 0px 3px 6px #00000029;
-  box-shadow: inset 0px 3px 6px #00000029;
 }
 </style>

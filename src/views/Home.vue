@@ -67,7 +67,7 @@ export default class Home extends Vue {}
       top: 40%;
       right: 25%;
       opacity: 0.2;
-      z-index: 0;
+      z-index: 10;
       transform: translate(0%, -25%);
     }
   }
@@ -76,12 +76,14 @@ export default class Home extends Vue {}
     position: fixed;
     top: 235px;
     left: 0;
+    z-index: 100;
   }
 
   .alt-wallet {
     position: fixed;
     top: 235px;
     right: 0;
+    z-index: 100;
   }
 }
 </style>

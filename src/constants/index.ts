@@ -10,35 +10,27 @@ export const TYPE_ERC20 = 'ERC-20'
 
 export const KNOWN_CURRENCY = {
   ECOC: {
-    icon: require('@/assets/icon/currency/ecoc.svg'),
-    mark: require('@/assets/wallet-token/ecoc.svg'),
+    icon: require('@/assets/img/currencies/ecoc.svg'),
+    mark: require('@/assets/img/currencies/ecoc.svg'),
   },
   EFG: {
-    icon: require('@/assets/icon/currency/efg.svg'),
-    mark: require('@/assets/wallet-token/efg.svg'),
+    icon: require('@/assets/img/currencies/efg.svg'),
+    mark: require('@/assets/img/currencies/efg.svg'),
   },
   GPT: {
-    icon: require('@/assets/icon/currency/gpt.svg'),
-    mark: require('@/assets/wallet-token/gpt.svg'),
+    icon: require('@/assets/img/currencies/gpt.svg'),
+    mark: require('@/assets/img/currencies/gpt.svg'),
   },
   USDT: {
-    icon: require('@/assets/icon/currency/usdt.svg'),
-    mark: require('@/assets/wallet-token/usdt.svg'),
+    icon: require('@/assets/img/currencies/usdt.svg'),
+    mark: require('@/assets/img/currencies/usdt.svg'),
   },
   ETH: {
-    icon: require('@/assets/icon/currency/eth.svg'),
-    mark: require('@/assets/wallet-token/ether.svg'),
-  },
-  EWETH: {
-    icon: require('@/assets/icon/currency/eth.svg'),
-    mark: require('@/assets/wallet-token/ether.svg'),
-  },
-  EWUSDT: {
-    icon: require('@/assets/icon/currency/usdt.svg'),
-    mark: require('@/assets/wallet-token/usdt.svg'),
+    icon: require('@/assets/img/currencies/eth.svg'),
+    mark: require('@/assets/img/currencies/eth.svg'),
   },
   DEFAULT: {
-    icon: require('@/assets/icon/currency/default.svg'),
-    mark: require('@/assets/wallet-token/default.svg'),
+    icon: require('@/assets/img/currencies/default.svg'),
+    mark: require('@/assets/img/currencies/default.svg'),
   },
 } as CurrencyStyle

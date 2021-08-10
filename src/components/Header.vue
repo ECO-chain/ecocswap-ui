@@ -59,10 +59,4 @@ export default class Header extends Vue {
     text-align: center;
   }
 }
-
-.header.shadow {
-  -webkit-box-shadow: 0px 3px 6px #00000029;
-  -moz-box-shadow: 0px 3px 6px #00000029;
-  box-shadow: 0px 3px 6px #00000029;
-}
 </style>

@@ -1,20 +1,25 @@
 <template>
-  <div v-if="show" class="ecoc-wallet">
-    <div class="header">
-      <img class="logo" src="@/assets/img/ecoc-wallet.svg" />
-    </div>
-    <div class="panel">
-      <div class="wraper">
-        <WalletSelection />
-        <div class="wallet-info"></div>
-        <div class="bottom">
-          <div class="link">Disconnect</div>
+  <div class="ecoc-wallet">
+    <transition name="modal">
+      <div :class="{ active: showWallet }">
+        <div class="ecoc-wallet-panel">
+          <div class="header">
+            <div class="header-pin" @click="walletToggle">
+              <img class="logo" src="@/assets/img/ecoc-wallet.svg" />
+            </div>
+          </div>
+          <div class="panel">
+            <div class="wraper">
+              <WalletSelection />
+              <div class="wallet-info"></div>
+              <div class="bottom">
+                <div class="link">Disconnect</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-  <div v-else class="ecoc-wallet-pin" flat>
-    <img class="logo" src="@/assets/img/ecoc-wallet.svg" />
+    </transition>
   </div>
 </template>
 
@@ -26,27 +31,46 @@ import WalletSelection from './WalletSelection.vue'
   components: { WalletSelection },
 })
 export default class EcocWallet extends Vue {
-  show = false
+  showWallet = false
+
+  walletToggle() {
+    this.showWallet = !this.showWallet
+  }
 }
 </script>
 
 <style scoped lang="scss">
 .ecoc-wallet {
+  top: 0;
+  right: 0;
+}
+
+.ecoc-wallet-panel {
+  transform: translate(-560px);
+  transition: 1s;
+  width: 660px;
+
   .header {
-    width: 660px;
     height: 70px;
     background: #ffffff 0% 0% no-repeat padding-box;
     box-shadow: 0px 3px 6px #00000029;
     border-radius: 0px 35px 35px 0px;
     opacity: 1;
 
-    .logo {
-      position: relative;
-      top: 50%;
-      left: 40%;
-      height: 27px;
-      width: 30px;
-      transform: translate(0, -50%);
+    &-pin {
+      float: right;
+      width: 100px;
+      height: 70px;
+      cursor: pointer;
+
+      .logo {
+        position: relative;
+        top: 50%;
+        left: 0;
+        height: 27px;
+        width: 30px;
+        transform: translate(0, -50%);
+      }
     }
   }
 
@@ -82,22 +106,8 @@ export default class EcocWallet extends Vue {
   }
 }
 
-.ecoc-wallet-pin {
-  width: 100px;
-  height: 70px;
-  background: #ffffff 0% 0% no-repeat padding-box;
-  box-shadow: 0px 3px 6px #00000029;
-  border-radius: 0px 35px 35px 0px;
-  opacity: 1;
-  cursor: pointer;
-
-  .logo {
-    position: relative;
-    top: 50%;
-    left: 0;
-    height: 27px;
-    width: 30px;
-    transform: translate(0, -50%);
-  }
+.active .ecoc-wallet-panel {
+  transform: initial;
+  transition: 0.5s;
 }
 </style>

@@ -107,4 +107,49 @@ ul {
     opacity: 0.8;
   }
 }
+
+.mask {
+  position: fixed;
+  z-index: 10000;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.shadow {
+  -webkit-box-shadow: 0px 3px 6px #00000029;
+  -moz-box-shadow: 0px 3px 6px #00000029;
+  box-shadow: 0px 3px 6px #00000029;
+}
+
+.inset-shadow {
+  -webkit-box-shadow: inset 0px 3px 6px #00000029;
+  -moz-box-shadow: inset 0px 3px 6px #00000029;
+  box-shadow: inset 0px 3px 6px #00000029;
+}
+
+// Dropdown Menu Animation
+
+.dropdown-enter-active,
+.dropdown-leave-active {
+  transition: all 0.5s;
+}
+.dropdown-enter,
+.dropdown-leave-to {
+  opacity: 0;
+  transition: visibility 0s 0.2s, opacity 0.2s linear;
+}
+
+// Modals Menu Animation
+.modal-enter-active,
+.modal-leave-active {
+  transition: all 0.5s;
+}
+.modal-enter,
+.modal-leave-to {
+  opacity: 0;
+  transition: visibility 0s 0.2s, opacity 0.2s linear;
+}
 </style>
