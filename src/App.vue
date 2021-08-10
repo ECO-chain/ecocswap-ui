@@ -55,6 +55,7 @@ export default class Home extends Vue {}
 
 html,
 body {
+  margin: 0;
   font-family: 'Poppins', sans-serif;
   overflow: -moz-scrollbars-none;
   -ms-overflow-style: none;
