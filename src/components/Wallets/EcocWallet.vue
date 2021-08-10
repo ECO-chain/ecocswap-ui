@@ -1,6 +1,6 @@
 <template>
   <div class="ecoc-wallet">
-    <transition name="modal">
+    <transition name="panel">
       <div :class="{ active: showWallet }">
         <div class="ecoc-wallet-panel">
           <div class="header">
@@ -42,11 +42,11 @@ export default class EcocWallet extends Vue {
 <style scoped lang="scss">
 .ecoc-wallet {
   top: 0;
-  right: 0;
+  left: 0;
 }
 
 .ecoc-wallet-panel {
-  transform: translate(-560px);
+  transform: translate(-550px);
   transition: 1s;
   width: 660px;
 
