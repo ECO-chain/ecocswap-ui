@@ -69,6 +69,26 @@ ul {
   list-style-type: none;
 }
 
+input {
+  border-top-style: hidden;
+  border-right-style: hidden;
+  border-left-style: hidden;
+  border-bottom-style: hidden;
+  width: 100%;
+  padding: 5px 15px;
+  margin: 0;
+
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -o-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+*:focus {
+  outline: none;
+}
+
 .container {
   margin-top: 84px;
   font-size: 16px;
@@ -92,15 +112,24 @@ ul {
     transform: translate(0, -50%);
   }
 
-  &-puple {
+  .shadow {
+    box-shadow: 0px 3px 8px #00000021;
+  }
+
+  &-bg-puple {
     background: #691c80 0% 0% no-repeat padding-box;
   }
 
-  &-blue {
+  &-text-puple {
+    color: #691c80;
+    background: white;
+  }
+
+  &-bg-blue {
     background: #15bacf 0% 0% no-repeat padding-box;
   }
 
-  &-blue2 {
+  &-bg-blue2 {
     background: #baf7ff 0% 0% no-repeat padding-box;
   }
 

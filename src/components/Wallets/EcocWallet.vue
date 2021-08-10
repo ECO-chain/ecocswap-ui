@@ -10,10 +10,44 @@
           </div>
           <div class="panel">
             <div class="wraper">
-              <WalletSelection />
-              <div class="wallet-info"></div>
-              <div class="bottom">
-                <div class="link">Disconnect</div>
+              <div class="wallet-management" v-if="isLogedIn">
+                <AssetsSelection />
+                <div class="wallet-info">
+                  <div class="wallet-tabs">
+                    <div class="tab-header"></div>
+                    <div class="tab-content">
+                      <div class="total-balance">
+                        <div class="left">Total Balance:</div>
+                        <a class="right">
+                          <div class="link">2000000 ECOC</div>
+                        </a>
+                      </div>
+                      <input class="textbox" placeholder="To address" />
+                      <input class="textbox" placeholder="Amount" />
+                      <div class="btn btn-bg-puple">
+                        <div class="name">Send</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="bottom">
+                  <div class="link">Disconnect</div>
+                </div>
+              </div>
+
+              <div class="connect-wallet" v-else>
+                <div class="title">
+                  <img class="logo" src="@/assets/logo-black.svg" alt="logo" />
+                  <div class="text">Please create or connect your wallet</div>
+                </div>
+                <div class="actions">
+                  <div class="btn btn-bg-puple shadow">
+                    <div class="name">Connect ECOCWallet</div>
+                  </div>
+                  <div class="btn btn-text-puple shadow">
+                    <div class="name">Create New ECOCWallet</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -25,13 +59,14 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component'
-import WalletSelection from './WalletSelection.vue'
+import AssetsSelection from './AssetsSelection.vue'
 
 @Options({
-  components: { WalletSelection },
+  components: { AssetsSelection },
 })
 export default class EcocWallet extends Vue {
   showWallet = false
+  isLogedIn = true
 
   walletToggle() {
     this.showWallet = !this.showWallet
@@ -40,6 +75,13 @@ export default class EcocWallet extends Vue {
 </script>
 
 <style scoped lang="scss">
+input {
+  height: 52px;
+  background: #f8f4ff 0% 0% no-repeat padding-box;
+  box-shadow: inset 0px 3px 6px #00000029;
+  border-radius: 16px;
+}
+
 .ecoc-wallet {
   top: 0;
   left: 0;
@@ -86,20 +128,67 @@ export default class EcocWallet extends Vue {
       width: 520px;
       margin: auto;
 
-      .wallet-info {
-        margin-top: 10px;
-        height: 400px;
-        background: #ffffff 0% 0% no-repeat padding-box;
-        box-shadow: inset 0px 3px 6px #00000029;
-        border-radius: 16px;
+      .wallet-management {
+        .wallet-info {
+          margin-top: 10px;
+          height: 400px;
+          background: #ffffff 0% 0% no-repeat padding-box;
+          box-shadow: inset 0px 3px 6px #00000029;
+          border-radius: 16px;
+
+          .tab-header {
+            height: 72px;
+            background: #f9f5ff;
+          }
+
+          .tab-content {
+            height: 100%;
+            padding: 25px;
+
+            .total-balance {
+              margin: 10px 5px;
+              .left {
+                float: left;
+              }
+              .right {
+                float: right;
+              }
+            }
+
+            .textbox {
+              margin: 5px 0px;
+            }
+
+            .btn {
+              margin-top: 30px;
+              bottom: 0;
+            }
+          }
+        }
+
+        .bottom {
+          margin-top: 20px;
+        }
       }
 
-      .bottom {
-        margin-top: 20px;
-        .link {
-          color: #691c80;
-          cursor: pointer;
-          text-decoration: underline;
+      .connect-wallet {
+        width: 374px;
+        height: 300px;
+        margin: auto;
+        .title {
+          .logo {
+            height: 45px;
+            width: 135px;
+          }
+          .text {
+            color: #929292;
+            opacity: 0.66;
+          }
+          padding: 100px 0px;
+        }
+
+        .actions .btn {
+          margin: 20px 0px;
         }
       }
     }
@@ -109,5 +198,11 @@ export default class EcocWallet extends Vue {
 .active .ecoc-wallet-panel {
   transform: initial;
   transition: 0.5s;
+}
+
+.link {
+  color: #691c80;
+  cursor: pointer;
+  text-decoration: underline;
 }
 </style>
