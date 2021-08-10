@@ -83,10 +83,40 @@ input {
   -o-box-sizing: border-box;
   -ms-box-sizing: border-box;
   box-sizing: border-box;
+
+  font-size: 16px;
+}
+
+textarea {
+  width: 100%;
+  padding: 15px 15px;
+  margin: 0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -o-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+
+  font-size: 16px;
 }
 
 *:focus {
   outline: none;
+}
+
+::placeholder {
+  color: #7a7a7a;
+  opacity: 0.8;
+}
+
+:-ms-input-placeholder {
+  color: #7a7a7a;
+  opacity: 0.8;
+}
+
+::-ms-input-placeholder {
+  color: #7a7a7a;
+  opacity: 0.8;
 }
 
 .container {
@@ -99,7 +129,7 @@ input {
 }
 
 .btn {
-  height: 55px;
+  height: 52px;
   border-radius: 16px;
   opacity: 1;
   color: white;

@@ -36,18 +36,7 @@
               </div>
 
               <div class="connect-wallet" v-else>
-                <div class="title">
-                  <img class="logo" src="@/assets/logo-black.svg" alt="logo" />
-                  <div class="text">Please create or connect your wallet</div>
-                </div>
-                <div class="actions">
-                  <div class="btn btn-bg-puple shadow">
-                    <div class="name">Connect ECOCWallet</div>
-                  </div>
-                  <div class="btn btn-text-puple shadow">
-                    <div class="name">Create New ECOCWallet</div>
-                  </div>
-                </div>
+                <EcocConnectWallet />
               </div>
             </div>
           </div>
@@ -60,13 +49,14 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component'
 import AssetsSelection from './AssetsSelection.vue'
+import EcocConnectWallet from './EcocConnectWallet.vue'
 
 @Options({
-  components: { AssetsSelection },
+  components: { AssetsSelection, EcocConnectWallet },
 })
 export default class EcocWallet extends Vue {
   showWallet = false
-  isLogedIn = true
+  isLogedIn = false
 
   walletToggle() {
     this.showWallet = !this.showWallet
@@ -175,21 +165,6 @@ input {
         width: 374px;
         height: 300px;
         margin: auto;
-        .title {
-          .logo {
-            height: 45px;
-            width: 135px;
-          }
-          .text {
-            color: #929292;
-            opacity: 0.66;
-          }
-          padding: 100px 0px;
-        }
-
-        .actions .btn {
-          margin: 20px 0px;
-        }
       }
     }
   }
