@@ -139,7 +139,7 @@ input {
 
   .panel {
     width: 550px;
-    min-height: 525px;
+    min-height: 480px;
     height: auto;
     background: #ffffff 0% 0% no-repeat padding-box;
     border-radius: 0px 0px 16px 0px;

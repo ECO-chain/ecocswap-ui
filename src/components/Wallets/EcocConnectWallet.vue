@@ -20,6 +20,9 @@
     <!--Connect ECOC Wallet Page-->
     <templete v-show="stepper.currentStep === 2">
       <div class="connect-wallet">
+        <div class="navbar">
+          <img class="back" src="@/assets/img/back.png" alt="back" @click="stepper.goto(1)" />
+        </div>
         <div class="title">
           <div class="text">Connect ECOC Wallet</div>
           <div class="description">Please upload your keystore file.</div>
@@ -42,10 +45,7 @@
           v-model="connectWallet.password"
         />
         <div class="connect-wallet-actions">
-          <div class="btn btn-text-puple shadow btn-left" @click="stepper.goto(1)">
-            <div class="name">Back</div>
-          </div>
-          <div class="btn btn-bg-puple shadow btn-right">
+          <div class="btn btn-bg-puple btn-right">
             <div class="name">Connect</div>
           </div>
         </div>
@@ -55,6 +55,9 @@
     <!--Create ECOC Wallet Page-->
     <templete v-show="stepper.currentStep === 3">
       <div class="create-wallet">
+        <div class="navbar">
+          <img class="back" src="@/assets/img/back.png" alt="back" @click="stepper.goto(1)" />
+        </div>
         <div class="title">
           <div class="text">Create ECOC Wallet</div>
           <div class="description">Please set your password to generate a keystore file</div>
@@ -76,10 +79,7 @@
         </div>
 
         <div class="create-wallet-actions">
-          <div class="btn btn-text-puple shadow btn-left" @click="stepper.goto(1)">
-            <div class="name">Back</div>
-          </div>
-          <div class="btn btn-bg-puple shadow btn-right" @click="stepper.goto(4)">
+          <div class="btn btn-bg-puple btn-right" @click="stepper.goto(4)">
             <div class="name">Connect</div>
           </div>
         </div>
@@ -103,10 +103,10 @@
         </div>
 
         <div class="keystore-result-actions">
-          <div class="btn btn-bg-puple shadow">
+          <div class="btn btn-bg-puple">
             <div class="name">Download keystore file</div>
           </div>
-          <div class="connect">
+          <div class="connect mt-8">
             Already saved your keystore file?.
             <a class="link" @click="stepper.goto(2)">Connect</a>
           </div>
@@ -130,7 +130,8 @@ export default class EcocConnectWallet extends Vue {
   }
 
   createWallet = {
-    keystore: 'example keystore contents',
+    keystore:
+      '{"version":"0.1","content":"U2FsdGVkX18pyLjeccY/tJX4nFhnEnTHiN0if74n7PxM3L25INdVGyVYtvNzTopoiB/1oYYYgv488hHs2emLhrpCUEtY/5Cvp9eeLuMFW+A=","crypto":{"cipher":"AES"}}',
     password: '',
     confimedPassword: '',
   }
@@ -152,16 +153,19 @@ export default class EcocConnectWallet extends Vue {
 <style scoped lang="scss">
 textarea {
   resize: none;
-  background: #f8f4ff 0% 0% no-repeat padding-box;
-  box-shadow: inset 0px 3px 6px #00000029;
+  background: #f5f5f5 0% 0% no-repeat padding-box;
   border-radius: 16px;
+  border: 0px solid rgba(105, 28, 128, 1);
 }
 
 input {
   height: 52px;
-  background: #f8f4ff 0% 0% no-repeat padding-box;
-  box-shadow: inset 0px 3px 6px #00000029;
+  background: #f5f5f5 0% 0% no-repeat padding-box;
   border-radius: 16px;
+}
+
+input:focus {
+  border: 1px solid rgba(105, 28, 128, 0.5);
 }
 
 .ecoc-connect-wallet {
@@ -181,7 +185,7 @@ input {
       color: #929292;
       opacity: 0.66;
     }
-    padding: 100px 0px;
+    padding: 80px 0px;
   }
 
   .actions .btn {
@@ -218,17 +222,8 @@ input {
   }
 
   .connect-wallet-actions {
-    display: flex;
     .btn {
-      width: 50%;
       margin: 20px 0px;
-
-      &-left {
-        margin-right: 10px;
-      }
-      &-right {
-        margin-left: 10px;
-      }
     }
   }
 }
@@ -237,25 +232,16 @@ input {
   margin: auto;
 
   .content {
-    margin-top: 30px;
+    margin-top: 40px;
     .textbox {
       margin: 5px 0px;
     }
   }
 
   .create-wallet-actions {
-    margin-top: 30px;
-    display: flex;
+    margin-top: 20px;
     .btn {
-      width: 50%;
       margin: 20px 0px;
-
-      &-left {
-        margin-right: 10px;
-      }
-      &-right {
-        margin-left: 10px;
-      }
     }
   }
 }
@@ -264,27 +250,35 @@ input {
   margin: auto;
 
   .content {
-    margin: 30px 0px;
+    margin: 20px 0px;
     .note {
-      background: rgba(255, 183, 77, 0.2);
+      background-color: #fffce9;
       color: #ffb74d;
       font-size: 13px;
-
       padding: 10px;
-      border-width: 1em;
-      border-color: #ffb74d;
+      border: 1px solid #ffb74d;
       border-radius: 10px;
     }
 
     .result {
-      min-height: 150px;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      overflow: auto;
+      word-wrap: break-word;
+      min-height: 120px;
       margin-top: 15px;
-      background: rgba(128, 128, 128, 0.2);
+      background: #f6f6f6 0% 0% no-repeat padding-box;
+      border-radius: 16px;
       font-size: 13px;
+      top: 50%;
 
-      padding: 10px;
-      border-radius: 10px;
+      padding: 14px;
     }
+  }
+
+  .keystore-result-actions {
+    padding: 0px 0px;
   }
 }
 
@@ -292,5 +286,15 @@ input {
   color: #691c80;
   cursor: pointer;
   text-decoration: underline;
+}
+
+.navbar {
+  display: flex;
+  position: left;
+  .back {
+    cursor: pointer;
+    width: 27px;
+    height: 27px;
+  }
 }
 </style>

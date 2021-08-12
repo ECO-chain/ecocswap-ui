@@ -153,6 +153,7 @@ textarea {
   &-text-puple {
     color: #691c80;
     background: white;
+    border: 1px solid #691c80;
   }
 
   &-bg-blue {
@@ -211,5 +212,21 @@ textarea {
 .modal-leave-to {
   opacity: 0;
   transition: visibility 0s 0.2s, opacity 0.2s linear;
+}
+
+.mt-4 {
+  margin-top: 4px;
+}
+
+.mt-8 {
+  margin-top: 8px;
+}
+
+.mb-4 {
+  margin-bottom: 4px;
+}
+
+.mb-8 {
+  margin-bottom: 8px;
 }
 </style>
