@@ -1,6 +1,9 @@
 import { createApp } from 'vue'
 import vClickOutside from 'click-outside-vue3'
 import { createI18n } from 'vue-i18n'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { far } from '@fortawesome/free-regular-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 import App from './App.vue'
 import './registerServiceWorker'
@@ -20,4 +23,12 @@ const i18n = createI18n({
   globalInjection: true,
 })
 
-createApp(App).use(store).use(i18n).use(router).use(vClickOutside).mount('#app')
+library.add(far)
+
+createApp(App)
+  .use(store)
+  .use(i18n)
+  .use(router)
+  .use(vClickOutside)
+  .component('font-awesome-icon', FontAwesomeIcon)
+  .mount('#app')

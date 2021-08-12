@@ -17,6 +17,7 @@
       </div>
     </templete>
 
+    <!--Connect ECOC Wallet Page-->
     <templete v-show="stepper.currentStep === 2">
       <div class="connect-wallet">
         <div class="title">
@@ -51,6 +52,7 @@
       </div>
     </templete>
 
+    <!--Create ECOC Wallet Page-->
     <templete v-show="stepper.currentStep === 3">
       <div class="create-wallet">
         <div class="title">
@@ -84,6 +86,7 @@
       </div>
     </templete>
 
+    <!--Keystore Result Page-->
     <templete v-show="stepper.currentStep === 4">
       <div class="keystore-result">
         <div class="title">

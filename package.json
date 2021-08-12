@@ -10,6 +10,9 @@
     "lint:fix": "eslint --fix --ext .vue,.js,.ts -- src/ tests/"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.36",
+    "@fortawesome/free-regular-svg-icons": "^5.15.4",
+    "@fortawesome/vue-fontawesome": "^3.0.0-4",
     "@types/crypto-js": "^4.0.2",
     "axios": "^0.21.1",
     "bignumber.js": "^9.0.1",
