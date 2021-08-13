@@ -160,8 +160,21 @@ textarea {
     background: #15bacf 0% 0% no-repeat padding-box;
   }
 
+  &-text-blue {
+    color: #15bacf;
+    background: white;
+    border: 1px solid #15bacf;
+  }
+
   &-bg-blue2 {
+    color: #15bacf;
     background: #baf7ff 0% 0% no-repeat padding-box;
+  }
+
+  &-text-blue2 {
+    color: #15bacf;
+    background: white;
+    border: 1px solid #baf7ff;
   }
 
   &:hover {
