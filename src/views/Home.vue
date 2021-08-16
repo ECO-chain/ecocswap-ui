@@ -1,5 +1,6 @@
 <template>
-  <div class="home">
+  <div class="home noselect">
+    <SwapPanel class="swap-panel" />
     <EcocWallet class="ecoc-wallet" />
     <EthWallet class="alt-wallet" />
 
@@ -9,7 +10,6 @@
     <div class="alt-side">
       <img class="watetmark" src="@/assets/img/eth-watermark.svg" />
     </div>
-    <SwapPanel class="swap-panel" />
   </div>
 </template>
 
@@ -26,21 +26,22 @@ import SwapPanel from '@/components/Swap/SwapPanel.vue'
     SwapPanel,
   },
 })
-export default class Home extends Vue {}
+export default class Home extends Vue {
+  ecocWalletShow = true
+  altWalletShow = false
+
+  onEcocToggle(show: boolean) {
+    console.log(show)
+    this.ecocWalletShow = show
+  }
+}
 </script>
 
 <style scoped lang="scss">
 .home {
   display: flex;
   align-items: stretch;
-  height: 100%;
-
-  .swap-panel {
-    position: absolute;
-    top: 311px;
-    left: 50%;
-    transform: translate(-50%, 0);
-  }
+  z-index: 100;
 
   .ecoc-side {
     flex: 50%;
@@ -54,10 +55,10 @@ export default class Home extends Vue {}
 
     .watetmark {
       position: fixed;
+      z-index: 0;
       top: 40%;
       left: 25%;
       opacity: 0.2;
-      z-index: 0;
     }
   }
 
@@ -74,26 +75,32 @@ export default class Home extends Vue {}
 
     .watetmark {
       position: fixed;
+      z-index: 0;
       top: 40%;
       right: 25%;
       opacity: 0.2;
-      z-index: 10;
       transform: translate(0%, -25%);
     }
   }
 
+  .swap-panel {
+    position: fixed;
+    top: 311px;
+    z-index: 102;
+  }
+
   .ecoc-wallet {
     position: fixed;
+    z-index: 102;
     top: 235px;
-    left: 0;
-    z-index: 100;
+    left: -550px;
   }
 
   .alt-wallet {
     position: fixed;
+    z-index: 102;
     top: 235px;
-    right: 0;
-    z-index: 100;
+    right: -466px;
   }
 }
 </style>

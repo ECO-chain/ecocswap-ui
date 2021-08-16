@@ -38,6 +38,7 @@ export default class Info extends Vue {
   display: flex;
 
   .menu-layout {
+    margin-top: 84px;
     background: #211733 0% 0% no-repeat padding-box;
     border-radius: 5px;
     float: left;
@@ -68,6 +69,7 @@ export default class Info extends Vue {
   }
 
   .content-layout {
+    margin-top: 84px;
     background-color: #ffffff;
     float: right;
     width: 67%;

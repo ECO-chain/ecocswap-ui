@@ -119,7 +119,6 @@ export default class Nav extends Vue {
   top: 0%;
   right: 140px;
   position: absolute;
-  z-index: 10000;
   height: auto;
   min-width: 200px;
   margin-top: 1rem;

@@ -35,7 +35,6 @@ export default class Header extends Vue {
   background: transparent linear-gradient(90deg, #202231 0%, #18286c 100%) 0% 0% no-repeat
     padding-box;
   opacity: 1;
-  z-index: 10;
 
   .logo {
     float: left;

@@ -1,5 +1,5 @@
 <template>
-  <div class="ecoc-wallet">
+  <div class="ecoc-wallet noselect">
     <transition name="panel">
       <div :class="{ active: showWallet }">
         <div class="ecoc-wallet-panel">
@@ -83,6 +83,7 @@ export default class EcocWallet extends Vue {
 
   walletToggle() {
     this.showWallet = !this.showWallet
+    this.$emit('onWalletToggle', this.showWallet)
   }
 
   login() {
@@ -106,10 +107,12 @@ input {
 .ecoc-wallet {
   top: 0;
   left: 0;
+  outline: none;
 }
 
 .ecoc-wallet-panel {
-  transform: translate(-550px);
+  outline: none;
+  // transform: translate(-550px);
   transition: 1s;
   width: 660px;
 
@@ -235,7 +238,10 @@ input {
 }
 
 .active .ecoc-wallet-panel {
-  transform: initial;
+  position: absolute;
+  //transform: initial;
+  //transform: translate(550px);
+  left: 550px;
   transition: 0.5s;
 }
 

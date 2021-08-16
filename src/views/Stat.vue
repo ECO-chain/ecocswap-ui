@@ -79,7 +79,7 @@ export default class Stat extends Vue {
 
 .wraper {
   margin: auto;
-  margin-top: 74px;
+  margin-top: 158px;
   min-width: 800px;
   max-width: 1088px;
 

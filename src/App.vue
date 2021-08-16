@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Header />
+    <Header class="header" />
     <router-view class="container" />
   </div>
 </template>
@@ -51,6 +51,8 @@ export default class Home extends Vue {}
   font-family: 'Poppins', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  display: block;
+  overflow: hidden;
 }
 
 html,
@@ -131,10 +133,14 @@ textarea {
   opacity: 0.8;
 }
 
+.header {
+  z-index: 300;
+}
+
 .container {
-  margin-top: 84px;
   font-size: 16px;
   width: 100%;
+  height: 100%;
   text-align: center;
   min-height: 100vh;
   overflow-y: auto;
@@ -194,9 +200,27 @@ textarea {
   }
 }
 
+.btn-icon {
+  cursor: pointer;
+  background: #ffffff 0% 0% no-repeat padding-box;
+  box-shadow: 0px 3px 6px #00000029;
+  padding: 14px;
+  border-radius: 50%;
+  height: auto;
+  width: auto;
+
+  .icon {
+    transform: translate(0, 10%);
+  }
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
 .mask {
   position: fixed;
-  z-index: 10000;
+  z-index: 1000;
   top: 0;
   left: 0;
   width: 100%;
@@ -237,6 +261,16 @@ textarea {
 .modal-leave-to {
   opacity: 0;
   transition: visibility 0s 0.2s, opacity 0.2s linear;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
 }
 
 .mt-4 {

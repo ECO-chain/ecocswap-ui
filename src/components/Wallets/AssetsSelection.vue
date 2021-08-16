@@ -1,5 +1,5 @@
 <template>
-  <div :class="'selection ' + bg" @click="selection.open">
+  <div :class="'noselect selection ' + bg" @click="selection.open">
     <img class="logo" :src="selectedData.logo" />
     <div class="name">{{ selectedData.name }}</div>
     <div class="amount">
@@ -12,7 +12,10 @@
 
   <transition name="modal">
     <div class="mask" v-if="selection.showSelection">
-      <div class="selection-modal shadow" v-bind:class="{ active: selection.showSelection }">
+      <div
+        class="noselect selection-modal shadow"
+        v-bind:class="{ active: selection.showSelection }"
+      >
         <div class="selection-modal-header">
           <div class="title">Select Token</div>
           <div class="actions actions-item" @click="selection.close">X</div>

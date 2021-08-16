@@ -1,5 +1,5 @@
 <template>
-  <div class="eth-wallet" flat>
+  <div class="eth-wallet noselect" flat>
     <transition name="panel">
       <div :class="{ active: showWallet }">
         <div class="eth-wallet-panel">
@@ -77,7 +77,7 @@ export default class EthWallet extends Vue {
 }
 
 .eth-wallet-panel {
-  transform: translate(466px);
+  // transform: translate(466px);
   transition: 1s;
   width: 600px;
 
@@ -163,7 +163,9 @@ export default class EthWallet extends Vue {
 }
 
 .active .eth-wallet-panel {
-  transform: initial;
+  // transform: initial;
+  position: absolute;
+  right: 466px;
   transition: 0.5s;
 }
 

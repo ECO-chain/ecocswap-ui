@@ -1,31 +1,35 @@
 <template>
   <div class="swap-panel">
     <div class="ecoc-side">
-      <AssetsSelection class="asset-selection" />
-      <SwapInput class="input" key="ecoc-input" />
+      <div class="wraper">
+        <AssetsSelection class="asset-selection" />
+        <SwapInput class="input" key="ecoc-input" />
+      </div>
     </div>
 
     <div class="alt-side">
-      <div class="ecoc-assets">
-        <AssetsSelection class="asset-selection" />
-        <SwapInput class="input" key="wrap-ecoc-input" />
-      </div>
+      <div class="wraper">
+        <div class="ecoc-assets">
+          <AssetsSelection class="asset-selection" />
+          <SwapInput class="input" key="wrap-ecoc-input" />
+        </div>
 
-      <div class="alt-swap">
-        <div class="btn-button">
-          <img class="icon" src="@/assets/img/swap-unavailable.svg" alt="alt-swap" />
+        <div class="alt-swap">
+          <div class="btn-icon">
+            <img class="icon" src="@/assets/img/swap-unavailable.svg" alt="alt-swap" />
+          </div>
+        </div>
+
+        <div class="alt-assets">
+          <AssetsSelection />
+          <SwapInput class="input" key="alt-input" />
         </div>
       </div>
 
-      <div class="alt-assets">
-        <AssetsSelection />
-        <SwapInput class="input" key="alt-input" />
-      </div>
-    </div>
-
-    <div class="cross-swap">
-      <div class="btn-button">
-        <img class="icon" src="@/assets/img/swap-unavailable.svg" alt="cross-swap" />
+      <div class="cross-swap">
+        <div class="btn-icon">
+          <img class="icon" src="@/assets/img/swap-unavailable.svg" alt="cross-swap" />
+        </div>
       </div>
     </div>
   </div>
@@ -50,14 +54,21 @@ export default class SwapPanel extends Vue {
   display: flex;
   align-items: stretch;
   height: auto;
+  width: 100%;
 
   .ecoc-side {
     flex: 50%;
-    width: 500px;
-    min-width: 300px;
-    margin-right: 60px;
 
-    .assets-selection {
+    .wraper {
+      margin: 0 auto;
+      max-width: 500px;
+      min-width: 200px;
+      margin-right: 110px;
+    }
+    @media only screen and (max-width: 400px) {
+      .wraper {
+        margin: 0 auto;
+      }
     }
 
     .input {
@@ -67,10 +78,19 @@ export default class SwapPanel extends Vue {
 
   .alt-side {
     flex: 50%;
-    display: flex;
-    width: 500px;
-    min-width: 300px;
-    margin-left: 60px;
+
+    .wraper {
+      max-width: 500px;
+      min-width: 200px;
+      margin: 0 auto;
+      margin-left: 110px;
+      display: flex;
+    }
+    @media only screen and (max-width: 400px) {
+      .wraper {
+        margin: 0 auto;
+      }
+    }
 
     .ecoc-assets {
       flex: 50%;
@@ -82,8 +102,7 @@ export default class SwapPanel extends Vue {
 
     .alt-swap {
       position: relative;
-      top: 25%;
-      margin: 15px;
+      margin: auto 15px;
 
       .icon {
         width: 33px;
@@ -106,24 +125,6 @@ export default class SwapPanel extends Vue {
       width: 33px;
       height: 27px;
     }
-  }
-}
-
-.btn-button {
-  cursor: pointer;
-  background: #ffffff 0% 0% no-repeat padding-box;
-  box-shadow: 0px 3px 6px #00000029;
-  padding: 14px;
-  border-radius: 50%;
-  height: auto;
-  width: auto;
-
-  .icon {
-    transform: translate(0, 10%);
-  }
-
-  &:hover {
-    opacity: 0.8;
   }
 }
 </style>
