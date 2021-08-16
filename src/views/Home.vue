@@ -93,14 +93,12 @@ export default class Home extends Vue {
     position: fixed;
     z-index: 102;
     top: 235px;
-    left: -550px;
   }
 
   .alt-wallet {
     position: fixed;
     z-index: 102;
     top: 235px;
-    right: -466px;
   }
 }
 </style>

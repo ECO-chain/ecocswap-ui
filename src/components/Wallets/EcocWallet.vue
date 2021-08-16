@@ -107,12 +107,12 @@ input {
 .ecoc-wallet {
   top: 0;
   left: 0;
-  outline: none;
 }
 
 .ecoc-wallet-panel {
-  outline: none;
-  // transform: translate(-550px);
+  position: absolute;
+  left: 0;
+  transform: translate(-550px);
   transition: 1s;
   width: 660px;
 
@@ -238,10 +238,7 @@ input {
 }
 
 .active .ecoc-wallet-panel {
-  position: absolute;
-  //transform: initial;
-  //transform: translate(550px);
-  left: 550px;
+  transform: initial;
   transition: 0.5s;
 }
 

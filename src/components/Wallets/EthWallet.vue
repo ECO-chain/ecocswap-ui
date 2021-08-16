@@ -77,7 +77,9 @@ export default class EthWallet extends Vue {
 }
 
 .eth-wallet-panel {
-  // transform: translate(466px);
+  position: absolute;
+  right: 0;
+  transform: translate(466px);
   transition: 1s;
   width: 600px;
 
@@ -163,9 +165,7 @@ export default class EthWallet extends Vue {
 }
 
 .active .eth-wallet-panel {
-  // transform: initial;
-  position: absolute;
-  right: 466px;
+  transform: initial;
   transition: 0.5s;
 }
 

@@ -114,6 +114,14 @@ textarea {
   font-size: 16px;
 }
 
+/* stylelint-disable-line */
+img {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+}
+
 *:focus {
   outline: none;
 }

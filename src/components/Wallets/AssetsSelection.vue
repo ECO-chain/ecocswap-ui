@@ -18,7 +18,9 @@
       >
         <div class="selection-modal-header">
           <div class="title">Select Token</div>
-          <div class="actions actions-item" @click="selection.close">X</div>
+          <div class="actions actions-item" @click="selection.close">
+            <img class="icon" src="@/assets/img/cancel.png" alt="close" />
+          </div>
         </div>
 
         <ul class="selection-modal-list">
@@ -168,6 +170,15 @@ export default class Selection extends Vue.with(Props) {
       &-item {
         cursor: pointer;
         font-size: 24px;
+      }
+
+      &:hover {
+        opacity: 0.5;
+      }
+
+      .icon {
+        width: 21px;
+        height: 21px;
       }
     }
   }
