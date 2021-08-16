@@ -82,7 +82,6 @@ export default class Selection extends Vue.with(Props) {
 <style scoped lang="scss">
 .selection {
   display: flex;
-  overflow: auto;
   height: 55px;
   min-height: 55px;
   border-radius: 16px;
@@ -165,6 +164,7 @@ export default class Selection extends Vue.with(Props) {
       float: right;
       &-item {
         cursor: pointer;
+        font-size: 24px;
       }
     }
   }

@@ -9,6 +9,7 @@
     <div class="alt-side">
       <img class="watetmark" src="@/assets/img/eth-watermark.svg" />
     </div>
+    <SwapPanel class="swap-panel" />
   </div>
 </template>
 
@@ -16,11 +17,13 @@
 import { Options, Vue } from 'vue-class-component'
 import EcocWallet from '@/components/Wallets/EcocWallet.vue'
 import EthWallet from '@/components/Wallets/EthWallet.vue'
+import SwapPanel from '@/components/Swap/SwapPanel.vue'
 
 @Options({
   components: {
     EcocWallet,
     EthWallet,
+    SwapPanel,
   },
 })
 export default class Home extends Vue {}
@@ -31,6 +34,13 @@ export default class Home extends Vue {}
   display: flex;
   align-items: stretch;
   height: 100%;
+
+  .swap-panel {
+    position: absolute;
+    top: 311px;
+    left: 50%;
+    transform: translate(-50%, 0);
+  }
 
   .ecoc-side {
     flex: 50%;
