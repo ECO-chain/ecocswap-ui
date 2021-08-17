@@ -4,7 +4,7 @@ import { createI18n } from 'vue-i18n'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { far } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-
+import easySpinner from 'vue-easy-spinner'
 import App from './App.vue'
 import './registerServiceWorker'
 import router from './router'
@@ -30,5 +30,6 @@ createApp(App)
   .use(i18n)
   .use(router)
   .use(vClickOutside)
+  .use(easySpinner, { prefix: 'easy' })
   .component('font-awesome-icon', FontAwesomeIcon)
   .mount('#app')

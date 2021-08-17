@@ -1,5 +1,5 @@
 <template>
-  <div class="ecoc-wallet noselect">
+  <div class="noselect">
     <transition name="panel">
       <div :class="{ active: showWallet }">
         <div class="ecoc-wallet-panel">
@@ -104,11 +104,6 @@ input {
   border-radius: 16px;
 }
 
-.ecoc-wallet {
-  top: 0;
-  left: 0;
-}
-
 .ecoc-wallet-panel {
   position: absolute;
   left: 0;
@@ -142,7 +137,8 @@ input {
 
   .panel {
     width: 550px;
-    min-height: 480px;
+    min-height: 500px;
+    max-height: 650px;
     height: auto;
     background: #ffffff 0% 0% no-repeat padding-box;
     border-radius: 0px 0px 16px 0px;

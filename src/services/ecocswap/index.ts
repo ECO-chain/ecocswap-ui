@@ -3,7 +3,7 @@ import { SmartContract } from '@/services/contract'
 import { WalletParams } from '@/services/ecoc/types'
 import { defaultNetwork } from '@/services/ecoc/config'
 import { ECOC_MAINNET } from '@/services/ecoc/constants'
-import { Params, ExecutionResult } from '@/services/types'
+import { Params, ExecutionResult } from '@/services/contract/types'
 import { toDecimals, toNumber } from '@/services/utils'
 import abi from './abi.json'
 

@@ -2,7 +2,7 @@ import * as bip39 from 'bip39'
 import * as bip32 from 'bip32'
 import { Ecocjs } from 'ecoweb3'
 
-import { EWallet, AddressInfo, TxData, Utxo, Transaction } from './types'
+import { EWallet, AddressInfo, TxData, Utxo, Transaction, Ecrc20Info } from './types'
 import { ECOC_MAINNET, ECOC_TESTNET } from './constants'
 import { ecocw3, changeToNetwork } from './ecocw3'
 
@@ -36,7 +36,7 @@ export default class EcocWallet implements EWallet {
   getAddress() {
     const { address } = Ecocjs.payments.p2pkh({
       pubkey: this.keypair.publicKey,
-      network: this.network
+      network: this.network,
     })
     return address as string
   }
@@ -63,6 +63,10 @@ export default class EcocWallet implements EWallet {
 
   async getTxList() {
     return await EcocWallet.getTxList(this.address)
+  }
+
+  async getEcrc20() {
+    return await EcocWallet.getEcrc20(this.address)
   }
 
   async getUtxoList() {
@@ -123,6 +127,10 @@ export default class EcocWallet implements EWallet {
 
   static async getTxList(address: string, pageNum = 0) {
     return (await ecocw3.api.getTxList(address, pageNum)) as TxData
+  }
+
+  static async getEcrc20(address: string) {
+    return (await ecocw3.api.getEcrc20(address)) as Ecrc20Info[]
   }
 
   static async getUtxoList(address: string) {
@@ -205,10 +213,7 @@ export default class EcocWallet implements EWallet {
     const network = Ecocjs.getNetwork(networkStr)
     const seedHex = await bip39.mnemonicToSeed(mnemonic, password)
     const hdNode = bip32.fromSeed(seedHex, network)
-    const account = hdNode
-      .deriveHardened(88)
-      .deriveHardened(0)
-      .deriveHardened(0)
+    const account = hdNode.deriveHardened(88).deriveHardened(0).deriveHardened(0)
     const keyPair = account
 
     return new EcocWallet(keyPair, networkStr)

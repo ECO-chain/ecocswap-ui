@@ -296,4 +296,12 @@ img {
 .mb-8 {
   margin-bottom: 8px;
 }
+
+.error-message {
+  text-align: right;
+  margin-right: 5px;
+  margin-top: 5px;
+  color: #ff7878;
+  font-size: 14px;
+}
 </style>

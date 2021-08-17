@@ -2,7 +2,7 @@
   <div class="swap-panel">
     <div class="ecoc-side">
       <div class="wraper">
-        <AssetsSelection class="asset-selection" />
+        <AssetsSelection />
         <SwapInput class="input" key="ecoc-input" />
       </div>
     </div>
@@ -10,7 +10,7 @@
     <div class="alt-side">
       <div class="wraper">
         <div class="ecoc-assets">
-          <AssetsSelection class="asset-selection" />
+          <AssetsSelection />
           <SwapInput class="input" key="wrap-ecoc-input" />
         </div>
 

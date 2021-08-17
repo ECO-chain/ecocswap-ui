@@ -45,7 +45,10 @@
           v-model="connectWallet.password"
         />
         <div class="connect-wallet-actions">
-          <div class="btn btn-bg-puple btn-right">
+          <div class="error-message" v-if="connectWallet.errorMsg">
+            {{ connectWallet.errorMsg }}
+          </div>
+          <div class="btn btn-bg-puple" @click="connectWallet.onConnectWallet">
             <div class="name">Connect</div>
           </div>
         </div>
@@ -79,8 +82,12 @@
         </div>
 
         <div class="create-wallet-actions">
-          <div class="btn btn-bg-puple btn-right" @click="stepper.goto(4)">
-            <div class="name">Connect</div>
+          <div class="error-message" v-if="createWallet.errorMsg">{{ createWallet.errorMsg }}</div>
+          <div class="btn btn-bg-puple btn-right" @click="createWallet.onCreateNewWallet(stepper)">
+            <div class="name" v-if="createWallet.isLoading">
+              <easy-spinner size="20" type="circular" />
+            </div>
+            <div class="name" v-else>Create</div>
           </div>
         </div>
       </div>
@@ -118,33 +125,112 @@
 
 <script lang="ts">
 import { Options, Vue, setup } from 'vue-class-component'
+import { ref, computed } from 'vue'
 import useStepper from '@/components/composables/use-stepper'
+import useEcocWallet from '@/components/composables/use-ecoc-wallet'
 
 @Options({
   components: {},
 })
 export default class EcocConnectWallet extends Vue {
-  connectWallet = {
-    keystore: '',
-    password: '',
-  }
-
-  createWallet = {
-    keystore:
-      '{"version":"0.1","content":"U2FsdGVkX18pyLjeccY/tJX4nFhnEnTHiN0if74n7PxM3L25INdVGyVYtvNzTopoiB/1oYYYgv488hHs2emLhrpCUEtY/5Cvp9eeLuMFW+A=","crypto":{"cipher":"AES"}}',
-    password: '',
-    confimedPassword: '',
-  }
+  minPasswordLength = 8
 
   stepper = setup(() => {
-    const { currentStep, totalStep, goto, next, prev } = useStepper(4)
+    const { currentStep, goto } = useStepper(4)
 
     return {
       currentStep,
-      totalStep,
       goto,
-      next,
-      prev,
+    }
+  })
+
+  connectWallet = setup(() => {
+    const { state, connect } = useEcocWallet()
+    const keystore = ref('')
+    const password = ref('')
+    const errorMsg = ref('')
+
+    const isValid = computed(
+      () => keystore.value.length > 0 && password.value.length >= this.minPasswordLength
+    )
+
+    const onConnectWallet = () => {
+      errorMsg.value = ''
+
+      if (isValid.value) {
+        connect({ keystore: keystore.value, password: password.value })
+          .then(() => {
+            errorMsg.value = ''
+            console.log(state.address)
+          })
+          .catch((error) => {
+            errorMsg.value = error
+          })
+      } else {
+        errorMsg.value = 'Wrong Password'
+      }
+    }
+
+    return {
+      keystore,
+      password,
+      errorMsg,
+      onConnectWallet,
+    }
+  })
+
+  createWallet = setup(() => {
+    const { createWallet } = useEcocWallet()
+    const isLoading = ref(false)
+    const keystore = ref('')
+    const password = ref('')
+    const confimedPassword = ref('')
+    const errorMsg = ref('')
+
+    const isValid = computed(
+      () =>
+        password.value.length >= this.minPasswordLength && password.value === confimedPassword.value
+    )
+
+    const onError = (msg: string) => {
+      errorMsg.value = msg
+      isLoading.value = false
+    }
+
+    const onCreateNewWallet = (stepper: any) => {
+      if (isLoading.value === true) {
+        return
+      }
+
+      isLoading.value = true
+      errorMsg.value = ''
+
+      if (isValid.value) {
+        createWallet({ password: password.value })
+          .then((result) => {
+            errorMsg.value = ''
+
+            setTimeout(() => {
+              keystore.value = result
+              isLoading.value = false
+              stepper.goto(4)
+            }, 1500)
+          })
+          .catch((error) => {
+            onError(error)
+          })
+      } else {
+        onError('Invalid Password')
+      }
+    }
+
+    return {
+      isLoading: computed(() => isLoading.value),
+      keystore,
+      password,
+      confimedPassword,
+      errorMsg,
+      onCreateNewWallet,
     }
   })
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="eth-wallet noselect" flat>
+  <div class="wallet noselect" flat>
     <transition name="panel">
       <div :class="{ active: showWallet }">
         <div class="eth-wallet-panel">
@@ -71,7 +71,7 @@ export default class EthWallet extends Vue {
 </script>
 
 <style scoped lang="scss">
-.eth-wallet {
+.wallet {
   top: 0;
   right: 0;
 }
