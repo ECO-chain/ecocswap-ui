@@ -4,6 +4,15 @@
     <EcocWallet class="ecoc-wallet" />
     <EthWallet class="alt-wallet" />
 
+    <div class="ecoc-lastblock">
+      <span class="dot"></span>
+      <span>{{ home.ecocLastBlock }}</span>
+    </div>
+    <div class="alt-lastblock">
+      <span>{{ home.ethLastBlock }}</span>
+      <span class="dot"></span>
+    </div>
+
     <div class="ecoc-side">
       <img class="watetmark" src="@/assets/img/ecoc-watermark.svg" />
     </div>
@@ -14,10 +23,12 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component'
+import { Options, Vue, setup } from 'vue-class-component'
 import EcocWallet from '@/components/Wallets/EcocWallet.vue'
 import EthWallet from '@/components/Wallets/EthWallet.vue'
 import SwapPanel from '@/components/Swap/SwapPanel.vue'
+import useEcocWallet from '@/components/composables/use-ecoc-wallet'
+import useEthWallet from '@/components/composables/use-eth-wallet'
 
 @Options({
   components: {
@@ -27,13 +38,17 @@ import SwapPanel from '@/components/Swap/SwapPanel.vue'
   },
 })
 export default class Home extends Vue {
-  ecocWalletShow = true
-  altWalletShow = false
+  home = setup(() => {
+    const { lastBlock: ecocLastBlock } = useEcocWallet()
+    const { lastBlock: ethLastBlock } = useEthWallet()
 
-  onEcocToggle(show: boolean) {
-    console.log(show)
-    this.ecocWalletShow = show
-  }
+    console.log(ecocLastBlock, ethLastBlock)
+
+    return {
+      ecocLastBlock,
+      ethLastBlock,
+    }
+  })
 }
 </script>
 
@@ -100,5 +115,38 @@ export default class Home extends Vue {
     z-index: 102;
     top: 235px;
   }
+
+  .ecoc-lastblock {
+    position: fixed;
+    top: 95%;
+    left: 0;
+    margin-left: 20px;
+    color: #ff43c7;
+
+    .dot {
+      background-color: #ff43c7;
+      margin-right: 5px;
+    }
+  }
+
+  .alt-lastblock {
+    position: fixed;
+    top: 95%;
+    right: 0;
+    margin-right: 20px;
+    color: #15bacf;
+
+    .dot {
+      background-color: #15bacf;
+      margin-left: 5px;
+    }
+  }
+}
+
+.dot {
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  display: inline-block;
 }
 </style>

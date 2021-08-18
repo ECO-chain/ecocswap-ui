@@ -194,7 +194,7 @@ export default class EcocConnectWallet extends Vue {
       }
 
       connect({ keystore: keystore.value, password: password.value })
-        .then(() => {
+        .then(async () => {
           clear()
         })
         .catch((error) => {

@@ -1,13 +1,16 @@
-import { reactive } from 'vue'
+import { reactive, computed } from 'vue'
+
+const state = reactive({
+  address: '',
+  lastUpdate: 0,
+  lastBlock: 0,
+})
 
 export default function useEthWallet() {
-  const wallet = reactive({
-    address: '',
-    network: '',
-    assets: [],
-  })
+  const lastBlock = computed(() => state.lastBlock)
 
   return {
-    wallet,
+    state,
+    lastBlock,
   }
 }

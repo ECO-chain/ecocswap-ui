@@ -39,7 +39,9 @@
                         <div class="total-balance">
                           <div class="left">Total Balance:</div>
                           <a class="right">
-                            <div class="link">2000000 ECOC</div>
+                            <div class="link">
+                              {{ wallet.selectedAsset.amount }} {{ wallet.selectedAsset.symbol }}
+                            </div>
                           </a>
                         </div>
                         <input class="textbox" placeholder="To address" />
@@ -83,7 +85,7 @@ import useEcocWallet from '@/components/composables/use-ecoc-wallet'
 })
 export default class EcocWallet extends Vue {
   wallet = setup(() => {
-    const { address, isLogedIn, logout } = useEcocWallet()
+    const { address, selectedAsset, isLogedIn, logout } = useEcocWallet()
     const show = ref(false)
 
     const walletToggle = () => {
@@ -93,6 +95,7 @@ export default class EcocWallet extends Vue {
     return {
       show: computed(() => show.value),
       address,
+      selectedAsset,
       isLogedIn,
       walletToggle,
       logout,

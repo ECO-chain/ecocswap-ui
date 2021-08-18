@@ -7,7 +7,7 @@
 
 <script lang="ts">
 import { Options, Vue, setup } from 'vue-class-component'
-import { provide } from 'vue'
+import { reactive, watch } from 'vue'
 import Header from '@/components/Header.vue'
 import useEcocWallet from '@/components/composables/use-ecoc-wallet'
 
@@ -18,9 +18,35 @@ import useEcocWallet from '@/components/composables/use-ecoc-wallet'
 })
 export default class Home extends Vue {
   global = setup(() => {
-    const ecocWallet = useEcocWallet()
+    const { isLogedIn, updateAssetsPrice, updateAssetsBalance, updateLastBlock } = useEcocWallet()
+    let polling = reactive<NodeJS.Timeout>({} as NodeJS.Timeout)
 
-    provide('ecocWallet', ecocWallet)
+    const updateData = async () => {
+      if (isLogedIn) {
+        await updateAssetsPrice()
+        await updateAssetsBalance()
+        await updateLastBlock()
+      }
+    }
+
+    const startPooling = () => {
+      updateData()
+      polling = setInterval(() => {
+        updateData()
+      }, 30000)
+    }
+
+    const stopPooling = () => {
+      clearInterval(polling)
+    }
+
+    watch(isLogedIn, (value) => {
+      if (value === true) {
+        startPooling()
+      } else {
+        stopPooling()
+      }
+    })
 
     return {}
   })
