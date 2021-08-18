@@ -8,6 +8,7 @@
               <img class="logo" src="@/assets/img/ecoc-wallet.svg" />
             </div>
           </div>
+
           <div class="panel">
             <div class="wraper">
               <div class="wallet-management" v-if="wallet.isLogedIn">
@@ -32,6 +33,7 @@
                         </div>
                       </div>
                     </tab>
+
                     <tab name="Send" icon="arrow-alt-circle-up">
                       <div class="tab-content">
                         <div class="total-balance">
@@ -49,6 +51,7 @@
                     </tab>
                   </tabs>
                 </div>
+
                 <div class="bottom">
                   <div class="link" @click="wallet.logout">Disconnect</div>
                 </div>
@@ -80,7 +83,7 @@ import useEcocWallet from '@/components/composables/use-ecoc-wallet'
 })
 export default class EcocWallet extends Vue {
   wallet = setup(() => {
-    const { state, isLogedIn, logout } = useEcocWallet()
+    const { address, isLogedIn, logout } = useEcocWallet()
     const show = ref(false)
 
     const walletToggle = () => {
@@ -89,8 +92,7 @@ export default class EcocWallet extends Vue {
 
     return {
       show: computed(() => show.value),
-      address: computed(() => state.address),
-      state,
+      address,
       isLogedIn,
       walletToggle,
       logout,

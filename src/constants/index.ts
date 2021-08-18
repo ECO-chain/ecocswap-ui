@@ -9,6 +9,8 @@ export const TYPE_ECOC = 'ECOC'
 export const TYPE_ECRC20 = 'ECRC-20'
 export const TYPE_ETH = 'ETH'
 export const TYPE_ERC20 = 'ERC-20'
+export const TYPE_RECEIVED = 'Received'
+export const TYPE_SENT = 'Sent'
 
 export const STATUS_SYNCED = 'Synced'
 export const STATUS_PENDING = 'Pending'

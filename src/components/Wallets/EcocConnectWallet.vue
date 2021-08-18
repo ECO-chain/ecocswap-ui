@@ -235,7 +235,7 @@ export default class EcocConnectWallet extends Vue {
     const confimedPassword = ref('')
     const errorMsg = ref('')
 
-    const isValid = computed(
+    const isPasswordValid = computed(
       () =>
         password.value.length >= this.minPasswordLength && password.value === confimedPassword.value
     )
@@ -253,8 +253,8 @@ export default class EcocConnectWallet extends Vue {
       isLoading.value = true
       errorMsg.value = ''
 
-      if (!isValid.value) {
-        onError(`Invalid input - Password have to be at least ${this.minPasswordLength} char`)
+      if (!isPasswordValid.value) {
+        onError(`Password must be at least ${this.minPasswordLength} char`)
         return
       }
 
