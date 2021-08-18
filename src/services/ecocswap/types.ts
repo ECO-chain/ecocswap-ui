@@ -9,11 +9,11 @@ export interface AssetInfo {
 export interface RequestInfo {
   networkId: number
   requester: string
-  beneficiar: number
+  beneficiar: string
   asset: string
   amount: number
   gasCosts: number
-  txid: number
+  txid: string
   pending: boolean
   completed: boolean
 }

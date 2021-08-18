@@ -4,9 +4,8 @@ import { WalletParams } from '@/services/ecoc/types'
 import { defaultNetwork } from '@/services/ecoc/config'
 import { ECOC_MAINNET } from '@/services/ecoc/constants'
 import { Params, ExecutionResult } from '@/services/contract/types'
-import { toDecimals, toNumber } from '@/services/utils'
 import abi from './abi.json'
-import { AssetInfo } from './types'
+import { AssetInfo, RequestInfo } from './types'
 
 const mainnetAddress = '2eea1b7f4ac5ee217cfe0933471931c36fe4c402'
 const testnetAddress = '2eea1b7f4ac5ee217cfe0933471931c36fe4c402'
@@ -94,7 +93,7 @@ export namespace ecocswap {
     return res
   }
 
-  export const getRequestInfo = async (requestId: number) => {
+  export const getRequestInfo = async (requestId: number): Promise<RequestInfo> => {
     const params = {
       methodArgs: [requestId],
     } as Params
@@ -103,7 +102,27 @@ export namespace ecocswap {
     const executionResult = result.executionResult as ExecutionResult
     const output = executionResult.formattedOutput
 
-    return output
+    const networkId = output.networkId
+    const requester = Decoder.toEcoAddress(output.requester, isMainnet)
+    const beneficiar = output.beneficiar.toString(16)
+    const asset = output.asset
+    const amount = output.amount
+    const gasCosts = output.gasCosts
+    const txid = output.txid.toString(16)
+    const pending = output.pending
+    const completed = output.completed
+
+    return {
+      networkId,
+      requester,
+      beneficiar,
+      asset,
+      amount,
+      gasCosts,
+      txid,
+      pending,
+      completed,
+    }
   }
 
   export const getTransferStatus = async (requestId: number): Promise<boolean> => {
@@ -121,11 +140,12 @@ export namespace ecocswap {
   //send to contract
   export const lockECOC = async (
     amount: number,
-    poolAddress: string,
+    userAddress: string,
+    networkId: string,
     walletParams: WalletParams
   ) => {
     const params = {
-      methodArgs: [poolAddress],
+      methodArgs: [userAddress, networkId],
       senderAddress: walletParams.address,
       amount: amount,
       fee: walletParams.fee,
@@ -137,6 +157,29 @@ export namespace ecocswap {
     const utxoList = walletParams.utxoList
 
     const rawTx = await contract.getSendToTx('lockECOC', params, keypair, utxoList)
+    return rawTx
+  }
+
+  export const lockECRC20 = async (
+    amount: number,
+    assetAddress: string,
+    userAddress: string,
+    networkId: string,
+    walletParams: WalletParams
+  ) => {
+    const params = {
+      methodArgs: [assetAddress, userAddress, networkId, amount],
+      senderAddress: walletParams.address,
+      amount: 0,
+      fee: walletParams.fee,
+      gasLimit: walletParams.gasLimit,
+      gasPrice: walletParams.gasPrice,
+    } as Params
+
+    const keypair = walletParams.keypair
+    const utxoList = walletParams.utxoList
+
+    const rawTx = await contract.getSendToTx('lockECRC20', params, keypair, utxoList)
     return rawTx
   }
 }
