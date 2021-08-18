@@ -10,20 +10,20 @@ import { Ecrc20 } from '@/services/ecrc20'
 import * as constants from '@/constants'
 import { Ecoc as EcocAsset } from '@/services/currency'
 
-export default function useEcocWallet() {
-  const state = reactive<Wallet>({
-    address: '',
-    network: '',
-    keystore: {} as KeyStore,
-    assets: EcocAsset.assetInit(),
-    txData: { pagesTotal: 0, txs: [] } as TxData,
-    selectedAssetIndex: 0,
-    lastUpdate: 0,
-    lastBlock: 0,
-    status: constants.STATUS_SYNCED,
-    pendingTransactions: [] as PendingTransaction[],
-  })
+const state = reactive<Wallet>({
+  address: '',
+  network: '',
+  keystore: {} as KeyStore,
+  assets: EcocAsset.assetInit(),
+  txData: { pagesTotal: 0, txs: [] } as TxData,
+  selectedAssetIndex: 0,
+  lastUpdate: 0,
+  lastBlock: 0,
+  status: constants.STATUS_SYNCED,
+  pendingTransactions: [] as PendingTransaction[],
+})
 
+export default function useEcocWallet() {
   const isLogedIn = computed(() => !!state.address)
 
   const connect = async (payload: { keystore: string; password: string }) => {

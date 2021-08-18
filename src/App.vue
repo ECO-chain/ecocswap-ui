@@ -6,15 +6,25 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component'
+import { Options, Vue, setup } from 'vue-class-component'
+import { provide } from 'vue'
 import Header from '@/components/Header.vue'
+import useEcocWallet from '@/components/composables/use-ecoc-wallet'
 
 @Options({
   components: {
     Header,
   },
 })
-export default class Home extends Vue {}
+export default class Home extends Vue {
+  global = setup(() => {
+    const ecocWallet = useEcocWallet()
+
+    provide('ecocWallet', ecocWallet)
+
+    return {}
+  })
+}
 </script>
 
 <style lang="scss">

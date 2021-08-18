@@ -34,8 +34,14 @@
             placeholder="Keystore contents"
             readonly
           ></textarea>
-          <div class="updoad">
-            <a class="link">Choose your keystore file</a>
+          <div class="upload">
+            <input
+              type="file"
+              name="file-upload"
+              ref="uploadRef"
+              @change="connectWallet.uploadKeystore"
+            />
+            <a class="link" @click="$refs.uploadRef.click()">Choose your keystore file</a>
           </div>
         </div>
         <input
@@ -45,7 +51,7 @@
           v-model="connectWallet.password"
         />
         <div class="connect-wallet-actions">
-          <div class="error-message" v-if="connectWallet.errorMsg">
+          <div class="error-message" v-show="connectWallet.errorMsg">
             {{ connectWallet.errorMsg }}
           </div>
           <div class="btn btn-bg-puple" @click="connectWallet.onConnectWallet">
@@ -82,7 +88,9 @@
         </div>
 
         <div class="create-wallet-actions">
-          <div class="error-message" v-if="createWallet.errorMsg">{{ createWallet.errorMsg }}</div>
+          <div class="error-message" v-show="createWallet.errorMsg">
+            {{ createWallet.errorMsg }}
+          </div>
           <div class="btn btn-bg-puple btn-right" @click="createWallet.onCreateNewWallet(stepper)">
             <div class="name" v-if="createWallet.isLoading">
               <easy-spinner size="20" type="circular" />
@@ -110,7 +118,7 @@
         </div>
 
         <div class="keystore-result-actions">
-          <div class="btn btn-bg-puple">
+          <div class="btn btn-bg-puple" @click="createWallet.downloadKeystore">
             <div class="name">Download keystore file</div>
           </div>
           <div class="connect mt-8">
@@ -128,6 +136,7 @@ import { Options, Vue, setup } from 'vue-class-component'
 import { ref, computed } from 'vue'
 import useStepper from '@/components/composables/use-stepper'
 import useEcocWallet from '@/components/composables/use-ecoc-wallet'
+import { getFormattedTime } from '@/utils'
 
 @Options({
   components: {},
@@ -145,29 +154,67 @@ export default class EcocConnectWallet extends Vue {
   })
 
   connectWallet = setup(() => {
-    const { state, connect } = useEcocWallet()
+    const { connect } = useEcocWallet()
     const keystore = ref('')
     const password = ref('')
     const errorMsg = ref('')
 
-    const isValid = computed(
-      () => keystore.value.length > 0 && password.value.length >= this.minPasswordLength
-    )
+    const isPasswordValid = computed(() => password.value.length >= this.minPasswordLength)
+
+    const isKeystoreValid = computed(() => {
+      if (keystore.value.length <= 0) {
+        return false
+      }
+
+      const obj = JSON.parse(keystore.value)
+      return 'version' in obj && 'content' in obj
+    })
+
+    const clear = () => {
+      keystore.value = ''
+      password.value = ''
+      errorMsg.value = ''
+    }
+
+    const onError = (msg: string) => {
+      errorMsg.value = msg
+    }
 
     const onConnectWallet = () => {
       errorMsg.value = ''
 
-      if (isValid.value) {
-        connect({ keystore: keystore.value, password: password.value })
-          .then(() => {
-            errorMsg.value = ''
-            console.log(state.address)
-          })
-          .catch((error) => {
-            errorMsg.value = error
-          })
-      } else {
-        errorMsg.value = 'Wrong Password'
+      if (!isPasswordValid.value) {
+        onError(`Password must be at least ${this.minPasswordLength} char`)
+        return
+      }
+
+      if (!isKeystoreValid.value) {
+        onError('Invalid keystore format')
+        return
+      }
+
+      connect({ keystore: keystore.value, password: password.value })
+        .then(() => {
+          clear()
+        })
+        .catch((error) => {
+          const msg = error.message ? error.message : error
+          onError(msg)
+        })
+    }
+
+    const uploadKeystore = (event: any) => {
+      const file = event.target.files[0]
+      const reader = new FileReader()
+
+      reader.onload = (e) => {
+        if (e.target) {
+          keystore.value = e.target.result as string
+        }
+      }
+
+      if (file != null && file.size > 0) {
+        reader.readAsText(file)
       }
     }
 
@@ -176,6 +223,7 @@ export default class EcocConnectWallet extends Vue {
       password,
       errorMsg,
       onConnectWallet,
+      uploadKeystore,
     }
   })
 
@@ -205,22 +253,36 @@ export default class EcocConnectWallet extends Vue {
       isLoading.value = true
       errorMsg.value = ''
 
-      if (isValid.value) {
-        createWallet({ password: password.value })
-          .then((result) => {
-            errorMsg.value = ''
+      if (!isValid.value) {
+        onError(`Invalid input - Password have to be at least ${this.minPasswordLength} char`)
+        return
+      }
 
-            setTimeout(() => {
-              keystore.value = result
-              isLoading.value = false
-              stepper.goto(4)
-            }, 1500)
-          })
-          .catch((error) => {
-            onError(error)
-          })
-      } else {
-        onError('Invalid Password')
+      createWallet({ password: password.value })
+        .then((result) => {
+          errorMsg.value = ''
+
+          setTimeout(() => {
+            keystore.value = result
+            isLoading.value = false
+            stepper.goto(4)
+          }, 1500)
+        })
+        .catch((error) => {
+          const msg = error.message ? error.message : error
+          onError(msg)
+        })
+    }
+
+    const downloadKeystore = () => {
+      if (keystore.value.length > 0) {
+        const blob = new Blob([keystore.value], { type: 'application/json' })
+        const filename = `keystore-${getFormattedTime()}.json`
+        const link = document.createElement('a')
+
+        link.href = window.URL.createObjectURL(blob)
+        link.download = filename
+        link.click()
       }
     }
 
@@ -231,6 +293,7 @@ export default class EcocConnectWallet extends Vue {
       confimedPassword,
       errorMsg,
       onCreateNewWallet,
+      downloadKeystore,
     }
   })
 }
@@ -252,6 +315,10 @@ input {
 
 input:focus {
   border: 1px solid rgba(105, 28, 128, 0.5);
+}
+
+.upload input {
+  display: none;
 }
 
 .ecoc-connect-wallet {

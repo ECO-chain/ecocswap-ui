@@ -1,16 +1,16 @@
 <template>
   <div class="noselect">
     <transition name="panel">
-      <div :class="{ active: showWallet }">
+      <div :class="{ active: wallet.show }">
         <div class="ecoc-wallet-panel">
           <div class="header">
-            <div class="header-pin" @click="walletToggle">
+            <div class="header-pin" @click="wallet.walletToggle">
               <img class="logo" src="@/assets/img/ecoc-wallet.svg" />
             </div>
           </div>
           <div class="panel">
             <div class="wraper">
-              <div class="wallet-management" v-if="isLogedIn">
+              <div class="wallet-management" v-if="wallet.isLogedIn">
                 <AssetsSelection />
                 <div class="wallet-info">
                   <tabs color="purple" class="tabs">
@@ -19,7 +19,7 @@
                         <QRCodeVue3
                           :width="220"
                           :height="220"
-                          :value="address"
+                          :value="wallet.address"
                           :dotsOptions="{
                             type: 'square',
                           }"
@@ -27,7 +27,8 @@
                         />
                         <div class="wallet-address-text">ECOC Wallet Address:</div>
                         <div class="wallet-address">
-                          {{ address }} <font-awesome-icon :icon="['far', 'clone']" class="icon" />
+                          {{ wallet.address }}
+                          <font-awesome-icon :icon="['far', 'clone']" class="icon" />
                         </div>
                       </div>
                     </tab>
@@ -49,7 +50,7 @@
                   </tabs>
                 </div>
                 <div class="bottom">
-                  <div class="link" @click="logout">Disconnect</div>
+                  <div class="link" @click="wallet.logout">Disconnect</div>
                 </div>
               </div>
 
@@ -65,34 +66,36 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component'
+import { Options, Vue, setup } from 'vue-class-component'
+import { ref, computed } from 'vue'
 import QRCodeVue3 from 'qrcode-vue3'
 import Tabs from '@/components/Tabs.vue'
 import Tab from '@/components/Tab.vue'
 import AssetsSelection from './AssetsSelection.vue'
 import EcocConnectWallet from './EcocConnectWallet.vue'
+import useEcocWallet from '@/components/composables/use-ecoc-wallet'
 
 @Options({
   components: { AssetsSelection, EcocConnectWallet, Tabs, Tab, QRCodeVue3 },
 })
 export default class EcocWallet extends Vue {
-  showWallet = false
-  isLogedIn = true
+  wallet = setup(() => {
+    const { state, isLogedIn, logout } = useEcocWallet()
+    const show = ref(false)
 
-  address = 'EXz7mS2YieTJF1DDgLSs1xZs3SigGAfpjC'
+    const walletToggle = () => {
+      show.value = !show.value
+    }
 
-  walletToggle() {
-    this.showWallet = !this.showWallet
-    this.$emit('onWalletToggle', this.showWallet)
-  }
-
-  login() {
-    this.isLogedIn = true
-  }
-
-  logout() {
-    this.isLogedIn = false
-  }
+    return {
+      show: computed(() => show.value),
+      address: computed(() => state.address),
+      state,
+      isLogedIn,
+      walletToggle,
+      logout,
+    }
+  })
 }
 </script>
 
