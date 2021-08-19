@@ -280,7 +280,7 @@ export default function useEcocWallet() {
     return txs
   }
 
-  const logout = async () => {
+  const disconnect = async () => {
     state.address = ''
     state.network = ''
     state.keystore = {} as KeyStore
@@ -300,7 +300,7 @@ export default function useEcocWallet() {
     lastBlock,
     createWallet,
     connect,
-    logout,
+    disconnect,
     selectAsset,
     getTxHistory,
     send,

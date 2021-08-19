@@ -42,8 +42,6 @@ export default class Home extends Vue {
     const { lastBlock: ecocLastBlock } = useEcocWallet()
     const { lastBlock: ethLastBlock } = useEthWallet()
 
-    console.log(ecocLastBlock, ethLastBlock)
-
     return {
       ecocLastBlock,
       ethLastBlock,

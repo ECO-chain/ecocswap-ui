@@ -10,6 +10,7 @@ import { Options, Vue, setup } from 'vue-class-component'
 import { reactive, watch } from 'vue'
 import Header from '@/components/Header.vue'
 import useEcocWallet from '@/components/composables/use-ecoc-wallet'
+import useEthWallet from '@/components/composables/use-eth-wallet'
 
 @Options({
   components: {
@@ -17,8 +18,9 @@ import useEcocWallet from '@/components/composables/use-ecoc-wallet'
   },
 })
 export default class Home extends Vue {
-  global = setup(() => {
-    const { isLogedIn, updateAssetsPrice, updateAssetsBalance, updateLastBlock } = useEcocWallet()
+  ecocSide = setup(() => {
+    const { isLogedIn, updateLastBlock, updateAssetsPrice, updateAssetsBalance } = useEcocWallet()
+
     let polling = reactive<NodeJS.Timeout>({} as NodeJS.Timeout)
 
     const updateData = async () => {
@@ -34,6 +36,39 @@ export default class Home extends Vue {
       polling = setInterval(() => {
         updateData()
       }, 30000)
+    }
+
+    const stopPooling = () => {
+      clearInterval(polling)
+    }
+
+    watch(isLogedIn, (value) => {
+      if (value === true) {
+        startPooling()
+      } else {
+        stopPooling()
+      }
+    })
+
+    return {}
+  })
+
+  altSide = setup(() => {
+    const { isLogedIn, updateLastBlock } = useEthWallet()
+
+    let polling = reactive<NodeJS.Timeout>({} as NodeJS.Timeout)
+
+    const updateData = async () => {
+      if (isLogedIn) {
+        await updateLastBlock()
+      }
+    }
+
+    const startPooling = () => {
+      updateData()
+      polling = setInterval(() => {
+        updateData()
+      }, 10000)
     }
 
     const stopPooling = () => {

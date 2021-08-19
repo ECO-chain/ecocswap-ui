@@ -1,29 +1,26 @@
 <template>
   <div class="wallet noselect" flat>
     <transition name="panel">
-      <div :class="{ active: showWallet }">
+      <div :class="{ active: wallet.show }">
         <div class="eth-wallet-panel">
           <div class="header">
-            <div class="header-pin" @click="walletToggle">
-              <div class="text">ETHWallet</div>
+            <div class="header-pin" @click="wallet.walletToggle">
+              <div class="text" v-if="!wallet.icon">ETHWallet</div>
+              <img class="logo" v-else :src="wallet.icon" alt="ETHWallet" />
             </div>
           </div>
           <div class="panel">
             <div class="wraper">
-              <div class="wallet-management" v-if="isLogedIn">
+              <div class="wallet-management" v-if="wallet.isLogedIn">
                 <div class="wallet-address-text">Wallet Address:</div>
-                <div class="wallet-address">{{ address }}</div>
+                <div class="wallet-address">{{ wallet.address }}</div>
                 <div class="wallet-actions">
-                  <div class="btn btn-bg-blue left" @click="gotoExplorer">
+                  <div class="btn btn-bg-blue left" @click="wallet.gotoExplorer">
                     <div class="name">Etherscan</div>
                   </div>
                   <div class="btn btn-bg-blue2 right">
                     <div class="name">Copy Address</div>
                   </div>
-                </div>
-
-                <div class="bottom">
-                  <a class="link" @click="logout">Disconnect</a>
                 </div>
               </div>
               <div class="connect-wallet" v-else>
@@ -38,35 +35,43 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component'
+import { Options, Vue, setup } from 'vue-class-component'
+import { ref, computed, watch } from 'vue'
 import EthConnectWallet from './EthConnectWallet.vue'
+import useEthWallet from '@/components/composables/use-eth-wallet'
 
 @Options({
   components: { EthConnectWallet },
 })
 export default class EthWallet extends Vue {
-  showWallet = false
-  isLogedIn = true
+  wallet = setup(() => {
+    const { address, isLogedIn, walletIcon } = useEthWallet()
+    const explorerUrl = 'https://etherscan.io'
+    const show = ref(false)
+    const icon = ref(walletIcon.value)
 
-  address = '0x51F998d36Df6C5bD1F2f16c9E33ac10F6080cFa2'
-  ethExplorer = 'https://etherscan.io'
+    watch(walletIcon, (value: string) => {
+      icon.value = value
+    })
 
-  walletToggle() {
-    this.showWallet = !this.showWallet
-  }
+    const walletToggle = () => {
+      show.value = !show.value
+    }
 
-  login() {
-    this.isLogedIn = true
-  }
+    const gotoExplorer = () => {
+      const fullurl = explorerUrl + '/address/' + address.value
+      window.open(`${fullurl}`)
+    }
 
-  logout() {
-    this.isLogedIn = false
-  }
-
-  gotoExplorer() {
-    const fullurl = this.ethExplorer + '/address/' + this.address
-    window.open(`${fullurl}`)
-  }
+    return {
+      show: computed(() => show.value),
+      icon,
+      address,
+      isLogedIn,
+      walletToggle,
+      gotoExplorer,
+    }
+  })
 }
 </script>
 
@@ -81,7 +86,7 @@ export default class EthWallet extends Vue {
   right: 0;
   transform: translate(466px);
   transition: 1s;
-  width: 600px;
+  min-width: 580px;
 
   .header {
     height: 70px;
@@ -103,6 +108,13 @@ export default class EthWallet extends Vue {
         transform: translate(-50%, -50%);
         color: #15bacf;
         font-weight: bold;
+      }
+
+      .logo {
+        position: relative;
+        top: 50%;
+        left: 0;
+        transform: translate(-50%, -50%);
       }
     }
   }

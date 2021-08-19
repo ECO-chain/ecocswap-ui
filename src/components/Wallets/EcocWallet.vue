@@ -55,7 +55,7 @@
                 </div>
 
                 <div class="bottom">
-                  <div class="link" @click="wallet.logout">Disconnect</div>
+                  <div class="link" @click="wallet.disconnect">Disconnect</div>
                 </div>
               </div>
 
@@ -85,7 +85,7 @@ import useEcocWallet from '@/components/composables/use-ecoc-wallet'
 })
 export default class EcocWallet extends Vue {
   wallet = setup(() => {
-    const { address, selectedAsset, isLogedIn, logout } = useEcocWallet()
+    const { address, selectedAsset, isLogedIn, disconnect } = useEcocWallet()
     const show = ref(false)
 
     const walletToggle = () => {
@@ -98,7 +98,7 @@ export default class EcocWallet extends Vue {
       selectedAsset,
       isLogedIn,
       walletToggle,
-      logout,
+      disconnect,
     }
   })
 }

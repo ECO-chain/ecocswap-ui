@@ -29,7 +29,8 @@
     "vue-easy-spinner": "^0.1.0",
     "vue-i18n": "^9.1.7",
     "vue-router": "^4.0.0-0",
-    "vuex": "^4.0.0-0"
+    "vuex": "^4.0.0-0",
+    "web3": "^1.5.2"
   },
   "devDependencies": {
     "@types/chai": "^4.2.11",

@@ -2,14 +2,14 @@
   {
     "name": "EFG",
     "symbol": "EFG",
-    "address": "b97f87f4510f6d71a3532cddf2d06ffad163b371",
+    "address": "b9e9717937bdd93eb149b4fe8089712aea156865",
     "decimals": "8",
     "totalSupply": "100000000000000"
   },
   {
     "name": "GPT",
     "symbol": "GPT",
-    "address": "7d2da43956d3939ac978c7df934450adb0ae1f30",
+    "address": "d80ec3f88b75c2e1b60db9125aa8e3f91688174b",
     "decimals": "4",
     "totalSupply": "100000000"
   }

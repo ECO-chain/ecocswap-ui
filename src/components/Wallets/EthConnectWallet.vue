@@ -2,7 +2,12 @@
   <div class="eth-connect-wallet">
     <div class="title">Connect Supported Ethereum Wallet</div>
     <div class="menu">
-      <div class="item" v-for="(item, index) in menuList" :key="item.name + index">
+      <div
+        class="item"
+        v-for="(item, index) in connection.supportedWallet"
+        :key="item.name + index"
+        @click="connection.connect(item.walletId)"
+      >
         <div class="left">
           <div class="text">{{ item.name }}</div>
         </div>
@@ -15,34 +20,21 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component'
+import { Options, Vue, setup } from 'vue-class-component'
+import useEthWallet from '@/components/composables/use-eth-wallet'
 
 @Options({
   components: {},
 })
 export default class EcocConnectWallet extends Vue {
-  menuList = [
-    {
-      name: 'MetaMask',
-      icon: require('@/assets/img/wallets/metamask.png'),
-    },
-    {
-      name: 'WalletConnect',
-      icon: require('@/assets/img/wallets/wallet-connect.png'),
-    },
-    {
-      name: 'Coinbase Wallet',
-      icon: require('@/assets/img/wallets/coinbase-wallet.png'),
-    },
-    {
-      name: 'Formatic',
-      icon: require('@/assets/img/wallets/formatic.png'),
-    },
-    {
-      name: 'Portis',
-      icon: require('@/assets/img/wallets/portis.png'),
-    },
-  ]
+  connection = setup(() => {
+    const { connect, supportedWallet } = useEthWallet()
+
+    return {
+      supportedWallet,
+      connect,
+    }
+  })
 }
 </script>
 
