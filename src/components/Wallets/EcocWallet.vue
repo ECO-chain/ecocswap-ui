@@ -12,7 +12,11 @@
           <div class="panel">
             <div class="wraper">
               <div class="wallet-management" v-if="wallet.isLogedIn">
-                <AssetsSelection />
+                <AssetsSelection
+                  :assets="wallet.assets"
+                  :defalutIndex="wallet.selectedAssetIndex"
+                  @onSelect="wallet.selectAsset"
+                />
                 <div class="wallet-info">
                   <tabs color="purple" class="tabs">
                     <tab name="Receive" icon="arrow-alt-circle-down">
@@ -27,7 +31,7 @@
                           :cornersSquareOptions="{ type: 'extra-rounded' }"
                         />
                         <div class="wallet-address-text">ECOC Wallet Address:</div>
-                        <div class="wallet-address">
+                        <div class="wallet-address" @click="wallet.copyAddress">
                           {{ wallet.address }}
                           <font-awesome-icon :icon="['far', 'clone']" class="icon" />
                         </div>
@@ -79,26 +83,43 @@ import Tab from '@/components/Tab.vue'
 import AssetsSelection from './AssetsSelection.vue'
 import EcocConnectWallet from './EcocConnectWallet.vue'
 import useEcocWallet from '@/components/composables/use-ecoc-wallet'
+import { copyToClipboard } from '@/utils'
 
 @Options({
   components: { AssetsSelection, EcocConnectWallet, Tabs, Tab, QRCodeVue3 },
 })
 export default class EcocWallet extends Vue {
   wallet = setup(() => {
-    const { address, selectedAsset, isLogedIn, disconnect } = useEcocWallet()
+    const {
+      address,
+      assets,
+      selectedAsset,
+      selectedAssetIndex,
+      isLogedIn,
+      selectAsset,
+      disconnect,
+    } = useEcocWallet()
     const show = ref(false)
 
     const walletToggle = () => {
       show.value = !show.value
     }
 
+    const copyAddress = () => {
+      copyToClipboard(address.value)
+    }
+
     return {
       show: computed(() => show.value),
       address,
+      assets,
       selectedAsset,
+      selectedAssetIndex,
       isLogedIn,
+      selectAsset,
       walletToggle,
       disconnect,
+      copyAddress,
     }
   })
 }

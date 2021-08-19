@@ -29,6 +29,7 @@ export default function useEcocWallet() {
   const address = computed(() => state.address)
   const assets = computed(() => state.assets)
   const selectedAsset = computed(() => state.assets[state.selectedAssetIndex])
+  const selectedAssetIndex = computed(() => state.selectedAssetIndex)
   const lastBlock = computed(() => state.lastBlock)
 
   const _getAssetPrice = async (symbol: string) => {
@@ -296,6 +297,7 @@ export default function useEcocWallet() {
     address,
     assets,
     selectedAsset,
+    selectedAssetIndex,
     isLogedIn,
     lastBlock,
     createWallet,

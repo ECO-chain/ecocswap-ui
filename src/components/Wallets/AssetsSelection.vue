@@ -49,23 +49,37 @@
 <script lang="ts">
 /* eslint @typescript-eslint/no-var-requires: "off" */
 import { Options, Vue, setup, prop } from 'vue-class-component'
+import { watchEffect } from 'vue'
+import { Asset } from '@/services/currency/types'
+import { getEstimatedValue } from '@/services/utils'
 import useSelection from '@/components/composables/use-selection'
-import { KNOWN_CURRENCY } from '@/constants'
 
 class Props {
   bg = prop<string>({ default: 'bg-purple' })
   defalutIndex = prop<number>({ default: 0 })
+  assets = prop<Asset[]>({ default: [] })
 }
 
-@Options({})
+@Options({
+  emits: ['onSelect'],
+})
 export default class Selection extends Vue.with(Props) {
   selection = setup(() => {
-    const { showSelection, selectedIndex, selectedData, dataList, addData, open, close, select } =
+    const { showSelection, selectedIndex, selectedData, dataList, open, close, select } =
       useSelection(this.defalutIndex)
 
-    addData(KNOWN_CURRENCY['ECOC'].icon, 'ECOC', 1000, 1200)
-    addData(KNOWN_CURRENCY['EFG'].icon, 'EFG', 121, 211)
-    addData(KNOWN_CURRENCY['GPT'].icon, 'GPT', 25, 4422)
+    watchEffect(() => this.$emit('onSelect', selectedIndex))
+    watchEffect(() => {
+      dataList.value = this.assets.map((asset) => {
+        const value = getEstimatedValue(asset.amount, asset.price)
+        return {
+          logo: asset.style.icon,
+          name: asset.symbol,
+          balance: asset.amount,
+          value: Number(value),
+        }
+      })
+    })
 
     return {
       showSelection,
@@ -142,6 +156,10 @@ export default class Selection extends Vue.with(Props) {
 .bg-white {
   color: block;
   background: white 0% 0% no-repeat padding-box;
+
+  .icon {
+    filter: brightness(0) invert(1);
+  }
 }
 
 .selection-modal {

@@ -45,7 +45,7 @@ export default function useSelection(defalutIndex: number) {
         return false
       }
     }),
-    dataList: computed(() => dataList.value),
+    dataList,
     addData,
     open,
     close,

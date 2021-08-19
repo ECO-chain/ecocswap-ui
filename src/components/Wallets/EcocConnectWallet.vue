@@ -1,133 +1,125 @@
 <template>
   <div class="ecoc-connect-wallet">
-    <templete v-show="stepper.currentStep === 1">
-      <div class="main">
-        <div class="title">
-          <img class="logo" src="@/assets/logo-black.svg" alt="logo" />
-          <div class="text">Please create or connect your wallet</div>
+    <div class="main" v-show="stepper.currentStep === 1">
+      <div class="title">
+        <img class="logo" src="@/assets/logo-black.svg" alt="logo" />
+        <div class="text">Please create or connect your wallet</div>
+      </div>
+      <div class="actions">
+        <div class="btn btn-bg-puple shadow" @click="stepper.goto(2)">
+          <div class="name">Connect ECOCWallet</div>
         </div>
-        <div class="actions">
-          <div class="btn btn-bg-puple shadow" @click="stepper.goto(2)">
-            <div class="name">Connect ECOCWallet</div>
-          </div>
-          <div class="btn btn-text-puple shadow" @click="stepper.goto(3)">
-            <div class="name">Create New ECOCWallet</div>
-          </div>
+        <div class="btn btn-text-puple shadow" @click="stepper.goto(3)">
+          <div class="name">Create New ECOCWallet</div>
         </div>
       </div>
-    </templete>
+    </div>
 
     <!--Connect ECOC Wallet Page-->
-    <templete v-show="stepper.currentStep === 2">
-      <div class="connect-wallet">
-        <div class="navbar">
-          <img class="back" src="@/assets/img/back.png" alt="back" @click="stepper.goto(1)" />
+    <div class="connect-wallet" v-show="stepper.currentStep === 2">
+      <div class="navbar">
+        <img class="back" src="@/assets/img/back.png" alt="back" @click="stepper.goto(1)" />
+      </div>
+      <div class="title">
+        <div class="text">Connect ECOC Wallet</div>
+        <div class="description">Please upload your keystore file.</div>
+      </div>
+      <div class="keystore">
+        <textarea
+          class="input"
+          v-model="connectWallet.keystore"
+          placeholder="Keystore contents"
+          readonly
+        ></textarea>
+        <div class="upload">
+          <input
+            type="file"
+            name="file-upload"
+            ref="uploadRef"
+            @change="connectWallet.uploadKeystore"
+          />
+          <a class="link" @click="$refs.uploadRef.click()">Choose your keystore file</a>
         </div>
-        <div class="title">
-          <div class="text">Connect ECOC Wallet</div>
-          <div class="description">Please upload your keystore file.</div>
+      </div>
+      <input
+        class="textbox"
+        type="password"
+        placeholder="Password"
+        v-model="connectWallet.password"
+      />
+      <div class="connect-wallet-actions">
+        <div class="error-message" v-show="connectWallet.errorMsg">
+          {{ connectWallet.errorMsg }}
         </div>
-        <div class="keystore">
-          <textarea
-            class="input"
-            v-model="connectWallet.keystore"
-            placeholder="Keystore contents"
-            readonly
-          ></textarea>
-          <div class="upload">
-            <input
-              type="file"
-              name="file-upload"
-              ref="uploadRef"
-              @change="connectWallet.uploadKeystore"
-            />
-            <a class="link" @click="$refs.uploadRef.click()">Choose your keystore file</a>
-          </div>
+        <div class="btn btn-bg-puple" @click="connectWallet.onConnectWallet">
+          <div class="name">Connect</div>
         </div>
+      </div>
+    </div>
+
+    <!--Create ECOC Wallet Page-->
+    <div class="create-wallet" v-show="stepper.currentStep === 3">
+      <div class="navbar">
+        <img class="back" src="@/assets/img/back.png" alt="back" @click="stepper.goto(1)" />
+      </div>
+      <div class="title">
+        <div class="text">Create ECOC Wallet</div>
+        <div class="description">Please set your password to generate a keystore file</div>
+      </div>
+
+      <div class="content">
         <input
           class="textbox"
           type="password"
-          placeholder="Password"
-          v-model="connectWallet.password"
+          placeholder="Input your password"
+          v-model="createWallet.password"
         />
-        <div class="connect-wallet-actions">
-          <div class="error-message" v-show="connectWallet.errorMsg">
-            {{ connectWallet.errorMsg }}
+        <input
+          class="textbox"
+          type="password"
+          placeholder=" Repeat your password"
+          v-model="createWallet.confimedPassword"
+        />
+      </div>
+
+      <div class="create-wallet-actions">
+        <div class="error-message" v-show="createWallet.errorMsg">
+          {{ createWallet.errorMsg }}
+        </div>
+        <div class="btn btn-bg-puple btn-right" @click="createWallet.onCreateNewWallet(stepper)">
+          <div class="name" v-if="createWallet.isLoading">
+            <easy-spinner size="20" type="circular" />
           </div>
-          <div class="btn btn-bg-puple" @click="connectWallet.onConnectWallet">
-            <div class="name">Connect</div>
-          </div>
+          <div class="name" v-else>Create</div>
         </div>
       </div>
-    </templete>
-
-    <!--Create ECOC Wallet Page-->
-    <templete v-show="stepper.currentStep === 3">
-      <div class="create-wallet">
-        <div class="navbar">
-          <img class="back" src="@/assets/img/back.png" alt="back" @click="stepper.goto(1)" />
-        </div>
-        <div class="title">
-          <div class="text">Create ECOC Wallet</div>
-          <div class="description">Please set your password to generate a keystore file</div>
-        </div>
-
-        <div class="content">
-          <input
-            class="textbox"
-            type="password"
-            placeholder="Input your password"
-            v-model="createWallet.password"
-          />
-          <input
-            class="textbox"
-            type="password"
-            placeholder=" Repeat your password"
-            v-model="createWallet.confimedPassword"
-          />
-        </div>
-
-        <div class="create-wallet-actions">
-          <div class="error-message" v-show="createWallet.errorMsg">
-            {{ createWallet.errorMsg }}
-          </div>
-          <div class="btn btn-bg-puple btn-right" @click="createWallet.onCreateNewWallet(stepper)">
-            <div class="name" v-if="createWallet.isLoading">
-              <easy-spinner size="20" type="circular" />
-            </div>
-            <div class="name" v-else>Create</div>
-          </div>
-        </div>
-      </div>
-    </templete>
+    </div>
 
     <!--Keystore Result Page-->
-    <templete v-show="stepper.currentStep === 4">
-      <div class="keystore-result">
-        <div class="title">
-          <div class="text">Keystore File Generated!</div>
-          <div class="description">Please save your keystore file to connect your wallet.</div>
-        </div>
+    <div class="keystore-result" v-show="stepper.currentStep === 4">
+      <div class="title">
+        <div class="text">Keystore File Generated!</div>
+        <div class="description">Please save your keystore file to connect your wallet.</div>
+      </div>
 
-        <div class="content">
-          <div class="note">
-            Note: Keep the keystore file in a safe and secure place. If you lose your keystore file
-            or forgot password, it may cause losing your funds and will not be able to recover.
-          </div>
-          <div class="result">{{ createWallet.keystore }}</div>
+      <div class="content">
+        <div class="note">
+          Note: Keep the keystore file in a safe and secure place. If you lose your keystore file or
+          forgot password, it may cause losing your funds and will not be able to recover.
         </div>
+        <div class="result">{{ createWallet.keystore }}</div>
+      </div>
 
-        <div class="keystore-result-actions">
-          <div class="btn btn-bg-puple" @click="createWallet.downloadKeystore">
-            <div class="name">Download keystore file</div>
-          </div>
-          <div class="connect mt-8">
-            Already saved your keystore file?.
-            <a class="link" @click="stepper.goto(2)">Connect</a>
-          </div>
+      <div class="keystore-result-actions">
+        <div class="btn btn-bg-puple" @click="createWallet.downloadKeystore">
+          <div class="name">Download keystore file</div>
+        </div>
+        <div class="connect mt-8">
+          Already saved your keystore file?.
+          <a class="link" @click="stepper.goto(2)">Connect</a>
         </div>
       </div>
-    </templete>
+    </div>
   </div>
 </template>
 

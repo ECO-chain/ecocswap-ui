@@ -2,7 +2,7 @@
   <div class="swap-panel">
     <div class="ecoc-side">
       <div class="wraper">
-        <AssetsSelection />
+        <AssetsSelection :assets="swap.ecocAssets" :defalutIndex="swap.ecocSelectedAssetIndex" />
         <SwapInput class="input" key="ecoc-input" />
       </div>
     </div>
@@ -10,7 +10,7 @@
     <div class="alt-side">
       <div class="wraper">
         <div class="ecoc-assets">
-          <AssetsSelection />
+          <AssetsSelection :assets="swap.ecocAssets" :defalutIndex="swap.ecocSelectedAssetIndex" />
           <SwapInput class="input" key="wrap-ecoc-input" />
         </div>
 
@@ -21,7 +21,11 @@
         </div>
 
         <div class="alt-assets">
-          <AssetsSelection />
+          <AssetsSelection
+            bg="bg-white"
+            :assets="swap.ecocAssets"
+            :defalutIndex="swap.ecocSelectedAssetIndex"
+          />
           <SwapInput class="input" key="alt-input" />
         </div>
       </div>
@@ -36,16 +40,31 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component'
+import { Options, Vue, setup } from 'vue-class-component'
 import AssetsSelection from '@/components/Wallets/AssetsSelection.vue'
+import useEcocWallet from '@/components/composables/use-ecoc-wallet'
+import useEthWallet from '@/components/composables/use-eth-wallet'
 import SwapInput from './SwapInput.vue'
 
 @Options({
   components: { AssetsSelection, SwapInput },
 })
 export default class SwapPanel extends Vue {
-  isECOCLogedIn = true
-  isAltLogedIn = true
+  swap = setup(() => {
+    const {
+      isLogedIn: isECOCLogedIn,
+      assets: ecocAssets,
+      selectedAssetIndex: ecocSelectedAssetIndex,
+    } = useEcocWallet()
+    const { isLogedIn: isAltLogedIn } = useEthWallet()
+
+    return {
+      isECOCLogedIn,
+      isAltLogedIn,
+      ecocAssets,
+      ecocSelectedAssetIndex,
+    }
+  })
 }
 </script>
 

@@ -5,8 +5,8 @@
         <div class="eth-wallet-panel">
           <div class="header">
             <div class="header-pin" @click="wallet.walletToggle">
-              <div class="text" v-if="!wallet.icon">ETHWallet</div>
-              <img class="logo" v-else :src="wallet.icon" alt="ETHWallet" />
+              <img class="logo" v-if="wallet.icon" :src="wallet.icon" alt="ETHWallet" />
+              <div class="text" v-else>ETHWallet</div>
             </div>
           </div>
           <div class="panel">
@@ -18,7 +18,7 @@
                   <div class="btn btn-bg-blue left" @click="wallet.gotoExplorer">
                     <div class="name">Etherscan</div>
                   </div>
-                  <div class="btn btn-bg-blue2 right">
+                  <div class="btn btn-bg-blue2 right" @click="wallet.copyAddress">
                     <div class="name">Copy Address</div>
                   </div>
                 </div>
@@ -39,6 +39,7 @@ import { Options, Vue, setup } from 'vue-class-component'
 import { ref, computed, watch } from 'vue'
 import EthConnectWallet from './EthConnectWallet.vue'
 import useEthWallet from '@/components/composables/use-eth-wallet'
+import { copyToClipboard } from '@/utils'
 
 @Options({
   components: { EthConnectWallet },
@@ -63,6 +64,10 @@ export default class EthWallet extends Vue {
       window.open(`${fullurl}`)
     }
 
+    const copyAddress = () => {
+      copyToClipboard(address.value)
+    }
+
     return {
       show: computed(() => show.value),
       icon,
@@ -70,6 +75,7 @@ export default class EthWallet extends Vue {
       isLogedIn,
       walletToggle,
       gotoExplorer,
+      copyAddress,
     }
   })
 }
