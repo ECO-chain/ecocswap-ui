@@ -1,13 +1,17 @@
 import { reactive } from 'vue'
 import * as constants from '@/constants'
-import { Eth as EthAsset, Ecoc as EcocAsset } from '@/services/currency'
-
-const supportedAssets = reactive({
-  [constants.TYPE_ECOC]: EcocAsset.assetInit(),
-  [constants.TYPE_ETH]: EthAsset.assetInit().filter((asset) => !(asset.symbol === constants.ETH)),
-})
+import useEcocWallet from './use-ecoc-wallet'
+import useEthWallet from './use-eth-wallet'
 
 export default function useCrossSwap() {
+  const { assets: ecocAssets } = useEcocWallet()
+  const { assets: ethAssets } = useEthWallet()
+
+  const supportedAssets = reactive({
+    [constants.TYPE_ECOC]: ecocAssets,
+    [constants.TYPE_ETH]: ethAssets.value.filter((asset) => !(asset.symbol === constants.ETH)),
+  })
+
   return {
     supportedAssets,
   }

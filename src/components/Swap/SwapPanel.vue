@@ -1,14 +1,14 @@
 <template>
   <div class="swap-panel">
     <div class="ecoc-side">
-      <div class="wraper">
+      <div :class="swap.isECOCLogedIn ? 'wraper' : 'wraper disable'">
         <AssetsSelection :assets="swap.ecocSupportedAssets" defalutIndex="0" />
         <SwapInput class="input" key="ecoc-input" />
       </div>
     </div>
 
     <div class="alt-side">
-      <div class="wraper">
+      <div :class="swap.isAltLogedIn ? 'wraper' : 'wraper disable'">
         <div class="ecoc-assets">
           <AssetsSelection :assets="swap.altSupportedAssets" defalutIndex="0" />
           <SwapInput class="input" key="wrap-ecoc-input" />
@@ -144,5 +144,10 @@ export default class SwapPanel extends Vue {
       height: 27px;
     }
   }
+}
+
+.disable {
+  pointer-events: none;
+  opacity: 0.4;
 }
 </style>
