@@ -1,7 +1,6 @@
 import { reactive, computed } from 'vue'
-import Web3 from 'web3'
 import { WalletError } from '@/exceptions/wallet'
-import { getProvider, defaultChainID } from '@/services/eth/config'
+import { web3, changeToChainId, tryWithGivenProvider } from '@/services/eth/web3'
 
 declare let window: any
 
@@ -16,7 +15,7 @@ interface ConnectInfo {
 }
 
 const state = reactive({
-  web3: new Web3(getProvider(defaultChainID)),
+  web3: web3,
   ethereum: window.ethereum,
   chainId: '',
   account: '',
@@ -24,14 +23,6 @@ const state = reactive({
 
 export default function useWeb3() {
   const isWalletAvailable = computed(() => typeof window.ethereum !== 'undefined')
-
-  const changeToChainId = (chainId: string): any => {
-    state.web3 = new Web3(getProvider(chainId) || Web3.givenProvider)
-  }
-
-  const tryWithGivenProvider = () => {
-    state.web3 = new Web3(Web3.givenProvider || getProvider(defaultChainID))
-  }
 
   const init = () => {
     if (!isWalletAvailable.value) {

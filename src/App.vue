@@ -54,12 +54,14 @@ export default class Home extends Vue {
   })
 
   altSide = setup(() => {
-    const { isLogedIn, updateLastBlock } = useEthWallet()
+    const { isLogedIn, updateLastBlock, updateAssetsBalance, updateAssetsPrice } = useEthWallet()
 
     let polling = reactive<NodeJS.Timeout>({} as NodeJS.Timeout)
 
     const updateData = async () => {
       if (isLogedIn) {
+        await updateAssetsBalance()
+        await updateAssetsPrice()
         await updateLastBlock()
       }
     }

@@ -2,7 +2,7 @@
   <div class="swap-panel">
     <div class="ecoc-side">
       <div class="wraper">
-        <AssetsSelection :assets="swap.ecocAssets" :defalutIndex="swap.ecocSelectedAssetIndex" />
+        <AssetsSelection :assets="swap.ecocSupportedAssets" defalutIndex="0" />
         <SwapInput class="input" key="ecoc-input" />
       </div>
     </div>
@@ -10,7 +10,7 @@
     <div class="alt-side">
       <div class="wraper">
         <div class="ecoc-assets">
-          <AssetsSelection :assets="swap.ecocAssets" :defalutIndex="swap.ecocSelectedAssetIndex" />
+          <AssetsSelection :assets="swap.altSupportedAssets" defalutIndex="0" />
           <SwapInput class="input" key="wrap-ecoc-input" />
         </div>
 
@@ -21,11 +21,7 @@
         </div>
 
         <div class="alt-assets">
-          <AssetsSelection
-            bg="bg-white"
-            :assets="swap.ecocAssets"
-            :defalutIndex="swap.ecocSelectedAssetIndex"
-          />
+          <AssetsSelection bg="bg-white" :assets="swap.altAssets" defalutIndex="0" />
           <SwapInput class="input" key="alt-input" />
         </div>
       </div>
@@ -44,6 +40,7 @@ import { Options, Vue, setup } from 'vue-class-component'
 import AssetsSelection from '@/components/Wallets/AssetsSelection.vue'
 import useEcocWallet from '@/components/composables/use-ecoc-wallet'
 import useEthWallet from '@/components/composables/use-eth-wallet'
+import useCrossSwap from '@/components/composables/use-cross-swap'
 import SwapInput from './SwapInput.vue'
 
 @Options({
@@ -51,18 +48,20 @@ import SwapInput from './SwapInput.vue'
 })
 export default class SwapPanel extends Vue {
   swap = setup(() => {
-    const {
-      isLogedIn: isECOCLogedIn,
-      assets: ecocAssets,
-      selectedAssetIndex: ecocSelectedAssetIndex,
-    } = useEcocWallet()
-    const { isLogedIn: isAltLogedIn } = useEthWallet()
+    const { isLogedIn: isECOCLogedIn } = useEcocWallet()
+    const { isLogedIn: isAltLogedIn, assets: ethAssets } = useEthWallet()
+    const { supportedAssets } = useCrossSwap()
+
+    const ecocSupportedAssets = supportedAssets.ECOC
+    const altSupportedAssets = supportedAssets.ETH
+    const altAssets = ethAssets
 
     return {
       isECOCLogedIn,
       isAltLogedIn,
-      ecocAssets,
-      ecocSelectedAssetIndex,
+      ecocSupportedAssets,
+      altSupportedAssets,
+      altAssets,
     }
   })
 }

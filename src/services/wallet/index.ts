@@ -1,5 +1,6 @@
 import * as constants from '@/constants'
 import EcocWallet from '@/services/ecoc/ecoc-wallet'
+import { web3 } from '@/services/eth/web3'
 import { defaultNetwork } from '@/services/ecoc/config'
 import { createKeystore, getKeystoreContent, getKeystoreFromString } from '@/services/keystore'
 import { Ecrc20 } from '@/services/ecrc20'
@@ -187,4 +188,21 @@ export namespace Ecoc {
   }
 }
 
-export namespace Eth {}
+export namespace Eth {
+  export const getBalance = async (address: string) => {
+    const balance = await web3.eth.getBalance(address).then((balance) => {
+      return web3.utils.fromWei(balance, 'ether')
+    })
+
+    const asset = {
+      name: constants.ETH,
+      symbol: constants.ETH,
+      type: constants.TYPE_ETH,
+      amount: Number(balance),
+      price: 0,
+      style: constants.KNOWN_CURRENCY.ETH,
+    } as Asset
+
+    return asset
+  }
+}

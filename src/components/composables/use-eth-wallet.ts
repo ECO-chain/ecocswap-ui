@@ -1,4 +1,7 @@
 import { ref, reactive, computed, watch } from 'vue'
+import { Eth as EthAsset } from '@/services/currency'
+import { Eth as EthWallet } from '@/services/wallet'
+import { Asset } from '@/services/currency/types'
 import useWeb3 from './use-web3'
 
 const wallet = {
@@ -40,6 +43,7 @@ const supportedWallet = ref([
 const state = reactive({
   address: '',
   chainId: '',
+  assets: EthAsset.assetInit(),
   lastUpdate: 0,
   lastBlock: 0,
   walletId: 0,
@@ -51,6 +55,7 @@ export default function useEthWallet() {
   const isLogedIn = computed(() => !!state.address)
   const lastBlock = computed(() => state.lastBlock)
   const address = computed(() => state.address)
+  const assets = computed(() => state.assets)
   const walletIcon = computed(() => {
     const wallet = supportedWallet.value.find((wallet) => wallet.walletId === state.walletId)
     if (!wallet) {
@@ -72,12 +77,72 @@ export default function useEthWallet() {
     }
   })
 
+  const _updateAsset = (assetData: Asset) => {
+    const assetIndex = state.assets.findIndex((asset) => {
+      if (asset.tokenInfo && assetData.tokenInfo) {
+        return asset.tokenInfo.address === assetData.tokenInfo.address
+      }
+
+      return asset.symbol === assetData.symbol
+    })
+
+    if (assetIndex < 0) {
+      state.assets.push(assetData)
+    } else {
+      assetData.price = state.assets[assetIndex].price
+      state.assets.splice(assetIndex, 1, assetData)
+    }
+  }
+
+  const _getAssetPrice = async (symbol: string) => {
+    if (symbol) {
+      return 0
+    }
+
+    return 1
+  }
+
+  const _updateTime = () => {
+    state.lastUpdate = new Date().getTime()
+  }
+
   const connect = async (walletid: number) => {
     switch (walletid) {
       case wallet.METAMASK:
         await activateWallet()
         state.walletId = wallet.METAMASK
         break
+    }
+  }
+
+  const updateAssetsBalance = async () => {
+    if (!isLogedIn.value) return
+
+    try {
+      const ethAsset = await EthWallet.getBalance(state.address)
+
+      _updateAsset(ethAsset)
+      _updateTime()
+    } catch (error) {
+      return Promise.reject(error)
+    }
+  }
+
+  const updateAssetsPrice = async () => {
+    if (!isLogedIn.value) return
+
+    try {
+      state.assets.forEach(async (asset) => {
+        const assetPrice = asset.price
+        const newPrice = await _getAssetPrice(asset.symbol)
+
+        if (newPrice !== assetPrice) {
+          asset.price = newPrice
+          _updateTime()
+        }
+      })
+    } catch (error) {
+      return Promise.reject(error)
     }
   }
 
@@ -95,10 +160,13 @@ export default function useEthWallet() {
     supportedWallet,
     state,
     address,
+    assets,
     isLogedIn,
     lastBlock,
+    walletIcon,
     connect,
     updateLastBlock,
-    walletIcon,
+    updateAssetsBalance,
+    updateAssetsPrice,
   }
 }

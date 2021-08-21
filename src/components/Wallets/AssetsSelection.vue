@@ -17,7 +17,7 @@
         v-bind:class="{ active: selection.showSelection }"
       >
         <div class="selection-modal-header">
-          <div class="title">Select Token</div>
+          <div class="title">Select Asset</div>
           <div class="actions actions-item" @click="selection.close">
             <img class="icon" src="@/assets/img/cancel.png" alt="close" />
           </div>
@@ -47,7 +47,6 @@
 </template>
 
 <script lang="ts">
-/* eslint @typescript-eslint/no-var-requires: "off" */
 import { Options, Vue, setup, prop } from 'vue-class-component'
 import { watchEffect } from 'vue'
 import { Asset } from '@/services/currency/types'
