@@ -71,6 +71,13 @@
         </div>
       </div>
     </transition>
+    <TxResult
+      v-model:isOpen="txResult.isOpen"
+      :txid="txResult.txid"
+      :errorMsg="txResult.errorMsg"
+      :loadingMsg="txResult.loadingMsg"
+      txType="ecoc"
+    />
   </div>
 </template>
 
@@ -80,15 +87,30 @@ import { ref, computed } from 'vue'
 import QRCodeVue3 from 'qrcode-vue3'
 import Tabs from '@/components/Tabs.vue'
 import Tab from '@/components/Tab.vue'
-import AssetsSelection from './AssetsSelection.vue'
-import EcocConnectWallet from './EcocConnectWallet.vue'
+import TxResult from '@/components/Modals/TxResult.vue'
 import useEcocWallet from '@/components/composables/use-ecoc-wallet'
 import { copyToClipboard } from '@/utils'
+import AssetsSelection from './AssetsSelection.vue'
+import EcocConnectWallet from './EcocConnectWallet.vue'
 
 @Options({
-  components: { AssetsSelection, EcocConnectWallet, Tabs, Tab, QRCodeVue3 },
+  components: { AssetsSelection, EcocConnectWallet, Tabs, Tab, QRCodeVue3, TxResult },
 })
 export default class EcocWallet extends Vue {
+  txResult = setup(() => {
+    const isOpen = ref(false)
+    const txid = ref('')
+    const loadingMsg = ref('sending 1 ECOC')
+    const errorMsg = ref('')
+
+    return {
+      isOpen,
+      txid,
+      loadingMsg,
+      errorMsg,
+    }
+  })
+
   wallet = setup(() => {
     const {
       address,

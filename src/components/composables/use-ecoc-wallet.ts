@@ -27,6 +27,7 @@ const state = reactive<Wallet>({
 export default function useEcocWallet() {
   const isLogedIn = computed(() => !!state.address)
   const address = computed(() => state.address)
+  const keystore = computed(() => state.keystore)
   const assets = computed(() => state.assets)
   const selectedAsset = computed(() => state.assets[state.selectedAssetIndex])
   const selectedAssetIndex = computed(() => state.selectedAssetIndex)
@@ -295,6 +296,7 @@ export default function useEcocWallet() {
   return {
     state,
     address,
+    keystore,
     assets,
     selectedAsset,
     selectedAssetIndex,

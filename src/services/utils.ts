@@ -3,6 +3,8 @@ import { Decoder } from 'ecoweb3'
 import { ECOC_MAINNET } from './ecoc/constants'
 import { ecocw3 } from '@/services/ecoc/ecocw3'
 import { defaultNetwork } from '@/services/ecoc/config'
+import { defaultChainID } from '@/services/eth/config'
+import * as EthConst from '@/services/eth/constants'
 
 const isMainnet = defaultNetwork === ECOC_MAINNET
 
@@ -58,9 +60,20 @@ export const addressFilter = (address: string): string => {
   return address
 }
 
-export const getExplorerUrl = (networkStr = ECOC_MAINNET): string => {
+export const getEcocExplorerUrl = (networkStr = ECOC_MAINNET): string => {
   if (networkStr === ECOC_MAINNET) return 'https://explorer.ecoc.io'
   return 'https://testnet.explorer.ecoc.io'
+}
+
+export const getEthExplorerUrl = (chainId = defaultChainID): string => {
+  switch (chainId) {
+    case EthConst.chainId.ETHEREUM_MAINNET:
+      return 'https://etherscan.io'
+    case EthConst.chainId.ETHEREUM_GOR:
+      return 'https://goerli.etherscan.io'
+  }
+
+  return 'https://etherscan.io'
 }
 
 export const getBlockNumber = async (): Promise<number> => {
