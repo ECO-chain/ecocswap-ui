@@ -150,8 +150,4 @@ export default class Stat extends Vue {
   font-weight: bold;
   background: #fdfbff;
 }
-
-.disable {
-  opacity: 0.5;
-}
 </style>

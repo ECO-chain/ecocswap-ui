@@ -60,7 +60,7 @@ export const addressFilter = (address: string): string => {
   return address
 }
 
-export const getEcocExplorerUrl = (networkStr = ECOC_MAINNET): string => {
+export const getEcocExplorerUrl = (networkStr = defaultNetwork): string => {
   if (networkStr === ECOC_MAINNET) return 'https://explorer.ecoc.io'
   return 'https://testnet.explorer.ecoc.io'
 }

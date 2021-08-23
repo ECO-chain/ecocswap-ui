@@ -48,14 +48,14 @@
 
 <script lang="ts">
 import { Options, Vue, setup, prop } from 'vue-class-component'
-import { watchEffect } from 'vue'
+import { ref, watchEffect, watch } from 'vue'
 import { Asset } from '@/services/currency/types'
 import { getEstimatedValue } from '@/services/utils'
 import useSelection from '@/components/composables/use-selection'
 
 class Props {
   bg = prop<string>({ default: 'bg-purple' })
-  defalutIndex = prop<number>({ default: 0 })
+  selectedIndex = prop<number>({ default: 0 })
   assets = prop<Asset[]>({ default: [] })
 }
 
@@ -65,9 +65,17 @@ class Props {
 export default class Selection extends Vue.with(Props) {
   selection = setup(() => {
     const { showSelection, selectedIndex, selectedData, dataList, open, close, select } =
-      useSelection(this.defalutIndex)
+      useSelection(this.selectedIndex)
+    const selectedIndexProp = ref(this.selectedIndex)
 
-    watchEffect(() => this.$emit('onSelect', selectedIndex))
+    watch(selectedIndex, (index) => {
+      this.$emit('onSelect', index)
+    })
+
+    watchEffect(() => {
+      selectedIndexProp.value = this.selectedIndex
+      selectedIndex.value = selectedIndexProp.value
+    })
     watchEffect(() => {
       dataList.value = this.assets.map((asset) => {
         const value = getEstimatedValue(asset.amount, asset.price)
@@ -81,6 +89,7 @@ export default class Selection extends Vue.with(Props) {
     })
 
     return {
+      selectedIndexProp,
       showSelection,
       selectedIndex,
       selectedData,

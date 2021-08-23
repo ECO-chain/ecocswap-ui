@@ -1,16 +1,24 @@
 <template>
   <div class="swap-panel">
     <div class="ecoc-side">
-      <div :class="swap.isECOCLogedIn ? 'wraper' : 'wraper disable'">
-        <AssetsSelection :assets="swap.ecocSupportedAssets" defalutIndex="0" />
+      <div :class="swap.isECOCLogedIn ? 'wraper' : 'wraper'">
+        <AssetsSelection
+          :assets="swap.ecocSupportedAssets"
+          :selectedIndex="swap.ecocSelectedIndex"
+          @onSelect="swap.selectEcocIndex"
+        />
         <SwapInput class="input" key="ecoc-input" />
       </div>
     </div>
 
     <div class="alt-side">
-      <div :class="swap.isAltLogedIn ? 'wraper' : 'wraper disable'">
+      <div :class="swap.isAltLogedIn ? 'wraper' : 'wraper'">
         <div class="ecoc-assets">
-          <AssetsSelection :assets="swap.altSupportedAssets" defalutIndex="0" />
+          <AssetsSelection
+            :assets="swap.altSupportedAssets"
+            :selectedIndex="swap.altSelectedIndex"
+            @onSelect="swap.selectAltIndex"
+          />
           <SwapInput class="input" key="wrap-ecoc-input" />
         </div>
 
@@ -21,7 +29,7 @@
         </div>
 
         <div class="alt-assets">
-          <AssetsSelection bg="bg-white" :assets="swap.altAssets" defalutIndex="0" />
+          <AssetsSelection bg="bg-white" :assets="swap.altAssets" />
           <SwapInput class="input" key="alt-input" />
         </div>
       </div>
@@ -37,10 +45,12 @@
 
 <script lang="ts">
 import { Options, Vue, setup } from 'vue-class-component'
-import AssetsSelection from '@/components/Wallets/AssetsSelection.vue'
+import { ref, watchEffect, computed } from 'vue'
+import { Asset } from '@/services/currency/types'
 import useEcocWallet from '@/components/composables/use-ecoc-wallet'
 import useEthWallet from '@/components/composables/use-eth-wallet'
 import useCrossSwap from '@/components/composables/use-cross-swap'
+import AssetsSelection from '@/components/Wallets/AssetsSelection.vue'
 import SwapInput from './SwapInput.vue'
 
 @Options({
@@ -50,18 +60,54 @@ export default class SwapPanel extends Vue {
   swap = setup(() => {
     const { isLogedIn: isECOCLogedIn } = useEcocWallet()
     const { isLogedIn: isAltLogedIn, assets: ethAssets } = useEthWallet()
-    const { supportedAssets } = useCrossSwap()
+    const { supportedAssets, swapPairs } = useCrossSwap()
 
-    const ecocSupportedAssets = supportedAssets.ECOC
-    const altSupportedAssets = supportedAssets.ETH
-    const altAssets = ethAssets
+    const ecocSupportedAssets = ref<Asset[]>([])
+    const altSupportedAssets = ref<Asset[]>([])
+    const ecocSelectedIndex = ref(0)
+    const altSelectedIndex = ref(0)
+
+    watchEffect(() => {
+      ecocSupportedAssets.value = supportedAssets.ECOC
+      altSupportedAssets.value = supportedAssets.ETH
+    })
+
+    const selectEcocIndex = (index: number) => {
+      const ecocAsset = ecocSupportedAssets.value[index]
+      const pairedSymbol = swapPairs[ecocAsset.symbol]
+      const pairedIndex = altSupportedAssets.value.findIndex(
+        (asset) => asset.symbol === pairedSymbol
+      )
+
+      if (pairedIndex >= 0) {
+        altSelectedIndex.value = pairedIndex
+        console.log('altSelectedIndex', altSelectedIndex.value)
+      }
+    }
+
+    const selectAltIndex = (index: number) => {
+      const altAsset = altSupportedAssets.value[index]
+      const pairedSymbol = Object.keys(swapPairs).find((key) => swapPairs[key] === altAsset.symbol)
+      const pairedIndex = altSupportedAssets.value.findIndex(
+        (asset) => asset.symbol === pairedSymbol
+      )
+
+      if (pairedIndex >= 0) {
+        ecocSelectedIndex.value = pairedIndex
+        console.log('ecocSelectedIndex', ecocSelectedIndex.value)
+      }
+    }
 
     return {
       isECOCLogedIn,
       isAltLogedIn,
-      ecocSupportedAssets,
-      altSupportedAssets,
-      altAssets,
+      ecocSelectedIndex,
+      altSelectedIndex,
+      ecocSupportedAssets: computed(() => ecocSupportedAssets.value),
+      altSupportedAssets: computed(() => altSupportedAssets.value),
+      altAssets: ethAssets,
+      selectEcocIndex,
+      selectAltIndex,
     }
   })
 }
@@ -144,10 +190,5 @@ export default class SwapPanel extends Vue {
       height: 27px;
     }
   }
-}
-
-.disable {
-  pointer-events: none;
-  opacity: 0.4;
 }
 </style>

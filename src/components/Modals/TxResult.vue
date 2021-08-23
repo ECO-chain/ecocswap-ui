@@ -10,7 +10,7 @@
         <div class="modal-wraper">
           <div v-if="errorMsg" class="modal-error">
             <div class="error-wraper">
-              <img class="icon" src="@/assets/img/arrow-up-circle.svg" />
+              <img class="icon" src="@/assets/img/failed.png" />
               <div class="text-title">Transaction Failed</div>
               <div class="text-data">{{ errorMsg }}</div>
             </div>
@@ -53,7 +53,7 @@
 
 <script lang="ts">
 import { Options, Vue, setup, prop } from 'vue-class-component'
-import { computed } from 'vue'
+import { ref, computed, watchEffect } from 'vue'
 import { getEcocExplorerUrl, getEthExplorerUrl } from '@/services/utils'
 
 class Props {
@@ -67,8 +67,11 @@ class Props {
 @Options({ emits: ['update:isOpen'] })
 export default class TxSend extends Vue.with(Props) {
   modal = setup(() => {
+    const txid = ref(this.txid)
     const isEcocType = computed(() => this.txType === 'ecoc')
     const isEthType = computed(() => this.txType === 'eth')
+
+    watchEffect(() => (txid.value = this.txid))
 
     const close = () => {
       this.$emit('update:isOpen', false)
@@ -79,11 +82,11 @@ export default class TxSend extends Vue.with(Props) {
 
       switch (this.txType) {
         case 'ecoc':
-          fullurl = getEcocExplorerUrl() + '/tx/' + this.txid
+          fullurl = getEcocExplorerUrl() + '/tx/' + txid.value
           window.open(`${fullurl}`)
           break
         case 'eth':
-          fullurl = getEthExplorerUrl() + '/tx/' + this.txid
+          fullurl = getEthExplorerUrl() + '/tx/' + txid.value
           window.open(`${fullurl}`)
           break
       }
@@ -155,7 +158,7 @@ export default class TxSend extends Vue.with(Props) {
       }
 
       .text-title {
-        color: #ff7878;
+        color: #ff1a1a;
         margin-top: 40px;
         font-weight: bold;
         font-size: 20px;

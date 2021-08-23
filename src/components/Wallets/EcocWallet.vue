@@ -14,7 +14,7 @@
               <div class="wallet-management" v-if="wallet.isLogedIn">
                 <AssetsSelection
                   :assets="wallet.assets"
-                  :defalutIndex="wallet.selectedAssetIndex"
+                  :selectedIndex="wallet.selectedAssetIndex"
                   @onSelect="wallet.selectAsset"
                 />
                 <div class="wallet-info">
@@ -43,15 +43,26 @@
                         <div class="total-balance">
                           <div class="left">Total Balance:</div>
                           <a class="right">
-                            <div class="link">
+                            <div class="link" @click="transaction.setFullAmount">
                               {{ wallet.selectedAsset.amount }} {{ wallet.selectedAsset.symbol }}
                             </div>
                           </a>
                         </div>
-                        <input class="textbox" placeholder="To address" />
-                        <input class="textbox" placeholder="Amount" />
-                        <div class="btn btn-bg-puple">
-                          <div class="name">Send</div>
+                        <input
+                          class="textbox"
+                          placeholder="To address"
+                          v-model="transaction.toAddress"
+                        />
+                        <input
+                          class="textbox"
+                          placeholder="Amount"
+                          type="number"
+                          v-model="transaction.amount"
+                        />
+                        <div :class="transaction.isSendAble ? '' : 'disable'">
+                          <div class="btn btn-bg-puple" @click="transaction.send">
+                            <div class="name">Send</div>
+                          </div>
                         </div>
                       </div>
                     </tab>
@@ -71,11 +82,20 @@
         </div>
       </div>
     </transition>
+
+    <TxConfirmation
+      v-model:isOpen="transaction.confirm.isOpen"
+      :asset="transaction.selectedAsset"
+      :toAddress="transaction.toAddress"
+      :amount="transaction.amount"
+      @onConfirm="transaction.onConfirm"
+    />
+
     <TxResult
-      v-model:isOpen="txResult.isOpen"
-      :txid="txResult.txid"
-      :errorMsg="txResult.errorMsg"
-      :loadingMsg="txResult.loadingMsg"
+      v-model:isOpen="transaction.result.isOpen"
+      :txid="transaction.result.txid"
+      :errorMsg="transaction.result.errorMsg"
+      :loadingMsg="transaction.result.loadingMsg"
       txType="ecoc"
     />
   </div>
@@ -83,31 +103,94 @@
 
 <script lang="ts">
 import { Options, Vue, setup } from 'vue-class-component'
-import { ref, computed } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import QRCodeVue3 from 'qrcode-vue3'
+import useEcocWallet from '@/components/composables/use-ecoc-wallet'
+import { WalletParams } from '@/services/ecoc/types'
 import Tabs from '@/components/Tabs.vue'
 import Tab from '@/components/Tab.vue'
 import TxResult from '@/components/Modals/TxResult.vue'
-import useEcocWallet from '@/components/composables/use-ecoc-wallet'
+import TxConfirmation from '@/components/Modals/TxConfirmation.vue'
 import { copyToClipboard } from '@/utils'
 import AssetsSelection from './AssetsSelection.vue'
 import EcocConnectWallet from './EcocConnectWallet.vue'
 
 @Options({
-  components: { AssetsSelection, EcocConnectWallet, Tabs, Tab, QRCodeVue3, TxResult },
+  components: {
+    AssetsSelection,
+    EcocConnectWallet,
+    Tabs,
+    Tab,
+    QRCodeVue3,
+    TxResult,
+    TxConfirmation,
+  },
 })
 export default class EcocWallet extends Vue {
-  txResult = setup(() => {
-    const isOpen = ref(false)
-    const txid = ref('')
-    const loadingMsg = ref('sending 1 ECOC')
-    const errorMsg = ref('')
+  transaction = setup(() => {
+    const { selectedAsset } = useEcocWallet()
+    const toAddress = ref('')
+    const amount = ref<string | number>('')
+
+    const result = reactive({
+      isOpen: false,
+      txid: '',
+      loadingMsg: '',
+      errorMsg: '',
+    })
+
+    const confirm = reactive({
+      isOpen: false,
+    })
+
+    const isSendAble = computed(() => {
+      if (!toAddress.value) {
+        return false
+      }
+
+      if (amount.value <= 0 || amount.value > selectedAsset.value.amount) {
+        return false
+      }
+
+      return true
+    })
+
+    const openResultModal = () => {
+      result.isOpen = true
+    }
+
+    const openConfirmModal = () => {
+      confirm.isOpen = true
+    }
+
+    const setFullAmount = () => {
+      amount.value = selectedAsset.value.amount
+    }
+
+    const send = () => {
+      openConfirmModal()
+    }
+
+    const onConfirm = (walletParams: WalletParams) => {
+      console.log(walletParams)
+      result.loadingMsg = `sending ${amount.value} ${selectedAsset.value.symbol} to ${toAddress.value}`
+      setTimeout(() => {
+        result.txid = 'deeefd4dcb3bcc3b0f742d44c93105240a76dcf249391eb64553031a5283ca1a'
+      }, 1500)
+
+      openResultModal()
+    }
 
     return {
-      isOpen,
-      txid,
-      loadingMsg,
-      errorMsg,
+      result,
+      confirm,
+      selectedAsset,
+      toAddress,
+      amount,
+      isSendAble,
+      send,
+      onConfirm,
+      setFullAmount,
     }
   })
 

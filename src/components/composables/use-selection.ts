@@ -37,7 +37,6 @@ export default function useSelection(defalutIndex: number) {
 
   return {
     showSelection: computed(() => showSelection.value),
-    selectedIndex: computed(() => selectedIndex.value),
     selectedData: computed(() => {
       if (typeof dataList.value[selectedIndex.value] != 'undefined') {
         return dataList.value[selectedIndex.value]
@@ -45,6 +44,7 @@ export default function useSelection(defalutIndex: number) {
         return false
       }
     }),
+    selectedIndex,
     dataList,
     addData,
     open,
