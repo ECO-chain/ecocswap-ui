@@ -39,7 +39,7 @@ export default class Home extends Vue {
     }
 
     const stopPooling = () => {
-      clearInterval(polling)
+      clearInterval(polling as NodeJS.Timeout)
     }
 
     watch(isLogedIn, (value) => {
@@ -74,7 +74,7 @@ export default class Home extends Vue {
     }
 
     const stopPooling = () => {
-      clearInterval(polling)
+      clearInterval(polling as NodeJS.Timeout)
     }
 
     watch(isLogedIn, (value) => {
