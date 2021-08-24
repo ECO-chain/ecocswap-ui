@@ -52,6 +52,7 @@
                           class="textbox"
                           placeholder="To address"
                           v-model="transaction.toAddress"
+                          @change="transaction.onInputChanged"
                         />
                         <input
                           class="textbox"
@@ -59,6 +60,9 @@
                           type="number"
                           v-model="transaction.amount"
                         />
+                        <div class="error-message" v-show="transaction.errorMsg">
+                          {{ transaction.errorMsg }}
+                        </div>
                         <div :class="transaction.isSendAble ? '' : 'disable'">
                           <div class="btn btn-bg-puple" @click="transaction.send">
                             <div class="name">Send</div>
@@ -84,7 +88,7 @@
     </transition>
 
     <TxConfirmation
-      v-model:isOpen="transaction.confirm.isOpen"
+      v-model:isOpen="transaction.confirmation.isOpen"
       :asset="transaction.selectedAsset"
       :toAddress="transaction.toAddress"
       :amount="transaction.amount"
@@ -93,9 +97,9 @@
 
     <TxResult
       v-model:isOpen="transaction.result.isOpen"
-      :txid="transaction.result.txid"
-      :errorMsg="transaction.result.errorMsg"
-      :loadingMsg="transaction.result.loadingMsg"
+      v-model:txid="transaction.result.txid"
+      v-model:errorMsg="transaction.result.errorMsg"
+      v-model:loadingMsg="transaction.result.loadingMsg"
       txType="ecoc"
     />
   </div>
@@ -103,10 +107,14 @@
 
 <script lang="ts">
 import { Options, Vue, setup } from 'vue-class-component'
-import { ref, reactive, computed } from 'vue'
+import { ref, computed, provide } from 'vue'
 import QRCodeVue3 from 'qrcode-vue3'
 import useEcocWallet from '@/components/composables/use-ecoc-wallet'
+import useTxResult from '@/components/composables/modals/use-tx-result'
+import useTxConfirmation from '@/components/composables/modals/use-tx-confirmation'
 import { WalletParams } from '@/services/ecoc/types'
+import { SendPayload } from '@/services/wallet/types'
+import { isEcocAddress } from '@/services/utils'
 import Tabs from '@/components/Tabs.vue'
 import Tab from '@/components/Tab.vue'
 import TxResult from '@/components/Modals/TxResult.vue'
@@ -128,20 +136,17 @@ import EcocConnectWallet from './EcocConnectWallet.vue'
 })
 export default class EcocWallet extends Vue {
   transaction = setup(() => {
-    const { selectedAsset } = useEcocWallet()
+    const { selectedAsset, sendAsset, updateAssetsBalance } = useEcocWallet()
+    const result = useTxResult()
+    const confirmation = useTxConfirmation()
     const toAddress = ref('')
     const amount = ref<string | number>('')
+    const errorMsg = ref('')
 
-    const result = reactive({
-      isOpen: false,
-      txid: '',
-      loadingMsg: '',
-      errorMsg: '',
-    })
-
-    const confirm = reactive({
-      isOpen: false,
-    })
+    provide(
+      'asset',
+      computed(() => selectedAsset.value)
+    )
 
     const isSendAble = computed(() => {
       if (!toAddress.value) {
@@ -155,41 +160,67 @@ export default class EcocWallet extends Vue {
       return true
     })
 
-    const openResultModal = () => {
-      result.isOpen = true
-    }
-
-    const openConfirmModal = () => {
-      confirm.isOpen = true
-    }
-
     const setFullAmount = () => {
       amount.value = selectedAsset.value.amount
     }
 
+    const clear = () => {
+      errorMsg.value = ''
+      toAddress.value = ''
+      amount.value = ''
+    }
+
     const send = () => {
-      openConfirmModal()
+      if (!isEcocAddress(toAddress.value)) {
+        errorMsg.value = 'Invalid address format'
+        return
+      }
+
+      confirmation.open()
+    }
+
+    const onInputChanged = () => {
+      errorMsg.value = ''
     }
 
     const onConfirm = (walletParams: WalletParams) => {
-      console.log(walletParams)
-      result.loadingMsg = `sending ${amount.value} ${selectedAsset.value.symbol} to ${toAddress.value}`
-      setTimeout(() => {
-        result.txid = 'deeefd4dcb3bcc3b0f742d44c93105240a76dcf249391eb64553031a5283ca1a'
-      }, 1500)
+      confirmation.close()
+      result.setLoading(
+        `Sending ${amount.value} ${selectedAsset.value.symbol} to\n ${toAddress.value}`
+      )
+      result.open()
 
-      openResultModal()
+      const payload = {
+        asset: selectedAsset.value,
+        to: toAddress.value,
+        amount: Number(amount.value),
+        walletParams: walletParams,
+      } as SendPayload
+
+      sendAsset(payload)
+        .then((txid) => {
+          setTimeout(() => {
+            result.success(txid)
+            clear()
+            updateAssetsBalance()
+          }, 10000)
+        })
+        .catch((error) => {
+          result.error(error.message ? error.message : error)
+        })
     }
 
     return {
-      result,
-      confirm,
+      result: result.state,
+      confirmation: confirmation.state,
       selectedAsset,
       toAddress,
       amount,
       isSendAble,
+      errorMsg,
       send,
       onConfirm,
+      onInputChanged,
       setFullAmount,
     }
   })

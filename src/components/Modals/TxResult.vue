@@ -20,13 +20,13 @@
             <div class="result-wraper">
               <img class="icon" src="@/assets/img/arrow-up-circle.svg" />
               <div class="text-title">Transaction Submiitted</div>
-              <a class="text-data link" @click="modal.gotoExplorer">View on Explorer</a>
+              <a class="text-data link" @click="modal.gotoExplorer(txid)">View on Explorer</a>
             </div>
           </div>
 
           <div v-else class="modal-loading">
             <div v-if="modal.isEcocType">
-              <easy-spinner size="150" type="dots" />
+              <easy-spinner class="spinner" size="150" type="dots" />
               <div class="loading-wraper">
                 <div class="text-title">Waiting For Transaction ID</div>
                 <div class="text-data">{{ loadingMsg }}</div>
@@ -34,7 +34,7 @@
             </div>
 
             <div v-else-if="modal.isEthType">
-              <easy-spinner size="150" type="dots" />
+              <easy-spinner class="spinner" size="150" type="dots" />
               <div class="loading-wraper">
                 <div class="text-title">Waiting For Confirmation</div>
                 <div class="text-data">{{ loadingMsg }}</div>
@@ -53,40 +53,40 @@
 
 <script lang="ts">
 import { Options, Vue, setup, prop } from 'vue-class-component'
-import { ref, computed, watchEffect } from 'vue'
+import { computed } from 'vue'
 import { getEcocExplorerUrl, getEthExplorerUrl } from '@/services/utils'
 
 class Props {
   isOpen = prop<boolean>({ default: false })
   txType = prop<string>({ default: 'ecoc' })
-  txid = prop<string>({ default: '' })
+  txid = prop<string>({ required: true })
   loadingMsg = prop<string>({ default: '' })
   errorMsg = prop<string>({ default: '' })
 }
 
-@Options({ emits: ['update:isOpen'] })
+@Options({ emits: ['update:isOpen', 'update:txid', 'update:loadingMsg', 'update:errorMsg'] })
 export default class TxSend extends Vue.with(Props) {
   modal = setup(() => {
-    const txid = ref(this.txid)
     const isEcocType = computed(() => this.txType === 'ecoc')
     const isEthType = computed(() => this.txType === 'eth')
 
-    watchEffect(() => (txid.value = this.txid))
-
     const close = () => {
       this.$emit('update:isOpen', false)
+      this.$emit('update:txid', '')
+      this.$emit('update:loadingMsg', '')
+      this.$emit('update:errorMsg', '')
     }
 
-    const gotoExplorer = () => {
+    const gotoExplorer = (txid: string) => {
       let fullurl
 
       switch (this.txType) {
         case 'ecoc':
-          fullurl = getEcocExplorerUrl() + '/tx/' + txid.value
+          fullurl = getEcocExplorerUrl() + '/tx/' + txid
           window.open(`${fullurl}`)
           break
         case 'eth':
-          fullurl = getEthExplorerUrl() + '/tx/' + txid.value
+          fullurl = getEthExplorerUrl() + '/tx/' + txid
           window.open(`${fullurl}`)
           break
       }
@@ -126,10 +126,11 @@ export default class TxSend extends Vue.with(Props) {
   border-radius: 32px;
   opacity: 1;
   transform: translate(50%, -50%);
+  z-index: 10;
 
   &-header {
     height: auto;
-    padding: 39px 36px;
+    padding: 35px 30px;
 
     .actions {
       float: right;
@@ -151,7 +152,7 @@ export default class TxSend extends Vue.with(Props) {
 
   &-error {
     .error-wraper {
-      margin-top: 40px;
+      margin-top: 30px;
       .icon {
         width: 120px;
         height: 120px;
@@ -173,7 +174,7 @@ export default class TxSend extends Vue.with(Props) {
 
   &-result {
     .result-wraper {
-      margin-top: 40px;
+      margin-top: 30px;
       .icon {
         width: 120px;
         height: 120px;
@@ -193,14 +194,18 @@ export default class TxSend extends Vue.with(Props) {
   }
 
   &-loading {
+    padding: 10px;
     .loading-wraper {
-      margin-top: 45px;
+      margin-top: 30px;
       .text-title {
         font-weight: bold;
         font-size: 20px;
       }
 
       .text-data {
+        word-wrap: break-word;
+        white-space: -moz-pre-wrap;
+        white-space: pre-wrap;
         margin-top: 6px;
         font-size: 14px;
         color: #878787;
@@ -223,8 +228,10 @@ export default class TxSend extends Vue.with(Props) {
 
 @media only screen and (max-width: 400px) {
   .modal {
-    width: 350px;
-    height: 364px;
+    max-width: 350px;
+    min-width: 340px;
+    max-height: 464px;
+    min-height: 400px;
   }
 }
 </style>

@@ -1,5 +1,5 @@
 import { reactive, computed } from 'vue'
-import { InsufficientBalance } from '@/exceptions/wallet'
+import { InsufficientBalance, WalletError } from '@/exceptions/wallet'
 import { Wallet, SendPayload, PendingTransaction, TxHistory } from '@/services/wallet/types'
 import { TxData, Transaction } from '@/services/ecoc/types'
 import { KeyStore } from '@/services/keystore/types'
@@ -101,7 +101,7 @@ export default function useEcocWallet() {
     state.selectedAssetIndex = index
   }
 
-  const send = async (payload: SendPayload) => {
+  const sendAsset = async (payload: SendPayload) => {
     const { asset, to, amount, walletParams } = payload
 
     try {
@@ -123,7 +123,13 @@ export default function useEcocWallet() {
       const txid = await EcocWallet.sendEcocBalance(to, amount, walletParams)
       return txid
     } catch (error) {
-      return Promise.reject(error)
+      if (error.toString().includes('has no matching Script')) {
+        throw new WalletError('Invalid address format')
+      } else if (error.includes('400')) {
+        throw new WalletError('UTXO currently unavailable, Please try again')
+      } else {
+        throw new WalletError(error.message)
+      }
     }
   }
 
@@ -307,7 +313,7 @@ export default function useEcocWallet() {
     disconnect,
     selectAsset,
     getTxHistory,
-    send,
+    sendAsset,
     updateAssetsBalance,
     updateAssetsPrice,
     updateTxHistory,

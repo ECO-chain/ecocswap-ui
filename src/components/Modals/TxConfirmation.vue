@@ -3,7 +3,7 @@
     <div class="mask" v-if="isOpen">
       <div class="modal">
         <div class="modal-header">
-          <div class="actions actions-item" @click="modal.close">
+          <div class="actions actions-item" @click="transaction.close">
             <img class="icon" src="@/assets/img/cancel.png" alt="close" />
           </div>
         </div>
@@ -12,11 +12,13 @@
           <div class="text-title">Transaction Confirmation</div>
           <div class="text-data">Please confirm the transaction</div>
 
-          <div class="text-field" v-if="asset.tokenInfo">
+          <div class="text-field" v-if="transaction.isToken">
             <div class="name">Asset</div>
-            <div class="data tooltip">
-              {{ asset.tokenInfo.name }}
-              <span class="tooltiptext">{{ asset.tokenInfo.address }}</span>
+            <div class="data">
+              <div class="tooltip">
+                {{ transaction.tokenName }}
+                <span class="tooltiptext">{{ transaction.tokenAddress }}</span>
+              </div>
             </div>
           </div>
 
@@ -27,16 +29,47 @@
 
           <div class="text-field">
             <div class="name">Amount</div>
-            <div class="data">{{ amount }} {{ asset.symbol }}</div>
+            <div class="data">
+              {{ numberWithCommas(amount, { fixed: [0, 8] }) }} {{ transaction.assetSymbol }}
+            </div>
           </div>
 
           <div class="text-field">
-            <div class="name">Gas fee</div>
+            <div class="name">Fee</div>
             <div class="data">
               <div class="data-wraper">
-                <div>{{ amount }} ECOC</div>
-                <a class="options link">Gas Setting</a>
+                <div>{{ transaction.totalFee }} ECOC</div>
+                <a class="options link">Fee Setting</a>
+                <div class="fee-settings" v-show="transaction.feeSettings">
+                  <div class="settings-fee"></div>
+                  <div class="settings-gas">
+                    <input
+                      class="gas-textbox"
+                      placeholder="Gas Price"
+                      type="number"
+                      v-model="transaction.gasPrice"
+                    />
+                    <input
+                      class="gas-textbox"
+                      placeholder="Gas Limit"
+                      type="number"
+                      v-model="transaction.gasLimit"
+                    />
+                  </div>
+                </div>
               </div>
+            </div>
+          </div>
+
+          <div class="text-field" v-if="transaction.isNative">
+            <div class="name">Total</div>
+            <div class="data">
+              {{
+                numberWithCommas(Number(amount) + transaction.totalFee, {
+                  fixed: [0, 8],
+                })
+              }}
+              {{ transaction.assetSymbol }}
             </div>
           </div>
 
@@ -44,15 +77,15 @@
             class="password-textbox"
             placeholder="Keystore password"
             type="password"
-            v-model="modal.password"
+            v-model="transaction.password"
           />
 
           <div class="transaction-actions">
-            <div class="error-message" v-show="modal.errorMsg">
-              {{ modal.errorMsg }}
+            <div class="error-message" v-show="transaction.errorMsg">
+              {{ transaction.errorMsg }}
             </div>
-            <div class="btn btn-bg-puple btn-right" @click="modal.confirm">
-              <div class="name" v-if="modal.isLoading">
+            <div class="btn btn-bg-puple btn-right" @click="transaction.confirm">
+              <div class="name" v-if="transaction.isLoading">
                 <easy-spinner size="20" type="circular" />
               </div>
               <div class="name" v-else>Confirm</div>
@@ -66,38 +99,98 @@
 
 <script lang="ts">
 import { Options, Vue, setup, prop } from 'vue-class-component'
-import { ref, computed } from 'vue'
+import { ref, computed, watchEffect, inject } from 'vue'
 import { Asset } from '@/services/currency/types'
+import useEcocTransaction from '@/components/composables/use-ecoc-transaction'
+import { numberWithCommas } from '@/utils'
 
 class Props {
   isOpen = prop<boolean>({ default: false })
   isContract = prop<boolean>({ default: false })
-  asset = prop<Asset>({})
-  toAddress = prop<string>({})
-  amount = prop<number>({})
+  asset = prop<Asset>({ required: true })
+  toAddress = prop<string>({ required: true })
+  amount = prop<number>({ required: true })
 }
 
 @Options({
   emits: ['update:isOpen', 'onConfirm'],
 })
 export default class TxConfirmation extends Vue.with(Props) {
-  modal = setup(() => {
+  numberWithCommas = numberWithCommas
+  transaction = setup(() => {
+    const asset = ref<Asset>(inject('asset', this.asset))
+    const {
+      assetSymbol,
+      tokenAddress,
+      tokenName,
+      feeTierList,
+      isNative,
+      isToken,
+      totalFee,
+      gasLimit,
+      gasPrice,
+      txConfirm,
+      changeFeeTier,
+      changeAsset,
+    } = useEcocTransaction(asset.value)
+
     const errorMsg = ref('')
     const isLoading = ref(false)
     const password = ref('')
+    const feeSettings = ref(false)
+
+    watchEffect(() => {
+      changeAsset(asset.value)
+    })
+
+    const clear = () => {
+      isLoading.value = false
+      password.value = ''
+      errorMsg.value = ''
+    }
 
     const close = () => {
+      clear()
       this.$emit('update:isOpen', false)
     }
 
+    const onError = (msg: string) => {
+      clear()
+      errorMsg.value = msg
+    }
+
     const confirm = () => {
-      this.$emit('onConfirm', true)
+      isLoading.value = true
+      errorMsg.value = ''
+
+      txConfirm(password.value)
+        .then((walletParams) => {
+          setTimeout(() => {
+            clear()
+            this.$emit('onConfirm', walletParams)
+          }, 1500)
+        })
+        .catch((error) => {
+          const msg = error.message ? error.message : error
+          onError(msg)
+        })
     }
 
     return {
       isLoading: computed(() => isLoading.value),
+      feeSettings,
       errorMsg,
       password,
+      totalFee,
+      gasLimit,
+      gasPrice,
+      feeTierList,
+      isNative,
+      isToken,
+      assetSymbol,
+      tokenAddress,
+      tokenName,
+      changeFeeTier,
       confirm,
       close,
     }
@@ -129,11 +222,11 @@ input:focus {
   border-radius: 32px;
   opacity: 1;
   transform: translate(50%, -50%);
+  z-index: 10;
 
   &-header {
     height: auto;
-    padding: 39px 36px;
-
+    padding: 35px 30px;
     .actions {
       float: right;
       &-item {
@@ -153,7 +246,8 @@ input:focus {
   }
 
   .transaction-wraper {
-    padding: 35px;
+    padding: 30px;
+    padding-top: 20px;
     .text-title {
       color: #691c80;
       font-weight: bold;
@@ -171,14 +265,14 @@ input:focus {
       border-bottom: 1px solid rgba(135, 135, 135, 0.3);
       margin-top: 20px;
       .name {
-        font-size: 16px;
+        font-size: 14px;
         color: #878787;
         text-align: left;
         margin-left: 10px;
       }
 
       .data {
-        font-size: 20px;
+        font-size: 18px;
         text-align: right;
         margin-right: 10px;
 
@@ -209,5 +303,38 @@ input:focus {
   color: #691c80;
   cursor: pointer;
   text-decoration: underline;
+}
+
+@media only screen and (max-width: 400px) {
+  input {
+    font-size: 90%;
+  }
+  .modal {
+    max-width: 350px;
+    min-width: 340px;
+    max-height: 564px;
+    min-height: 500px;
+    font-size: 90%;
+  }
+
+  .modal .transaction-wraper .text-title {
+    font-size: 90%;
+  }
+
+  .modal .transaction-wraper .text-data {
+    font-size: 90%;
+  }
+
+  .modal .transaction-wraper .text-field .name {
+    font-size: 90%;
+  }
+
+  .modal .transaction-wraper .text-field .data {
+    font-size: 80%;
+  }
+
+  .modal .transaction-wraper .text-field .data .options {
+    font-size: 90%;
+  }
 }
 </style>

@@ -38,7 +38,7 @@ export default function useSelection(defalutIndex: number) {
   return {
     showSelection: computed(() => showSelection.value),
     selectedData: computed(() => {
-      if (typeof dataList.value[selectedIndex.value] != 'undefined') {
+      if (typeof dataList.value[selectedIndex.value] !== 'undefined') {
         return dataList.value[selectedIndex.value]
       } else {
         return false

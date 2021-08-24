@@ -391,11 +391,11 @@ img {
 
 .tooltip .tooltiptext {
   visibility: hidden;
-  width: 120px;
+  width: auto;
   background-color: black;
   color: #fff;
   text-align: center;
-  padding: 5px 0;
+  padding: 10px;
   border-radius: 6px;
   position: absolute;
   z-index: 1;
@@ -403,8 +403,8 @@ img {
 
 .tooltip .tooltiptext {
   bottom: 100%;
-  left: 50%;
-  margin-left: -60px;
+  left: 0%;
+  margin-left: -50%;
 }
 
 .tooltip .tooltiptext::after {

@@ -53,3 +53,21 @@ export const restrictNumberDecimals = ($event: any, input: any, decimals: number
     $event.preventDefault()
   }
 }
+
+export const numberWithCommas = (num: number, options?: { decimal?: number; fixed?: number[] }) => {
+  if (!options) {
+    return num.toLocaleString()
+  }
+
+  if (options && options.decimal) {
+    num = num / Math.pow(10, options.decimal as number)
+  }
+
+  if (options && options.fixed) {
+    return num.toLocaleString(undefined, {
+      minimumFractionDigits: options.fixed[0],
+      maximumFractionDigits: options.fixed[1],
+    })
+  }
+  return num.toLocaleString()
+}

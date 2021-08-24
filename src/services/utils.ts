@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js'
 import { Decoder } from 'ecoweb3'
 import { ECOC_MAINNET } from './ecoc/constants'
+import EcocWallet from '@/services/ecoc/ecoc-wallet'
 import { ecocw3 } from '@/services/ecoc/ecocw3'
 import { defaultNetwork } from '@/services/ecoc/config'
 import { defaultChainID } from '@/services/eth/config'
@@ -87,4 +88,8 @@ export const toEcocAddress = (addressHex: string): string => {
   } catch (error) {
     return addressHex
   }
+}
+
+export const isEcocAddress = (address: string): boolean => {
+  return EcocWallet.isEcocAddress(address)
 }

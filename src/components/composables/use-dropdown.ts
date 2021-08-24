@@ -58,7 +58,7 @@ export default function useDropdown() {
 
       parent.handler = () => {
         const menuIndex = parent.id
-        if (selectedSub.value != menuIndex) selectedSub.value = menuIndex
+        if (selectedSub.value !== menuIndex) selectedSub.value = menuIndex
         else selectedSub.value = -1
       }
     }

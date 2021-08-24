@@ -7,14 +7,19 @@ import { DEFAULT } from '@/services/contract'
 import { getEcocTotalFee } from '@/services/utils'
 import useEcocWallet from './use-ecoc-wallet'
 
-export default function useEcocTransaction(asset: Asset) {
+export default function useEcocTransaction(_asset: Asset) {
   const { isLogedIn, address, keystore } = useEcocWallet()
+  const asset = ref(_asset)
   const feeTierList = ref([0.004, 0.01, 0.1])
   const feeTier = ref(1)
   const gasLimit = ref(DEFAULT.DEFAULT_GAS_LIMIT)
   const gasPrice = ref(DEFAULT.DEFAULT_GAS_PRICE)
 
-  const isNative = computed(() => asset.symbol === 'ECOC')
+  const assetSymbol = computed(() => asset.value.symbol)
+  const tokenAddress = computed(() => asset.value.tokenInfo?.address)
+  const tokenName = computed(() => asset.value.tokenInfo?.name)
+  const isNative = computed(() => asset.value.symbol === 'ECOC')
+  const isToken = computed(() => typeof asset.value.tokenInfo !== 'undefined')
   const currentFee = computed(() => feeTierList.value[feeTier.value])
   const totalFee = computed(() => {
     if (isNative.value) return currentFee.value
@@ -27,37 +32,43 @@ export default function useEcocTransaction(asset: Asset) {
     }
   }
 
-  const confirm = async (password: string) => {
+  const changeAsset = (_asset: Asset) => {
+    asset.value = _asset
+  }
+
+  const txConfirm = async (password: string) => {
     if (!isLogedIn) {
-      Promise.reject(new WalletError('Please connect to ecoc wallet first'))
+      throw new WalletError('Please connect to ecoc wallet first')
     }
 
-    try {
-      const wallet = EcocWallet.importFromKeystore(keystore.value, password)
-      const utxoList = await wallet.getUtxoList()
+    const wallet = EcocWallet.importFromKeystore(keystore.value, password)
+    const utxoList = await wallet.getUtxoList()
 
-      const walletParams = {
-        address: address.value,
-        keypair: wallet.keypair,
-        utxoList: utxoList,
-        fee: currentFee.value,
-        gasLimit: gasLimit.value,
-        gasPrice: gasPrice.value,
-      } as WalletParams
+    const walletParams = {
+      address: address.value,
+      keypair: wallet.keypair,
+      utxoList: utxoList,
+      fee: currentFee.value,
+      gasLimit: gasLimit.value,
+      gasPrice: gasPrice.value,
+    } as WalletParams
 
-      return walletParams
-    } catch (error) {
-      Promise.reject(error)
-    }
+    return walletParams
   }
 
   return {
     feeTierList: computed(() => feeTierList.value),
     feeTier: computed(() => feeTier.value),
+    assetSymbol,
+    tokenAddress,
+    tokenName,
+    isNative,
+    isToken,
     totalFee,
     gasLimit,
     gasPrice,
-    confirm,
+    txConfirm,
     changeFeeTier,
+    changeAsset,
   }
 }
