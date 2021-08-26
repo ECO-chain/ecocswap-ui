@@ -1,4 +1,4 @@
-import { reactive, watchEffect } from 'vue'
+import { reactive, ref, watchEffect } from 'vue'
 import * as constants from '@/constants'
 import { Asset } from '@/services/currency/types'
 import useEcocWallet from './use-ecoc-wallet'
@@ -13,17 +13,21 @@ interface SwapPairs {
 }
 
 const ecocSwapSupported = ['ECOC', 'EFG']
-const ethSwapSupported = ['ECOC', 'EFG']
+const ethSwapSupported = ['WECOC', 'WEFG']
 
 const swapPairs = {
-  ['ECOC']: 'ECOC',
-  ['EFG']: 'EFG',
-  ['GPT']: 'GPT',
+  ['ECOC']: 'WECOC',
+  ['EFG']: 'WEFG',
+  ['GPT']: 'WGPT',
 } as SwapPairs
 
 export default function useCrossSwap() {
   const { assets: ecocAssets } = useEcocWallet()
   const { assets: ethAssets } = useEthWallet()
+  const amount = ref<string | number>('')
+  const toAddress = ref<string>('')
+  const fromAsset = ref<Asset>({} as Asset)
+  const toAsset = ref<Asset>({} as Asset)
 
   const supportedAssets = reactive<SupportedAssets>({
     [constants.TYPE_ECOC]: ecocAssets.value.filter((asset) =>
@@ -44,6 +48,10 @@ export default function useCrossSwap() {
   })
 
   return {
+    fromAsset,
+    toAsset,
+    amount,
+    toAddress,
     swapPairs,
     supportedAssets,
   }

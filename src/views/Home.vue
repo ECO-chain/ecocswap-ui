@@ -104,7 +104,7 @@ export default class Home extends Vue {
 
   .ecoc-wallet {
     position: fixed;
-    z-index: 102;
+    z-index: 103;
     top: 235px;
   }
 

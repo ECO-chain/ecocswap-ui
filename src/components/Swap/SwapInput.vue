@@ -1,30 +1,41 @@
 <template>
   <div class="swap-input">
-    <div class="max">Max</div>
+    <div class="max link" @click="onMax">Max</div>
     <div class="input-wraper">
-      <input class="input" type="number" placeholder="0" v-model="amount" />
+      <input
+        class="input"
+        type="number"
+        placeholder="0"
+        :value="amount"
+        @input="$emit('update:amount', $event.target.value)"
+      />
       <div class="value">~ ${{ value }}</div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component'
+import { Options, Vue, prop } from 'vue-class-component'
+
+class Props {
+  amount = prop<string | number>({ default: '' })
+  price = prop<number>({ default: 0 })
+}
 
 @Options({
-  components: {},
+  emits: ['onMax', 'update:amount'],
 })
-export default class SwapInput extends Vue {
-  amount = ''
-
+export default class SwapInput extends Vue.with(Props) {
   get value() {
-    const rate = 1.24
-
     if (!this.amount) {
       return 0
     }
 
-    return Number(this.amount) * rate
+    return Number(this.amount) * this.price
+  }
+
+  onMax() {
+    this.$emit('onMax')
   }
 }
 </script>
@@ -60,9 +71,17 @@ input {
     }
 
     .value {
+      color: #7a7a7a;
       text-align: right;
       font-size: 11px;
     }
   }
+}
+
+.link {
+  color: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: bold;
 }
 </style>

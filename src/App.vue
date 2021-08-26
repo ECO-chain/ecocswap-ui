@@ -344,6 +344,29 @@ img {
   transition: visibility 0s 0.2s, opacity 0.2s linear;
 }
 
+.modal {
+  &-header {
+    height: auto;
+    padding: 35px 30px;
+    .actions {
+      float: right;
+      &-item {
+        cursor: pointer;
+        font-size: 24px;
+      }
+
+      &:hover {
+        opacity: 0.5;
+      }
+
+      .icon {
+        width: 21px;
+        height: 21px;
+      }
+    }
+  }
+}
+
 .noselect {
   -webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none; /* Safari */

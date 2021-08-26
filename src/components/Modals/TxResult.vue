@@ -128,28 +128,6 @@ export default class TxSend extends Vue.with(Props) {
   transform: translate(50%, -50%);
   z-index: 10;
 
-  &-header {
-    height: auto;
-    padding: 35px 30px;
-
-    .actions {
-      float: right;
-      &-item {
-        cursor: pointer;
-        font-size: 24px;
-      }
-
-      &:hover {
-        opacity: 0.5;
-      }
-
-      .icon {
-        width: 21px;
-        height: 21px;
-      }
-    }
-  }
-
   &-error {
     .error-wraper {
       margin-top: 30px;

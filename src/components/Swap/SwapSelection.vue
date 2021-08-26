@@ -62,7 +62,7 @@ class Props {
 @Options({
   emits: ['onSelect'],
 })
-export default class AssetSelection extends Vue.with(Props) {
+export default class SwapSelection extends Vue.with(Props) {
   selection = setup(() => {
     const { showSelection, selectedIndex, selectedData, dataList, open, close, select } =
       useSelection(this.selectedIndex)

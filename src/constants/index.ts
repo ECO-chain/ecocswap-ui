@@ -31,6 +31,18 @@ export const KNOWN_CURRENCY = {
     icon: require('@/assets/img/currencies/gpt.svg'),
     color: '#7f4ab2',
   },
+  WECOC: {
+    icon: require('@/assets/img/currencies/ecoc.svg'),
+    color: '#7f4ab2',
+  },
+  WEFG: {
+    icon: require('@/assets/img/currencies/efg.svg'),
+    color: '#7f4ab2',
+  },
+  WGPT: {
+    icon: require('@/assets/img/currencies/gpt.svg'),
+    color: '#7f4ab2',
+  },
   USDT: {
     icon: require('@/assets/img/currencies/usdt.svg'),
     color: '#7f4ab2',
