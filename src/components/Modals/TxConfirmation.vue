@@ -38,7 +38,10 @@
             <div class="name">Fee</div>
             <div class="data">
               <div class="data-wraper">
-                <div>{{ transaction.totalFee }} ECOC</div>
+                <div>
+                  {{ transaction.totalFee }}
+                  <span class="extra" v-if="extraFee">(+{{ extraFee }})</span> ECOC
+                </div>
                 <a class="options link">Fee Setting</a>
                 <div class="fee-settings" v-show="transaction.feeSettings">
                   <div class="settings-fee"></div>
@@ -65,7 +68,7 @@
             <div class="name">Total</div>
             <div class="data">
               {{
-                numberWithCommas(Number(amount) + transaction.totalFee, {
+                numberWithCommas(Number(amount) + Number(extraFee) + transaction.totalFee, {
                   fixed: [0, 8],
                 })
               }}
@@ -112,6 +115,7 @@ class Props {
   asset = prop<Asset>({ required: true })
   toAddress = prop<string>({ required: true })
   amount = prop<number>({ required: true })
+  extraFee = prop<number>({ default: 0 })
 }
 
 @Options({
@@ -149,6 +153,12 @@ export default class TxConfirmation extends Vue.with(Props) {
       changeAsset(asset.value)
     })
 
+    const _init = () => {
+      if (this.isContract) {
+        gasLimit.value *= 2
+      }
+    }
+
     const clear = () => {
       isLoading.value = false
       password.value = ''
@@ -181,6 +191,8 @@ export default class TxConfirmation extends Vue.with(Props) {
           onError(msg)
         })
     }
+
+    _init()
 
     return {
       isLoading: computed(() => isLoading.value),
@@ -288,6 +300,10 @@ input:focus {
   color: #691c80;
   cursor: pointer;
   text-decoration: underline;
+}
+
+.extra {
+  color: #691c80;
 }
 
 @media only screen and (max-width: 400px) {

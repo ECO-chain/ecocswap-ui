@@ -171,8 +171,9 @@ export namespace ecocswap {
     walletParams: WalletParams
   ) => {
     const beneficiarAddr = Decoder.toEcoAddress(Decoder.removeHexPrefix(userAddress), isMainnet)
+    const tokenAddr = Decoder.toEcoAddress(Decoder.removeHexPrefix(assetAddress), isMainnet)
     const params = {
-      methodArgs: [assetAddress, beneficiarAddr, networkId, amount],
+      methodArgs: [tokenAddr, beneficiarAddr, networkId, amount],
       senderAddress: walletParams.address,
       amount: gasCost,
       fee: walletParams.fee,

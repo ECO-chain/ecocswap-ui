@@ -70,6 +70,7 @@
       :toAddress="swap.ecocswapContract"
       :amount="swap.ecocNeeded"
       :isContract="true"
+      :extraFee="swap.gasCost"
       @onConfirm="swap.onEcocConfirm"
     />
 
@@ -237,13 +238,13 @@ export default class SwapPanel extends Vue {
       conversion.close()
       if (
         fromAsset.value.type === constants.TYPE_ECOC ||
-        fromAsset.value.type === constants.TYPE_ERC20
+        fromAsset.value.type === constants.TYPE_ECRC20
       ) {
         const networkId = parseInt(ethState.chainId, 16)
         gasCost.value = await getEcocFee(networkId)
 
         if (fromAsset.value.symbol == constants.TYPE_ECOC) {
-          ecocNeeded.value = Number(amount.value) + gasCost.value
+          ecocNeeded.value = Number(amount.value)
         } else {
           ecocNeeded.value = Number(amount.value)
         }
@@ -305,6 +306,7 @@ export default class SwapPanel extends Vue {
       canAltSwap,
       ecocswapContract,
       ecocNeeded,
+      gasCost,
       ecocSwapSupported,
       ethSwapSupported,
       selectEcocIndex,

@@ -80,7 +80,7 @@ export default function useCrossSwap() {
       }
 
       rawTx = await ecocswap.lockECRC20(
-        amount,
+        fullAmount,
         gasCost,
         asset.tokenInfo.address,
         destination,
