@@ -122,10 +122,10 @@ export default function useEcocWallet() {
 
       const txid = await EcocWallet.sendEcocBalance(to, amount, walletParams)
       return txid
-    } catch (error) {
+    } catch (error: any) {
       if (error.toString().includes('has no matching Script')) {
         throw new WalletError('Invalid address format')
-      } else if (error.includes('400')) {
+      } else if (error.toString().includes('400')) {
         throw new WalletError('UTXO currently unavailable, Please try again')
       } else {
         throw new WalletError(error.message)

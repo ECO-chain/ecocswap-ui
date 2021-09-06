@@ -33,9 +33,17 @@
             </div>
             <div class="estimation-panel-wraper" v-else>
               <div class="estimation-field">
-                <div class="field-name">Fee charge</div>
+                <div class="field-name">Gas Cost</div>
                 <div class="field-data">
                   {{ numberWithCommas(conversion.estimationFee, { fixed: [0, 8] }) }}
+                  {{ conversion.feeUnit }}
+                </div>
+              </div>
+
+              <div class="estimation-field">
+                <div class="field-name">Admin Fee charge</div>
+                <div class="field-data">
+                  {{ numberWithCommas(conversion.adminFee, { fixed: [0, 8] }) }}
                   {{ toAsset.symbol }}
                 </div>
               </div>
@@ -44,7 +52,7 @@
                 <div class="field-name">You will receive</div>
                 <div class="field-data">
                   {{
-                    numberWithCommas(Number(amount) - conversion.estimationFee, {
+                    numberWithCommas(Number(amount) - conversion.adminFee, {
                       fixed: [0, 8],
                     })
                   }}
@@ -74,7 +82,11 @@
           </div>
 
           <div class="conversion-actions">
-            <div :class="Number(amount) - conversion.estimationFee > 0 ? '' : 'disable'">
+            <div
+              :class="
+                Number(amount) - conversion.adminFee > 0 && toAddress.length > 0 ? '' : 'disable'
+              "
+            >
               <div class="btn btn-bg-puple" @click="conversion.confirm">
                 <div class="name">Confirm</div>
               </div>
@@ -88,9 +100,12 @@
 
 <script lang="ts">
 import { Options, Vue, setup, prop } from 'vue-class-component'
-import { ref, computed, inject } from 'vue'
+import { ref, computed, inject, onMounted } from 'vue'
 import { Asset } from '@/services/currency/types'
 import { numberWithCommas } from '@/utils'
+import * as constants from '@/constants'
+import useEthWallet from '@/components/composables/use-eth-wallet'
+import useCrossSwap from '@/components/composables/use-cross-swap'
 
 class Props {
   isOpen = prop<boolean>({ default: false })
@@ -108,17 +123,31 @@ export default class ConvertConfirmation extends Vue.with(Props) {
   addressInput = ref(null as any)
 
   conversion = setup(() => {
+    const { getEcocFee } = useCrossSwap()
+    const { state: ethState } = useEthWallet()
     const fromAsset = ref<Asset>(inject('fromAsset', this.fromAsset))
     const toAsset = ref<Asset>(inject('toAsset', this.toAsset))
     const toAddress = ref<string>(inject('toAddress', this.toAddress))
     const isLoading = ref(true)
     const readonlyAddress = ref(true)
-    const estimationFee = ref(1.1)
+    const adminFee = ref(0)
+    const estimationFee = ref(0)
+    const feeUnit = ref('')
 
     const calculate = () => {
-      setTimeout(() => {
+      setTimeout(async () => {
+        if (
+          toAsset.value.type === constants.TYPE_ETH ||
+          toAsset.value.type === constants.TYPE_ERC20
+        ) {
+          const networkId = parseInt(ethState.chainId, 16)
+          estimationFee.value = await getEcocFee(networkId)
+          feeUnit.value = constants.TYPE_ECOC
+        } else {
+          feeUnit.value = constants.TYPE_ETH
+        }
         isLoading.value = false
-      }, 2000)
+      }, 1000)
     }
 
     const close = () => {
@@ -137,7 +166,9 @@ export default class ConvertConfirmation extends Vue.with(Props) {
       }, 200)
     }
 
-    calculate()
+    onMounted(() => {
+      calculate()
+    })
 
     return {
       fromAsset: computed(() => fromAsset.value),
@@ -145,10 +176,13 @@ export default class ConvertConfirmation extends Vue.with(Props) {
       isLoading: computed(() => isLoading.value),
       readonlyAddress: computed(() => readonlyAddress.value),
       toAddress,
+      adminFee,
       estimationFee,
+      feeUnit,
       confirm,
       close,
       changeAddress,
+      calculate,
     }
   })
 }

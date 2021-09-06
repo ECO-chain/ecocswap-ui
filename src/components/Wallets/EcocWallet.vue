@@ -88,6 +88,7 @@
     </transition>
 
     <TxConfirmation
+      v-if="transaction.confirmation.isOpen"
       v-model:isOpen="transaction.confirmation.isOpen"
       :asset="transaction.selectedAsset"
       :toAddress="transaction.toAddress"

@@ -5,6 +5,7 @@
         <SwapSelection
           :assets="swap.ecocSupportedAssets"
           :selectedIndex="swap.ecocSelectedIndex"
+          :swapSupported="swap.ecocSwapSupported"
           @onSelect="swap.selectEcocIndex"
         />
         <SwapInput class="input ecoc" key="ecoc-input" v-model:amount="swap.ecocAmount" />
@@ -17,6 +18,7 @@
           <SwapSelection
             :assets="swap.altSupportedAssets"
             :selectedIndex="swap.altSelectedIndex"
+            :swapSupported="swap.ethSwapSupported"
             @onSelect="swap.selectAltIndex"
           />
           <SwapInput class="input alt" key="wrap-ecoc-input" v-model:amount="swap.wrapAmount" />
@@ -42,6 +44,7 @@
     </div>
 
     <ConvertConfirmation
+      v-if="swap.conversion.isOpen"
       v-model:isOpen="swap.conversion.isOpen"
       :fromAsset="swap.fromAsset"
       :toAsset="swap.toAsset"
@@ -51,12 +54,32 @@
     />
 
     <SwapConfirmation
+      v-if="swap.altSwapping.isOpen"
       v-model:isOpen="swap.altSwapping.isOpen"
       :fromAsset="swap.fromAsset"
       :toAsset="swap.toAsset"
       :toAddress="swap.toAddress"
       :amount="swap.amount"
       @onConfirm="swap.swapConfirm"
+    />
+
+    <TxConfirmation
+      v-if="swap.confirmation.isOpen"
+      v-model:isOpen="swap.confirmation.isOpen"
+      :asset="swap.fromAsset"
+      :toAddress="swap.ecocswapContract"
+      :amount="swap.ecocNeeded"
+      :isContract="true"
+      @onConfirm="swap.onEcocConfirm"
+    />
+
+    <TxResult
+      v-if="swap.result.isOpen"
+      v-model:isOpen="swap.result.isOpen"
+      v-model:txid="swap.result.txid"
+      v-model:errorMsg="swap.result.errorMsg"
+      v-model:loadingMsg="swap.result.loadingMsg"
+      txType="ecoc"
     />
   </div>
 </template>
@@ -65,18 +88,31 @@
 import { Options, Vue, setup } from 'vue-class-component'
 import { ref, computed, watch, provide } from 'vue'
 import { Asset } from '@/services/currency/types'
+import { WalletParams } from '@/services/ecoc/types'
+import * as constants from '@/constants'
 import useEcocWallet from '@/components/composables/use-ecoc-wallet'
 import useEthWallet from '@/components/composables/use-eth-wallet'
 import useCrossSwap from '@/components/composables/use-cross-swap'
+import useTxResult from '@/components/composables/modals/use-tx-result'
 import useModal from '@/components/composables/modals/use-modal'
 import AssetsSelection from '@/components/Wallets/AssetsSelection.vue'
 import ConvertConfirmation from '@/components/Modals/ConvertConfirmation.vue'
 import SwapConfirmation from '@/components/Modals/SwapConfirmation.vue'
+import TxResult from '@/components/Modals/TxResult.vue'
+import TxConfirmation from '@/components/Modals/TxConfirmation.vue'
 import SwapSelection from './SwapSelection.vue'
 import SwapInput from './SwapInput.vue'
 
 @Options({
-  components: { AssetsSelection, SwapSelection, SwapInput, ConvertConfirmation, SwapConfirmation },
+  components: {
+    AssetsSelection,
+    SwapSelection,
+    SwapInput,
+    ConvertConfirmation,
+    SwapConfirmation,
+    TxResult,
+    TxConfirmation,
+  },
 })
 export default class SwapPanel extends Vue {
   wallet = setup(() => {
@@ -92,11 +128,25 @@ export default class SwapPanel extends Vue {
 
   swap = setup(() => {
     const { address: ecocAddress } = useEcocWallet()
-    const { address: ethAddress } = useEthWallet()
-    const { supportedAssets, swapPairs, fromAsset, toAsset, toAddress, amount } = useCrossSwap()
+    const { address: ethAddress, state: ethState } = useEthWallet()
+    const {
+      supportedAssets,
+      swapPairs,
+      fromAsset,
+      toAsset,
+      toAddress,
+      amount,
+      ecocswapContract,
+      ecocSwapSupported,
+      ethSwapSupported,
+      getEcocFee,
+      lockEcocAsset,
+    } = useCrossSwap()
     const { amount: ecocAmount } = useCrossSwap()
     const { amount: wrapAmount } = useCrossSwap()
     const { amount: altAmount } = useCrossSwap()
+    const result = useTxResult()
+    const confirmation = useModal()
     const conversion = useModal()
     const altSwapping = useModal()
 
@@ -104,6 +154,8 @@ export default class SwapPanel extends Vue {
     const altSupportedAssets = ref<Asset[]>(supportedAssets.ETH)
     const ecocSelectedIndex = ref(0)
     const altSelectedIndex = ref(0)
+    const ecocNeeded = ref(0)
+    const gasCost = ref(0)
 
     const ecocAsset = computed(() => ecocSupportedAssets.value[ecocSelectedIndex.value])
     const altAsset = computed(() => altSupportedAssets.value[altSelectedIndex.value])
@@ -118,26 +170,16 @@ export default class SwapPanel extends Vue {
       'toAsset',
       computed(() => toAsset.value)
     )
-    provide(
-      'toAddress',
-      computed(() => toAddress.value)
-    )
 
     watch(ecocAmount, (_amount) => {
       if (_amount > 0) {
-        fromAsset.value = ecocAsset.value
-        toAsset.value = altAsset.value
-        toAddress.value = ethAddress.value
-        amount.value = ecocAmount.value
+        wrapAmount.value = 0
       }
     })
 
     watch(wrapAmount, (_amount) => {
       if (_amount > 0) {
-        fromAsset.value = altAsset.value
-        toAsset.value = ecocAsset.value
-        toAddress.value = ecocAddress.value
-        amount.value = wrapAmount.value
+        ecocAmount.value = 0
       }
     })
 
@@ -172,6 +214,18 @@ export default class SwapPanel extends Vue {
     }
 
     const convert = () => {
+      if (wrapAmount.value > 0) {
+        fromAsset.value = altAsset.value
+        toAsset.value = ecocAsset.value
+        toAddress.value = ecocAddress.value
+        amount.value = wrapAmount.value
+      } else if (ecocAmount.value > 0) {
+        fromAsset.value = ecocAsset.value
+        toAsset.value = altAsset.value
+        toAddress.value = ethAddress.value
+        amount.value = ecocAmount.value
+      }
+
       conversion.open()
     }
 
@@ -179,17 +233,61 @@ export default class SwapPanel extends Vue {
       altSwapping.open()
     }
 
-    const convertConfirm = () => {
-      console.log(
-        `Convertion ${fromAsset.value.symbol} to ${toAsset.value.symbol} to ${toAddress.value}`
-      )
+    const convertConfirm = async () => {
+      conversion.close()
+      if (
+        fromAsset.value.type === constants.TYPE_ECOC ||
+        fromAsset.value.type === constants.TYPE_ERC20
+      ) {
+        const networkId = parseInt(ethState.chainId, 16)
+        gasCost.value = await getEcocFee(networkId)
+
+        if (fromAsset.value.symbol == constants.TYPE_ECOC) {
+          ecocNeeded.value = Number(amount.value) + gasCost.value
+        } else {
+          ecocNeeded.value = Number(amount.value)
+        }
+
+        confirmation.open()
+      } else {
+        //
+      }
     }
 
     const swapConfirm = () => {
       console.log(`Swapping ${fromAsset.value.symbol} to ${toAsset.value.symbol}`)
     }
 
+    const onEcocConfirm = (walletParams: WalletParams) => {
+      confirmation.close()
+      result.setLoading(`Converting from ${fromAsset.value.symbol} to\n ${toAsset.value.symbol}`)
+      result.open()
+
+      const networkId = parseInt(ethState.chainId, 16)
+
+      const payload = {
+        asset: fromAsset.value,
+        networkId: networkId,
+        destination: toAddress.value,
+        amount: Number(amount.value),
+        gasCost: gasCost.value,
+        walletParams: walletParams,
+      }
+
+      lockEcocAsset(payload)
+        .then((txid) => {
+          setTimeout(() => {
+            result.success(txid)
+          }, 2000)
+        })
+        .catch((error) => {
+          result.error(error.message ? error.message : error)
+        })
+    }
+
     return {
+      result: result.state,
+      confirmation: confirmation.state,
       altSwapping: altSwapping.state,
       conversion: conversion.state,
       ecocSupportedAssets,
@@ -197,6 +295,7 @@ export default class SwapPanel extends Vue {
       fromAsset,
       toAsset,
       amount,
+      toAddress,
       ecocAmount,
       wrapAmount,
       altAmount,
@@ -204,12 +303,17 @@ export default class SwapPanel extends Vue {
       altSelectedIndex,
       canConvert,
       canAltSwap,
+      ecocswapContract,
+      ecocNeeded,
+      ecocSwapSupported,
+      ethSwapSupported,
       selectEcocIndex,
       selectAltIndex,
       convertConfirm,
       swapConfirm,
       convert,
       altSwap,
+      onEcocConfirm,
     }
   })
 }

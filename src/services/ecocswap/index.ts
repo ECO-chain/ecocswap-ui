@@ -7,8 +7,8 @@ import { Params, ExecutionResult } from '@/services/contract/types'
 import abi from './abi.json'
 import { AssetInfo, RequestInfo } from './types'
 
-const mainnetAddress = '2eea1b7f4ac5ee217cfe0933471931c36fe4c402'
-const testnetAddress = '2eea1b7f4ac5ee217cfe0933471931c36fe4c402'
+const mainnetAddress = 'c4084f82019b0c36f89ccda5c68dd8e603b24981'
+const testnetAddress = 'c4084f82019b0c36f89ccda5c68dd8e603b24981'
 
 const defaultAddress = defaultNetwork === ECOC_MAINNET ? mainnetAddress : testnetAddress
 const isMainnet = defaultNetwork === ECOC_MAINNET
@@ -27,11 +27,11 @@ export namespace ecocswap {
     const executionResult = result.executionResult as ExecutionResult
     const output = executionResult.formattedOutput
 
-    const lockedAmount = output.lockedAmount as number
-    const pendingAmount = output.pendingAmount as number
-    const totalLocked = output.totalLocked as number
-    const totalUnlocked = output.totalUnlocked as number
-    const totalFees = output.totalFees as number
+    const lockedAmount = output.lockedAmount.toNumber()
+    const pendingAmount = output.pendingAmount.toNumber()
+    const totalLocked = output.totalLocked.toNumber()
+    const totalUnlocked = output.totalUnlocked.toNumber()
+    const totalFees = output.totalFees.toNumber()
 
     return {
       lockedAmount,
@@ -49,7 +49,7 @@ export namespace ecocswap {
 
     const result = await contract.call('getFeeRate', params)
     const executionResult = result.executionResult as ExecutionResult
-    const res = executionResult.formattedOutput.adminFee as number
+    const res = executionResult.formattedOutput.adminFee.toNumber()
 
     return res
   }
@@ -61,7 +61,7 @@ export namespace ecocswap {
 
     const result = await contract.call('getGasCost', params)
     const executionResult = result.executionResult as ExecutionResult
-    const res = executionResult.formattedOutput.gasCost as number
+    const res = executionResult.formattedOutput.gasCost.toNumber()
 
     return res
   }
@@ -73,7 +73,7 @@ export namespace ecocswap {
 
     const result = await contract.call('getAllRequests', params)
     const executionResult = result.executionResult as ExecutionResult
-    const res = executionResult.formattedOutput.requestId as number[]
+    const res = executionResult.formattedOutput.requestId.map((id: any) => id.toNumber())
 
     return res
   }
@@ -88,7 +88,7 @@ export namespace ecocswap {
 
     const result = await contract.call('getPendingRequests', params)
     const executionResult = result.executionResult as ExecutionResult
-    const res = executionResult.formattedOutput.requestId as number[]
+    const res = executionResult.formattedOutput.requestId.map((id: any) => id.toNumber())
 
     return res
   }
@@ -106,8 +106,8 @@ export namespace ecocswap {
     const requester = Decoder.toEcoAddress(output.requester, isMainnet)
     const beneficiar = output.beneficiar.toString(16)
     const asset = output.asset
-    const amount = output.amount
-    const gasCosts = output.gasCosts
+    const amount = output.amount.toNumber()
+    const gasCosts = output.gasCosts.toNumber()
     const txid = output.txid.toString(16)
     const pending = output.pending
     const completed = output.completed
@@ -140,14 +140,16 @@ export namespace ecocswap {
   //send to contract
   export const lockECOC = async (
     amount: number,
+    gasCost: number,
     userAddress: string,
-    networkId: string,
+    networkId: number,
     walletParams: WalletParams
   ) => {
+    const beneficiarAddr = Decoder.toEcoAddress(Decoder.removeHexPrefix(userAddress), isMainnet)
     const params = {
-      methodArgs: [userAddress, networkId],
+      methodArgs: [beneficiarAddr, networkId],
       senderAddress: walletParams.address,
-      amount: amount,
+      amount: amount + gasCost,
       fee: walletParams.fee,
       gasLimit: walletParams.gasLimit,
       gasPrice: walletParams.gasPrice,
@@ -162,15 +164,17 @@ export namespace ecocswap {
 
   export const lockECRC20 = async (
     amount: number,
+    gasCost: number,
     assetAddress: string,
     userAddress: string,
-    networkId: string,
+    networkId: number,
     walletParams: WalletParams
   ) => {
+    const beneficiarAddr = Decoder.toEcoAddress(Decoder.removeHexPrefix(userAddress), isMainnet)
     const params = {
-      methodArgs: [assetAddress, userAddress, networkId, amount],
+      methodArgs: [assetAddress, beneficiarAddr, networkId, amount],
       senderAddress: walletParams.address,
-      amount: 0,
+      amount: gasCost,
       fee: walletParams.fee,
       gasLimit: walletParams.gasLimit,
       gasPrice: walletParams.gasPrice,

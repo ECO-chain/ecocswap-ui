@@ -77,6 +77,10 @@ export default function useEthWallet() {
     }
   })
 
+  const _init = () => {
+    state.chainId = chainId.value
+  }
+
   const _updateAsset = (assetData: Asset) => {
     const assetIndex = state.assets.findIndex((asset) => {
       if (asset.tokenInfo && assetData.tokenInfo) {
@@ -155,6 +159,8 @@ export default function useEthWallet() {
       state.lastBlock = lastBlock
     }
   }
+
+  _init()
 
   return {
     supportedWallet,

@@ -84,11 +84,13 @@
             <div class="error-message" v-show="transaction.errorMsg">
               {{ transaction.errorMsg }}
             </div>
-            <div class="btn btn-bg-puple btn-right" @click="transaction.confirm">
-              <div class="name" v-if="transaction.isLoading">
-                <easy-spinner size="20" type="circular" />
+            <div :class="Number(amount) <= asset.amount ? '' : 'disable'">
+              <div class="btn btn-bg-puple btn-right" @click="transaction.confirm">
+                <div class="name" v-if="transaction.isLoading">
+                  <easy-spinner size="20" type="circular" />
+                </div>
+                <div class="name" v-else>Confirm</div>
               </div>
-              <div class="name" v-else>Confirm</div>
             </div>
           </div>
         </div>
@@ -138,6 +140,10 @@ export default class TxConfirmation extends Vue.with(Props) {
     const isLoading = ref(false)
     const password = ref('')
     const feeSettings = ref(false)
+
+    watchEffect(() => {
+      changeAsset(asset.value)
+    })
 
     watchEffect(() => {
       changeAsset(asset.value)

@@ -1,438 +1,436 @@
-{
-  "abi": [
-    {
-      "constant": true,
-      "inputs": [{ "name": "_requestId", "type": "uint256" }],
-      "name": "getRequestInfo",
-      "outputs": [
-        { "name": "networkId", "type": "uint256" },
-        { "name": "requester", "type": "address" },
-        { "name": "beneficiar", "type": "address" },
-        { "name": "asset", "type": "address" },
-        { "name": "amount", "type": "uint256" },
-        { "name": "gasCost", "type": "uint256" },
-        { "name": "adminFee", "type": "uint256" },
-        { "name": "txid", "type": "uint256" },
-        { "name": "pending", "type": "bool" },
-        { "name": "completed", "type": "bool" }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        { "name": "_tokenAddr", "type": "address" },
-        { "name": "_beneficiar", "type": "address" },
-        { "name": "_networkId", "type": "uint256" },
-        { "name": "_txid", "type": "uint256" },
-        { "name": "_amount", "type": "uint256" }
-      ],
-      "name": "unlockECRC20",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [{ "name": "_tokenAddr", "type": "address" }],
-      "name": "getLockedAssets",
-      "outputs": [{ "name": "amount", "type": "uint256" }],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        { "name": "_tokenAddr", "type": "address" },
-        { "name": "_networkId", "type": "uint256" },
-        { "name": "_feeRate", "type": "uint8" }
-      ],
-      "name": "addAsset",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        { "name": "_tokenAddr", "type": "address" },
-        { "name": "_beneficiarAddr", "type": "address" },
-        { "name": "_networkId", "type": "uint256" },
-        { "name": "_amount", "type": "uint256" }
-      ],
-      "name": "lockECRC20",
-      "outputs": [],
-      "payable": true,
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        { "name": "_beneficiarAddr", "type": "address" },
-        { "name": "_networkId", "type": "uint256" }
-      ],
-      "name": "lockECOC",
-      "outputs": [],
-      "payable": true,
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [{ "name": "_networkId", "type": "uint256" }],
-      "name": "getGasCost",
-      "outputs": [{ "name": "gasCost", "type": "uint256" }],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        { "name": "_cost", "type": "uint256" },
-        { "name": "_networkId", "type": "uint256" }
-      ],
-      "name": "setGasCost",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        { "name": "_tokenAddr", "type": "address" },
-        { "name": "_amount", "type": "uint256" }
-      ],
-      "name": "retrieveFees",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        { "name": "_tokenAddr", "type": "address" },
-        { "name": "_networkId", "type": "uint256" },
-        { "name": "_feeRate", "type": "uint8" }
-      ],
-      "name": "setAdminFee",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        { "name": "_oracle", "type": "address" },
-        { "name": "_networkId", "type": "uint256" }
-      ],
-      "name": "addOracle",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [{ "name": "_assetAddr", "type": "address" }],
-      "name": "getAssetInfo",
-      "outputs": [
-        { "name": "lockedAmount", "type": "uint256" },
-        { "name": "pendingAmount", "type": "uint256" },
-        { "name": "totalLocked", "type": "uint256" },
-        { "name": "totalUnlocked", "type": "uint256" },
-        { "name": "totalFees", "type": "uint256" }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        { "name": "_beneficiar", "type": "address" },
-        { "name": "_networkId", "type": "uint256" },
-        { "name": "_txid", "type": "uint256" },
-        { "name": "_amount", "type": "uint256" }
-      ],
-      "name": "unlockECOC",
-      "outputs": [],
-      "payable": true,
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [{ "name": "_requestId", "type": "uint256" }],
-      "name": "getTransferStatus",
-      "outputs": [{ "name": "completed", "type": "bool" }],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        { "name": "_oracle", "type": "address" },
-        { "name": "_networkId", "type": "uint256" }
-      ],
-      "name": "isOracle",
-      "outputs": [{ "name": "auth", "type": "bool" }],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [],
-      "name": "withdrawGasCosts",
-      "outputs": [],
-      "payable": true,
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [{ "name": "_tokenAddr", "type": "address" }],
-      "name": "getTotalAdminFee",
-      "outputs": [{ "name": "amount", "type": "uint256" }],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        { "name": "_requestId", "type": "uint256" },
-        { "name": "_txid", "type": "uint256" }
-      ],
-      "name": "issued",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        { "name": "_userAddr", "type": "address" },
-        { "name": "_networkId", "type": "uint256" }
-      ],
-      "name": "getAllRequests",
-      "outputs": [{ "name": "requestIds", "type": "uint256[]" }],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [{ "name": "_oracle", "type": "address" }],
-      "name": "getOracleBalace",
-      "outputs": [{ "name": "amount", "type": "uint256" }],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        { "name": "_oracle", "type": "address" },
-        { "name": "_networkId", "type": "uint256" }
-      ],
-      "name": "removeOracle",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        { "name": "_tokenAddr", "type": "address" },
-        { "name": "_networkId", "type": "uint256" }
-      ],
-      "name": "getFeeRate",
-      "outputs": [{ "name": "adminFee", "type": "uint8" }],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [{ "name": "_releaseId", "type": "uint256" }],
-      "name": "getReleaseInfo",
-      "outputs": [
-        { "name": "networkId", "type": "uint256" },
-        { "name": "txid", "type": "uint256" },
-        { "name": "oracle", "type": "address" },
-        { "name": "beneficiar", "type": "address" },
-        { "name": "asset", "type": "address" },
-        { "name": "amount", "type": "uint256" }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        { "name": "_userAddr", "type": "address" },
-        { "name": "_networkId", "type": "uint256" }
-      ],
-      "name": "getPendingRequests",
-      "outputs": [{ "name": "requestIds", "type": "uint256[]" }],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [{ "name": "_tokenAddr", "type": "address" }],
-      "name": "getAdminBalace",
-      "outputs": [{ "name": "amount", "type": "uint256" }],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [{ "name": "_adminWallet", "type": "address" }],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "constructor"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        { "indexed": false, "name": "tokenAddr", "type": "address" },
-        { "indexed": false, "name": "networkId", "type": "uint256" },
-        { "indexed": false, "name": "feeRate", "type": "uint8" }
-      ],
-      "name": "SetAdminFeeEvent",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        { "indexed": false, "name": "oracle", "type": "address" },
-        { "indexed": false, "name": "networkId", "type": "uint256" }
-      ],
-      "name": "AddOracleEvent",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        { "indexed": false, "name": "oracle", "type": "address" },
-        { "indexed": false, "name": "networkId", "type": "uint256" }
-      ],
-      "name": "RemoveOracleEvent",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        { "indexed": false, "name": "tokenAddr", "type": "address" },
-        { "indexed": false, "name": "networkId", "type": "uint256" },
-        { "indexed": false, "name": "feeRate", "type": "uint8" }
-      ],
-      "name": "AddAssetEvent",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        { "indexed": false, "name": "tokenAddr", "type": "address" },
-        { "indexed": false, "name": "amount", "type": "uint256" }
-      ],
-      "name": "RetrieveFeesEvent",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        { "indexed": false, "name": "oracle", "type": "address" },
-        { "indexed": false, "name": "tokenAddr", "type": "address" },
-        { "indexed": false, "name": "beneficiar", "type": "address" },
-        { "indexed": false, "name": "networkId", "type": "uint256" },
-        { "indexed": false, "name": "amount", "type": "uint256" },
-        { "indexed": false, "name": "releaseId", "type": "uint256" }
-      ],
-      "name": "UnlockECRC20Event",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        { "indexed": false, "name": "oracle", "type": "address" },
-        { "indexed": false, "name": "beneficiar", "type": "address" },
-        { "indexed": false, "name": "networkId", "type": "uint256" },
-        { "indexed": false, "name": "amount", "type": "uint256" },
-        { "indexed": false, "name": "txid", "type": "uint256" },
-        { "indexed": false, "name": "releaseId", "type": "uint256" }
-      ],
-      "name": "UnlockECOCEvent",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        { "indexed": false, "name": "oracle", "type": "address" },
-        { "indexed": false, "name": "requestId", "type": "uint256" },
-        { "indexed": false, "name": "txid", "type": "uint256" }
-      ],
-      "name": "IssuedEvent",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        { "indexed": false, "name": "oracle", "type": "address" },
-        { "indexed": false, "name": "cost", "type": "uint256" },
-        { "indexed": false, "name": "networkId", "type": "uint256" }
-      ],
-      "name": "SetGasCostEvent",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        { "indexed": false, "name": "oracle", "type": "address" },
-        { "indexed": false, "name": "amount", "type": "uint256" }
-      ],
-      "name": "WithdrawGasCostsEvent",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        { "indexed": false, "name": "tokenAddr", "type": "address" },
-        { "indexed": false, "name": "beneficiarAddr", "type": "address" },
-        { "indexed": false, "name": "networkId", "type": "uint256" },
-        { "indexed": false, "name": "amount", "type": "uint256" },
-        { "indexed": false, "name": "requestId", "type": "uint256" }
-      ],
-      "name": "LockECRC20Event",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        { "indexed": false, "name": "beneficiarAddr", "type": "address" },
-        { "indexed": false, "name": "networkId", "type": "uint256" },
-        { "indexed": false, "name": "amount", "type": "uint256" },
-        { "indexed": false, "name": "requestId", "type": "uint256" }
-      ],
-      "name": "LockECOCEvent",
-      "type": "event"
-    }
-  ]
-}
+[
+  {
+    "constant": true,
+    "inputs": [{ "name": "_requestId", "type": "uint256" }],
+    "name": "getRequestInfo",
+    "outputs": [
+      { "name": "networkId", "type": "uint256" },
+      { "name": "requester", "type": "address" },
+      { "name": "beneficiar", "type": "address" },
+      { "name": "asset", "type": "address" },
+      { "name": "amount", "type": "uint256" },
+      { "name": "gasCost", "type": "uint256" },
+      { "name": "adminFee", "type": "uint256" },
+      { "name": "txid", "type": "uint256" },
+      { "name": "pending", "type": "bool" },
+      { "name": "completed", "type": "bool" }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      { "name": "_tokenAddr", "type": "address" },
+      { "name": "_beneficiar", "type": "address" },
+      { "name": "_networkId", "type": "uint256" },
+      { "name": "_txid", "type": "uint256" },
+      { "name": "_amount", "type": "uint256" }
+    ],
+    "name": "unlockECRC20",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [{ "name": "_tokenAddr", "type": "address" }],
+    "name": "getLockedAssets",
+    "outputs": [{ "name": "amount", "type": "uint256" }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      { "name": "_tokenAddr", "type": "address" },
+      { "name": "_networkId", "type": "uint256" },
+      { "name": "_feeRate", "type": "uint8" }
+    ],
+    "name": "addAsset",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      { "name": "_tokenAddr", "type": "address" },
+      { "name": "_beneficiarAddr", "type": "address" },
+      { "name": "_networkId", "type": "uint256" },
+      { "name": "_amount", "type": "uint256" }
+    ],
+    "name": "lockECRC20",
+    "outputs": [],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      { "name": "_beneficiarAddr", "type": "address" },
+      { "name": "_networkId", "type": "uint256" }
+    ],
+    "name": "lockECOC",
+    "outputs": [],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [{ "name": "_networkId", "type": "uint256" }],
+    "name": "getGasCost",
+    "outputs": [{ "name": "gasCost", "type": "uint256" }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      { "name": "_cost", "type": "uint256" },
+      { "name": "_networkId", "type": "uint256" }
+    ],
+    "name": "setGasCost",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      { "name": "_tokenAddr", "type": "address" },
+      { "name": "_amount", "type": "uint256" }
+    ],
+    "name": "retrieveFees",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      { "name": "_tokenAddr", "type": "address" },
+      { "name": "_networkId", "type": "uint256" },
+      { "name": "_feeRate", "type": "uint8" }
+    ],
+    "name": "setAdminFee",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      { "name": "_oracle", "type": "address" },
+      { "name": "_networkId", "type": "uint256" }
+    ],
+    "name": "addOracle",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [{ "name": "_assetAddr", "type": "address" }],
+    "name": "getAssetInfo",
+    "outputs": [
+      { "name": "lockedAmount", "type": "uint256" },
+      { "name": "pendingAmount", "type": "uint256" },
+      { "name": "totalLocked", "type": "uint256" },
+      { "name": "totalUnlocked", "type": "uint256" },
+      { "name": "totalFees", "type": "uint256" }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      { "name": "_beneficiar", "type": "address" },
+      { "name": "_networkId", "type": "uint256" },
+      { "name": "_txid", "type": "uint256" },
+      { "name": "_amount", "type": "uint256" }
+    ],
+    "name": "unlockECOC",
+    "outputs": [],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [{ "name": "_requestId", "type": "uint256" }],
+    "name": "getTransferStatus",
+    "outputs": [{ "name": "completed", "type": "bool" }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      { "name": "_oracle", "type": "address" },
+      { "name": "_networkId", "type": "uint256" }
+    ],
+    "name": "isOracle",
+    "outputs": [{ "name": "auth", "type": "bool" }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [],
+    "name": "withdrawGasCosts",
+    "outputs": [],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [{ "name": "_tokenAddr", "type": "address" }],
+    "name": "getTotalAdminFee",
+    "outputs": [{ "name": "amount", "type": "uint256" }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      { "name": "_requestId", "type": "uint256" },
+      { "name": "_txid", "type": "uint256" }
+    ],
+    "name": "issued",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      { "name": "_userAddr", "type": "address" },
+      { "name": "_networkId", "type": "uint256" }
+    ],
+    "name": "getAllRequests",
+    "outputs": [{ "name": "requestIds", "type": "uint256[]" }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [{ "name": "_oracle", "type": "address" }],
+    "name": "getOracleBalace",
+    "outputs": [{ "name": "amount", "type": "uint256" }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      { "name": "_oracle", "type": "address" },
+      { "name": "_networkId", "type": "uint256" }
+    ],
+    "name": "removeOracle",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      { "name": "_tokenAddr", "type": "address" },
+      { "name": "_networkId", "type": "uint256" }
+    ],
+    "name": "getFeeRate",
+    "outputs": [{ "name": "adminFee", "type": "uint8" }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [{ "name": "_releaseId", "type": "uint256" }],
+    "name": "getReleaseInfo",
+    "outputs": [
+      { "name": "networkId", "type": "uint256" },
+      { "name": "txid", "type": "uint256" },
+      { "name": "oracle", "type": "address" },
+      { "name": "beneficiar", "type": "address" },
+      { "name": "asset", "type": "address" },
+      { "name": "amount", "type": "uint256" }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      { "name": "_userAddr", "type": "address" },
+      { "name": "_networkId", "type": "uint256" }
+    ],
+    "name": "getPendingRequests",
+    "outputs": [{ "name": "requestIds", "type": "uint256[]" }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [{ "name": "_tokenAddr", "type": "address" }],
+    "name": "getAdminBalace",
+    "outputs": [{ "name": "amount", "type": "uint256" }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "name": "_adminWallet", "type": "address" }],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": false, "name": "tokenAddr", "type": "address" },
+      { "indexed": false, "name": "networkId", "type": "uint256" },
+      { "indexed": false, "name": "feeRate", "type": "uint8" }
+    ],
+    "name": "SetAdminFeeEvent",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": false, "name": "oracle", "type": "address" },
+      { "indexed": false, "name": "networkId", "type": "uint256" }
+    ],
+    "name": "AddOracleEvent",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": false, "name": "oracle", "type": "address" },
+      { "indexed": false, "name": "networkId", "type": "uint256" }
+    ],
+    "name": "RemoveOracleEvent",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": false, "name": "tokenAddr", "type": "address" },
+      { "indexed": false, "name": "networkId", "type": "uint256" },
+      { "indexed": false, "name": "feeRate", "type": "uint8" }
+    ],
+    "name": "AddAssetEvent",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": false, "name": "tokenAddr", "type": "address" },
+      { "indexed": false, "name": "amount", "type": "uint256" }
+    ],
+    "name": "RetrieveFeesEvent",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": false, "name": "oracle", "type": "address" },
+      { "indexed": false, "name": "tokenAddr", "type": "address" },
+      { "indexed": false, "name": "beneficiar", "type": "address" },
+      { "indexed": false, "name": "networkId", "type": "uint256" },
+      { "indexed": false, "name": "amount", "type": "uint256" },
+      { "indexed": false, "name": "releaseId", "type": "uint256" }
+    ],
+    "name": "UnlockECRC20Event",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": false, "name": "oracle", "type": "address" },
+      { "indexed": false, "name": "beneficiar", "type": "address" },
+      { "indexed": false, "name": "networkId", "type": "uint256" },
+      { "indexed": false, "name": "amount", "type": "uint256" },
+      { "indexed": false, "name": "txid", "type": "uint256" },
+      { "indexed": false, "name": "releaseId", "type": "uint256" }
+    ],
+    "name": "UnlockECOCEvent",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": false, "name": "oracle", "type": "address" },
+      { "indexed": false, "name": "requestId", "type": "uint256" },
+      { "indexed": false, "name": "txid", "type": "uint256" }
+    ],
+    "name": "IssuedEvent",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": false, "name": "oracle", "type": "address" },
+      { "indexed": false, "name": "cost", "type": "uint256" },
+      { "indexed": false, "name": "networkId", "type": "uint256" }
+    ],
+    "name": "SetGasCostEvent",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": false, "name": "oracle", "type": "address" },
+      { "indexed": false, "name": "amount", "type": "uint256" }
+    ],
+    "name": "WithdrawGasCostsEvent",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": false, "name": "tokenAddr", "type": "address" },
+      { "indexed": false, "name": "beneficiarAddr", "type": "address" },
+      { "indexed": false, "name": "networkId", "type": "uint256" },
+      { "indexed": false, "name": "amount", "type": "uint256" },
+      { "indexed": false, "name": "requestId", "type": "uint256" }
+    ],
+    "name": "LockECRC20Event",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": false, "name": "beneficiarAddr", "type": "address" },
+      { "indexed": false, "name": "networkId", "type": "uint256" },
+      { "indexed": false, "name": "amount", "type": "uint256" },
+      { "indexed": false, "name": "requestId", "type": "uint256" }
+    ],
+    "name": "LockECOCEvent",
+    "type": "event"
+  }
+]

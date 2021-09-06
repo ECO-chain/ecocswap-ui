@@ -57,6 +57,7 @@ class Props {
   bg = prop<string>({ default: 'bg-purple' })
   selectedIndex = prop<number>({ default: 0 })
   assets = prop<Asset[]>({ default: [] })
+  swapSupported = prop<string[]>({ default: [] })
 }
 
 @Options({
@@ -72,15 +73,17 @@ export default class SwapSelection extends Vue.with(Props) {
     })
 
     watchEffect(() => {
-      dataList.value = this.assets.map((asset) => {
-        const value = getEstimatedValue(asset.amount, asset.price)
-        return {
-          logo: asset.style.icon,
-          name: asset.symbol,
-          balance: asset.amount,
-          value: Number(value),
-        }
-      })
+      dataList.value = this.assets
+        .filter((asset) => this.swapSupported.includes(asset.symbol))
+        .map((asset) => {
+          const value = getEstimatedValue(asset.amount, asset.price)
+          return {
+            logo: asset.style.icon,
+            name: asset.symbol,
+            balance: asset.amount,
+            value: Number(value),
+          }
+        })
     })
 
     return {
