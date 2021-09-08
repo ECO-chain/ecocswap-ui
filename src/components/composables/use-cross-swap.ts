@@ -26,8 +26,8 @@ interface lockAssetPayload {
   walletParams: WalletParams
 }
 
-const ecocSwapSupported = ['ECOC', 'EFG']
-const ethSwapSupported = ['WECOC', 'WEFG']
+const ecocSwapSupported = ['ECOC', 'EFG', 'GPT']
+const ethSwapSupported = ['WECOC', 'WEFG', 'WGPT']
 
 const swapPairs = {
   ['ECOC']: 'WECOC',
