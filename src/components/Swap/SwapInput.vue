@@ -7,7 +7,7 @@
         type="number"
         placeholder="0"
         :value="amount"
-        @input="$emit('update:amount', $event.target.value)"
+        @input="$emit('update:amount', $event.target?.value)"
       />
       <div class="value">~ ${{ value }}</div>
     </div>

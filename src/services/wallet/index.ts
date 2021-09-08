@@ -4,6 +4,7 @@ import { web3 } from '@/services/eth/web3'
 import { defaultNetwork } from '@/services/ecoc/config'
 import { createKeystore, getKeystoreContent, getKeystoreFromString } from '@/services/keystore'
 import { Ecrc20 } from '@/services/ecrc20'
+import { Erc20 } from '@/services/erc20'
 import { WalletError } from '@/exceptions/wallet'
 import { KeyStore } from '@/services/keystore/types'
 import { Asset, TokenInfo } from '@/services/currency/types'
@@ -201,6 +202,24 @@ export namespace Eth {
       amount: Number(balance),
       price: 0,
       style: constants.KNOWN_CURRENCY.ETH,
+    } as Asset
+
+    return asset
+  }
+
+  export const getErc20Balance = async (address: string, tokenInfo: TokenInfo) => {
+    const erc20 = new Erc20(tokenInfo)
+    const balance = await erc20.balanceOf(address)
+
+    const asset = {
+      name: tokenInfo.name,
+      symbol: tokenInfo.symbol,
+      type: constants.TYPE_ERC20,
+      amount: Number(balance),
+      price: 0,
+      style: Object.prototype.hasOwnProperty.call(constants.KNOWN_CURRENCY, tokenInfo.symbol)
+        ? constants.KNOWN_CURRENCY[tokenInfo.symbol]
+        : constants.KNOWN_CURRENCY['DEFAULT'],
     } as Asset
 
     return asset

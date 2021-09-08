@@ -1,4 +1,4 @@
-import { reactive, ref, computed } from 'vue'
+import { reactive, ref, computed, watch } from 'vue'
 import * as constants from '@/constants'
 import { Asset } from '@/services/currency/types'
 import { WalletParams } from '@/services/ecoc/types'
@@ -36,18 +36,34 @@ const swapPairs = {
 } as SwapPairs
 
 export default function useCrossSwap() {
-  const { assets: ecocAssets } = useEcocWallet()
-  const { assets: ethAssets } = useEthWallet()
+  const { state: ecocState } = useEcocWallet()
+  const { state: ethState } = useEthWallet()
+
   const amount = ref<string | number>('')
   const toAddress = ref<string>('')
   const fromAsset = ref<Asset>({} as Asset)
   const toAsset = ref<Asset>({} as Asset)
   const supportedAssets = reactive<SupportedAssets>({
-    [constants.TYPE_ECOC]: ecocAssets.value,
-    [constants.TYPE_ETH]: ethAssets.value,
+    [constants.TYPE_ECOC]: ecocState.assets.filter((asset) =>
+      ecocSwapSupported.includes(asset.symbol)
+    ),
+    [constants.TYPE_ETH]: ethState.assets.filter((asset) =>
+      ethSwapSupported.includes(asset.symbol)
+    ),
   })
 
   const ecocswapContract = computed(() => ecocswap.address)
+
+  watch(ecocState.assets, () => {
+    supportedAssets[constants.TYPE_ECOC] = ecocState.assets.filter((asset) =>
+      ecocSwapSupported.includes(asset.symbol)
+    )
+  })
+  watch(ethState.assets, () => {
+    supportedAssets[constants.TYPE_ETH] = ethState.assets.filter((asset) =>
+      ethSwapSupported.includes(asset.symbol)
+    )
+  })
 
   const getEcocFee = async (networkId: number) => {
     const gasCost = await ecocswap.getGasCost(networkId)

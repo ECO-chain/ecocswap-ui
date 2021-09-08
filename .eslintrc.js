@@ -5,9 +5,15 @@ module.exports = {
   },
   globals: {
     NodeJS: true,
+    defineProps: 'readonly',
+    defineEmits: 'readonly',
+    defineExpose: 'readonly',
+    withDefaults: 'readonly',
   },
   extends: [
     'plugin:vue/vue3-essential',
+    'plugin:vue/base',
+    'plugin:vue/vue3-recommended',
     'eslint:recommended',
     '@vue/typescript/recommended',
     '@vue/prettier',
@@ -23,6 +29,8 @@ module.exports = {
     '@typescript-eslint/no-namespace': 'off',
     '@typescript-eslint/ban-ts-ignore': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
+    'vue/script-setup-uses-vars': 'error',
+    "vue/attribute-hyphenation": ["error", "never"]
   },
   overrides: [
     {

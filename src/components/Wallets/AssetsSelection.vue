@@ -1,5 +1,5 @@
 <template>
-  <div :class="'noselect selection ' + bg" @click="selection.open">
+  <div v-if="selectedData" :class="'noselect selection ' + bg" @click="selection.open">
     <img class="logo" :src="selectedData.logo" />
     <div class="name">{{ selectedData.name }}</div>
     <div class="amount">
@@ -11,11 +11,8 @@
   </div>
 
   <transition name="modal">
-    <div class="mask" v-if="selection.showSelection">
-      <div
-        class="noselect selection-modal shadow"
-        v-bind:class="{ active: selection.showSelection }"
-      >
+    <div v-if="selection.showSelection" class="mask">
+      <div class="noselect selection-modal shadow" :class="{ active: selection.showSelection }">
         <div class="selection-modal-header">
           <div class="title">Select Asset</div>
           <div class="actions actions-item" @click="selection.close">
@@ -25,11 +22,11 @@
 
         <ul class="selection-modal-list">
           <li
-            class="selection-modal-item"
             v-for="(item, index) in selection.dataList"
             :key="'menu' + item.name"
+            class="selection-modal-item"
           >
-            <a @click="selection.select(index)" class="dropdown-link" :title="item.name">
+            <a class="dropdown-link" :title="item.name" @click="selection.select(index)">
               <div :class="'selection'">
                 <img class="logo" :src="item.logo" />
                 <div class="name">{{ item.name }}</div>

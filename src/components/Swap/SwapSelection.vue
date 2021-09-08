@@ -1,5 +1,5 @@
 <template>
-  <div :class="'noselect selection ' + bg" @click="selection.open">
+  <div v-if="selectedData" :class="'noselect selection ' + bg" @click="open">
     <img class="logo" :src="selectedData.logo" />
     <div class="name">{{ selectedData.name }}</div>
     <div class="amount">
@@ -11,25 +11,22 @@
   </div>
 
   <transition name="modal">
-    <div class="mask" v-if="selection.showSelection">
-      <div
-        class="noselect selection-modal shadow"
-        v-bind:class="{ active: selection.showSelection }"
-      >
+    <div v-if="showSelection" class="mask">
+      <div class="noselect selection-modal shadow" :class="{ active: showSelection }">
         <div class="selection-modal-header">
           <div class="title">Select Asset</div>
-          <div class="actions actions-item" @click="selection.close">
+          <div class="actions actions-item" @click="close">
             <img class="icon" src="@/assets/img/cancel.png" alt="close" />
           </div>
         </div>
 
         <ul class="selection-modal-list">
           <li
-            class="selection-modal-item"
-            v-for="(item, index) in selection.dataList"
+            v-for="(item, index) in dataList"
             :key="'menu' + item.name"
+            class="selection-modal-item"
           >
-            <a @click="selection.select(index)" class="dropdown-link" :title="item.name">
+            <a class="dropdown-link" :title="item.name" @click="select(index)">
               <div :class="'selection'">
                 <img class="logo" :src="item.logo" />
                 <div class="name">{{ item.name }}</div>
@@ -46,61 +43,58 @@
   </transition>
 </template>
 
-<script lang="ts">
-import { Options, Vue, setup, prop } from 'vue-class-component'
-import { watchEffect, watch } from 'vue'
+<script lang="ts" setup>
+import { watchEffect, watch, PropType } from 'vue'
 import { Asset } from '@/services/currency/types'
 import { getEstimatedValue } from '@/services/utils'
 import useSelection from '@/components/composables/use-selection'
 
-class Props {
-  bg = prop<string>({ default: 'bg-purple' })
-  selectedIndex = prop<number>({ default: 0 })
-  assets = prop<Asset[]>({ default: [] })
-  swapSupported = prop<string[]>({ default: [] })
-}
-
-@Options({
-  emits: ['onSelect'],
+const props = defineProps({
+  bg: {
+    type: String,
+    default: 'bg-purple',
+  },
+  selectedIndex: {
+    type: Number,
+    default: 0,
+  },
+  assets: {
+    type: Object as PropType<Asset[]>,
+    default: function () {
+      return []
+    },
+  },
 })
-export default class SwapSelection extends Vue.with(Props) {
-  selection = setup(() => {
-    const { showSelection, selectedIndex, selectedData, dataList, open, close, select } =
-      useSelection(this.selectedIndex)
 
-    watch(selectedIndex, (index) => {
-      this.$emit('onSelect', index)
-    })
+const emit = defineEmits(['onSelect'])
+const { showSelection, selectedIndex, selectedData, dataList, open, close, select } = useSelection(
+  props.selectedIndex
+)
 
-    watchEffect(() => {
-      dataList.value = this.assets
-        .filter((asset) => this.swapSupported.includes(asset.symbol))
-        .map((asset) => {
-          const value = getEstimatedValue(asset.amount, asset.price)
-          return {
-            logo: asset.style.icon,
-            name: asset.symbol,
-            balance: asset.amount,
-            value: Number(value),
-          }
-        })
-    })
+watch(selectedIndex, (index) => {
+  emit('onSelect', index)
+})
 
+watch(
+  () => props.selectedIndex,
+  (index) => {
+    if (index !== selectedIndex.value) {
+      select(index)
+    }
+  }
+)
+
+watchEffect(() => {
+  dataList.value = props.assets.map((asset) => {
+    const value = getEstimatedValue(asset.amount, asset.price)
     return {
-      showSelection,
-      selectedIndex,
-      selectedData,
-      dataList,
-      open,
-      close,
-      select,
+      logo: asset.style.icon,
+      name: asset.symbol,
+      balance: asset.amount,
+      value: Number(value),
     }
   })
-
-  get selectedData() {
-    return this.selection.selectedData
-  }
-}
+})
 </script>
 
 <style scoped lang="scss">

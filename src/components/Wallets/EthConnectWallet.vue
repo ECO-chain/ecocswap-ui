@@ -3,9 +3,9 @@
     <div class="title">Connect Supported Ethereum Wallet</div>
     <div class="menu">
       <div
-        class="item"
         v-for="(item, index) in connection.supportedWallet"
         :key="item.name + index"
+        class="item"
         @click="connection.connect(item.walletId)"
       >
         <div class="left">

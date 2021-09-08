@@ -5,10 +5,9 @@
         <SwapSelection
           :assets="swap.ecocSupportedAssets"
           :selectedIndex="swap.ecocSelectedIndex"
-          :swapSupported="swap.ecocSwapSupported"
           @onSelect="swap.selectEcocIndex"
         />
-        <SwapInput class="input ecoc" key="ecoc-input" v-model:amount="swap.ecocAmount" />
+        <SwapInput v-model:amount="swap.ecocAmount" class="input ecoc" @onMax="swap.onEcocMax" />
       </div>
     </div>
 
@@ -18,10 +17,9 @@
           <SwapSelection
             :assets="swap.altSupportedAssets"
             :selectedIndex="swap.altSelectedIndex"
-            :swapSupported="swap.ethSwapSupported"
             @onSelect="swap.selectAltIndex"
           />
-          <SwapInput class="input alt" key="wrap-ecoc-input" v-model:amount="swap.wrapAmount" />
+          <SwapInput v-model:amount="swap.wrapAmount" class="input alt" @onMax="swap.onWrapMax" />
         </div>
 
         <div class="alt-swap">
@@ -31,8 +29,12 @@
         </div>
 
         <div class="alt-assets">
-          <AssetsSelection bg="bg-white" :assets="wallet.altAssets" />
-          <SwapInput class="input alt" key="alt-input" v-model:amount="swap.altAmount" />
+          <AssetsSelection
+            bg="bg-white"
+            :assets="wallet.altAssets"
+            @onSelect="wallet.selectAltAssets"
+          />
+          <SwapInput v-model:amount="swap.altAmount" class="input alt" @onMax="swap.onAltMax" />
         </div>
       </div>
 
@@ -46,9 +48,9 @@
     <ConvertConfirmation
       v-if="swap.conversion.isOpen"
       v-model:isOpen="swap.conversion.isOpen"
+      v-model:toAddress="swap.toAddress"
       :fromAsset="swap.fromAsset"
       :toAsset="swap.toAsset"
-      v-model:toAddress="swap.toAddress"
       :amount="swap.amount"
       @onConfirm="swap.convertConfirm"
     />
@@ -86,8 +88,9 @@
 </template>
 
 <script lang="ts">
+/* eslint-disable */
 import { Options, Vue, setup } from 'vue-class-component'
-import { ref, computed, watch, provide } from 'vue'
+import { ref, computed, watch, watchEffect, provide } from 'vue'
 import { Asset } from '@/services/currency/types'
 import { WalletParams } from '@/services/ecoc/types'
 import * as constants from '@/constants'
@@ -118,18 +121,27 @@ import SwapInput from './SwapInput.vue'
 export default class SwapPanel extends Vue {
   wallet = setup(() => {
     const { isLogedIn: isECOCLogedIn } = useEcocWallet()
-    const { isLogedIn: isAltLogedIn, assets: ethAssets } = useEthWallet()
+    const {
+      isLogedIn: isAltLogedIn,
+      assets: ethAssets,
+      selectAsset: selectEthAsset,
+    } = useEthWallet()
 
     return {
       isECOCLogedIn,
       isAltLogedIn,
       altAssets: ethAssets,
+      selectAltAssets: selectEthAsset,
     }
   })
 
   swap = setup(() => {
     const { address: ecocAddress } = useEcocWallet()
-    const { address: ethAddress, state: ethState } = useEthWallet()
+    const {
+      address: ethAddress,
+      state: ethState,
+      selectedAsset: ethSelectedAsset,
+    } = useEthWallet()
     const {
       supportedAssets,
       swapPairs,
@@ -177,11 +189,15 @@ export default class SwapPanel extends Vue {
         wrapAmount.value = 0
       }
     })
-
     watch(wrapAmount, (_amount) => {
       if (_amount > 0) {
         ecocAmount.value = 0
       }
+    })
+
+    watchEffect(() => {
+      ecocSupportedAssets.value = supportedAssets.ECOC
+      altSupportedAssets.value = supportedAssets.ETH
     })
 
     const selectEcocIndex = (index: number) => {
@@ -194,7 +210,6 @@ export default class SwapPanel extends Vue {
 
       if (pairedIndex >= 0) {
         altSelectedIndex.value = pairedIndex
-        console.log('altSelectedIndex', altSelectedIndex.value)
       }
     }
 
@@ -204,13 +219,13 @@ export default class SwapPanel extends Vue {
       const pairedSymbol = Object.keys(swapPairs).find(
         (key) => swapPairs[key] === altAsset.value.symbol
       )
-      const pairedIndex = altSupportedAssets.value.findIndex(
+
+      const pairedIndex = ecocSupportedAssets.value.findIndex(
         (asset) => asset.symbol === pairedSymbol
       )
 
       if (pairedIndex >= 0) {
         ecocSelectedIndex.value = pairedIndex
-        console.log('ecocSelectedIndex', ecocSelectedIndex.value)
       }
     }
 
@@ -286,6 +301,18 @@ export default class SwapPanel extends Vue {
         })
     }
 
+    const onEcocMax = () => {
+      ecocAmount.value = ecocAsset.value.amount
+    }
+
+    const onWrapMax = () => {
+      wrapAmount.value = altAsset.value.amount
+    }
+
+    const onAltMax = () => {
+      altAmount.value = ethSelectedAsset.value.amount
+    }
+
     return {
       result: result.state,
       confirmation: confirmation.state,
@@ -316,6 +343,9 @@ export default class SwapPanel extends Vue {
       convert,
       altSwap,
       onEcocConfirm,
+      onEcocMax,
+      onWrapMax,
+      onAltMax,
     }
   })
 }

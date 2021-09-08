@@ -1,6 +1,6 @@
 <template>
   <div class="ecoc-connect-wallet">
-    <div class="main" v-show="stepper.currentStep === 1">
+    <div v-show="stepper.currentStep === 1" class="main">
       <div class="title">
         <img class="logo" src="@/assets/logo-black.svg" alt="logo" />
         <div class="text">Please create or connect your wallet</div>
@@ -16,7 +16,7 @@
     </div>
 
     <!--Connect ECOC Wallet Page-->
-    <div class="connect-wallet" v-show="stepper.currentStep === 2">
+    <div v-show="stepper.currentStep === 2" class="connect-wallet">
       <div class="navbar">
         <img class="back" src="@/assets/img/back.png" alt="back" @click="stepper.goto(1)" />
       </div>
@@ -26,29 +26,33 @@
       </div>
       <div class="keystore">
         <textarea
-          class="input"
           v-model="connectWallet.keystore"
+          class="input"
           placeholder="Keystore contents"
           readonly
         ></textarea>
         <div class="upload">
           <input
+            ref="uploadRef"
             type="file"
             name="file-upload"
-            ref="uploadRef"
             @change="connectWallet.uploadKeystore"
           />
-          <a class="link" @click="$refs.uploadRef.click()">Choose your keystore file</a>
+          <a class="link" @click="$refs.uploadRef.click(), $refs.passwordRef.focus()"
+            >Choose your keystore file</a
+          >
         </div>
       </div>
       <input
+        ref="passwordRef"
+        v-model="connectWallet.password"
         class="textbox"
         type="password"
         placeholder="Password"
-        v-model="connectWallet.password"
+        @keyup.enter="connectWallet.onConnectWallet"
       />
       <div class="connect-wallet-actions">
-        <div class="error-message" v-show="connectWallet.errorMsg">
+        <div v-show="connectWallet.errorMsg" class="error-message">
           {{ connectWallet.errorMsg }}
         </div>
         <div class="btn btn-bg-puple" @click="connectWallet.onConnectWallet">
@@ -58,7 +62,7 @@
     </div>
 
     <!--Create ECOC Wallet Page-->
-    <div class="create-wallet" v-show="stepper.currentStep === 3">
+    <div v-show="stepper.currentStep === 3" class="create-wallet">
       <div class="navbar">
         <img class="back" src="@/assets/img/back.png" alt="back" @click="stepper.goto(1)" />
       </div>
@@ -69,34 +73,35 @@
 
       <div class="content">
         <input
+          v-model="createWallet.password"
           class="textbox"
           type="password"
           placeholder="Input your password"
-          v-model="createWallet.password"
         />
         <input
+          v-model="createWallet.confimedPassword"
           class="textbox"
           type="password"
           placeholder=" Repeat your password"
-          v-model="createWallet.confimedPassword"
+          @keyup.enter="createWallet.onCreateNewWallet(stepper)"
         />
       </div>
 
       <div class="create-wallet-actions">
-        <div class="error-message" v-show="createWallet.errorMsg">
+        <div v-show="createWallet.errorMsg" class="error-message">
           {{ createWallet.errorMsg }}
         </div>
         <div class="btn btn-bg-puple btn-right" @click="createWallet.onCreateNewWallet(stepper)">
-          <div class="name" v-if="createWallet.isLoading">
+          <div v-if="createWallet.isLoading" class="name">
             <easy-spinner size="20" type="circular" />
           </div>
-          <div class="name" v-else>Create</div>
+          <div v-else class="name">Create</div>
         </div>
       </div>
     </div>
 
     <!--Keystore Result Page-->
-    <div class="keystore-result" v-show="stepper.currentStep === 4">
+    <div v-show="stepper.currentStep === 4" class="keystore-result">
       <div class="title">
         <div class="text">Keystore File Generated!</div>
         <div class="description">Please save your keystore file to connect your wallet.</div>

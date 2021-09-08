@@ -44,6 +44,7 @@ const state = reactive({
   address: '',
   chainId: '',
   assets: EthAsset.assetInit(),
+  selectedAssetIndex: 0,
   lastUpdate: 0,
   lastBlock: 0,
   walletId: 0,
@@ -56,6 +57,8 @@ export default function useEthWallet() {
   const lastBlock = computed(() => state.lastBlock)
   const address = computed(() => state.address)
   const assets = computed(() => state.assets)
+  const selectedAsset = computed(() => state.assets[state.selectedAssetIndex])
+  const selectedAssetIndex = computed(() => state.selectedAssetIndex)
   const walletIcon = computed(() => {
     const wallet = supportedWallet.value.find((wallet) => wallet.walletId === state.walletId)
     if (!wallet) {
@@ -119,13 +122,28 @@ export default function useEthWallet() {
     }
   }
 
+  const selectAsset = (index: number) => {
+    if (state.assets.length < index + 1) {
+      return
+    }
+
+    state.selectedAssetIndex = index
+  }
+
   const updateAssetsBalance = async () => {
     if (!isLogedIn.value) return
 
     try {
       const ethAsset = await EthWallet.getBalance(state.address)
-
       _updateAsset(ethAsset)
+
+      state.assets.forEach(async (asset) => {
+        if (asset.tokenInfo) {
+          const erc20Asset = await EthWallet.getErc20Balance(state.address, asset.tokenInfo)
+          _updateAsset(erc20Asset)
+        }
+      })
+
       _updateTime()
     } catch (error) {
       return Promise.reject(error)
@@ -170,7 +188,10 @@ export default function useEthWallet() {
     isLogedIn,
     lastBlock,
     walletIcon,
+    selectedAsset,
+    selectedAssetIndex,
     connect,
+    selectAsset,
     updateLastBlock,
     updateAssetsBalance,
     updateAssetsPrice,
