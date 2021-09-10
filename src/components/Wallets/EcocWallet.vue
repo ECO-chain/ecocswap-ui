@@ -11,7 +11,7 @@
 
           <div class="panel">
             <div class="wraper">
-              <div class="wallet-management" v-if="wallet.isLogedIn">
+              <div v-if="wallet.isLogedIn" class="wallet-management">
                 <AssetsSelection
                   :assets="wallet.assets"
                   :selectedIndex="wallet.selectedAssetIndex"
@@ -49,18 +49,18 @@
                           </a>
                         </div>
                         <input
+                          v-model="transaction.toAddress"
                           class="textbox"
                           placeholder="To address"
-                          v-model="transaction.toAddress"
                           @change="transaction.onInputChanged"
                         />
                         <input
+                          v-model="transaction.amount"
                           class="textbox"
                           placeholder="Amount"
                           type="number"
-                          v-model="transaction.amount"
                         />
-                        <div class="error-message" v-show="transaction.errorMsg">
+                        <div v-show="transaction.errorMsg" class="error-message">
                           {{ transaction.errorMsg }}
                         </div>
                         <div :class="transaction.isSendAble ? '' : 'disable'">
@@ -78,7 +78,7 @@
                 </div>
               </div>
 
-              <div class="connect-wallet" v-else>
+              <div v-else class="connect-wallet">
                 <EcocConnectWallet />
               </div>
             </div>

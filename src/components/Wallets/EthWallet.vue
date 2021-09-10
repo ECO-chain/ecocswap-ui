@@ -5,13 +5,13 @@
         <div class="eth-wallet-panel">
           <div class="header">
             <div class="header-pin" @click="wallet.walletToggle">
-              <img class="logo" v-if="wallet.icon" :src="wallet.icon" alt="ETHWallet" />
-              <div class="text" v-else>ETHWallet</div>
+              <img v-if="wallet.icon" class="logo" :src="wallet.icon" alt="ETHWallet" />
+              <div v-else class="text">ETHWallet</div>
             </div>
           </div>
           <div class="panel">
             <div class="wraper">
-              <div class="wallet-management" v-if="wallet.isLogedIn">
+              <div v-if="wallet.isLogedIn" class="wallet-management">
                 <div class="wallet-address-text">Wallet Address:</div>
                 <div class="wallet-address">{{ wallet.address }}</div>
                 <div class="wallet-actions">
@@ -23,7 +23,7 @@
                   </div>
                 </div>
               </div>
-              <div class="connect-wallet" v-else>
+              <div v-else class="connect-wallet">
                 <EthConnectWallet />
               </div>
             </div>

@@ -1,6 +1,6 @@
 <template>
   <transition name="modal">
-    <div class="mask" v-if="isOpen">
+    <div v-if="isOpen" class="mask">
       <div class="modal">
         <div class="modal-header">
           <div class="actions actions-item" @click="transaction.close">
@@ -12,7 +12,7 @@
           <div class="text-title">Transaction Confirmation</div>
           <div class="text-data">Please confirm the transaction</div>
 
-          <div class="text-field" v-if="transaction.isToken">
+          <div v-if="transaction.isToken" class="text-field">
             <div class="name">Asset</div>
             <div class="data">
               <div class="tooltip">
@@ -40,23 +40,23 @@
               <div class="data-wraper">
                 <div>
                   {{ transaction.totalFee }}
-                  <span class="extra" v-if="extraFee">(+{{ extraFee }})</span> ECOC
+                  <span v-if="extraFee" class="extra">(+{{ extraFee }})</span> ECOC
                 </div>
                 <a class="options link">Fee Setting</a>
-                <div class="fee-settings" v-show="transaction.feeSettings">
+                <div v-show="transaction.feeSettings" class="fee-settings">
                   <div class="settings-fee"></div>
                   <div class="settings-gas">
                     <input
+                      v-model="transaction.gasPrice"
                       class="gas-textbox"
                       placeholder="Gas Price"
                       type="number"
-                      v-model="transaction.gasPrice"
                     />
                     <input
+                      v-model="transaction.gasLimit"
                       class="gas-textbox"
                       placeholder="Gas Limit"
                       type="number"
-                      v-model="transaction.gasLimit"
                     />
                   </div>
                 </div>
@@ -64,7 +64,7 @@
             </div>
           </div>
 
-          <div class="text-field" v-if="transaction.isNative">
+          <div v-if="transaction.isNative" class="text-field">
             <div class="name">Total</div>
             <div class="data">
               {{
@@ -77,22 +77,22 @@
           </div>
 
           <input
+            v-model="transaction.password"
             class="password-textbox"
             placeholder="Keystore password"
             type="password"
-            v-model="transaction.password"
           />
 
           <div class="transaction-actions">
-            <div class="error-message" v-show="transaction.errorMsg">
+            <div v-show="transaction.errorMsg" class="error-message">
               {{ transaction.errorMsg }}
             </div>
             <div :class="Number(amount) <= asset.amount ? '' : 'disable'">
               <div class="btn btn-bg-puple btn-right" @click="transaction.confirm">
-                <div class="name" v-if="transaction.isLoading">
+                <div v-if="transaction.isLoading" class="name">
                   <easy-spinner size="20" type="circular" />
                 </div>
-                <div class="name" v-else>Confirm</div>
+                <div v-else class="name">Confirm</div>
               </div>
             </div>
           </div>

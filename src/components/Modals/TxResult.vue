@@ -1,6 +1,6 @@
 <template>
   <transition name="modal">
-    <div class="mask" v-if="isOpen">
+    <div v-if="isOpen" class="mask">
       <div :class="'modal ' + txType">
         <div class="modal-header">
           <div class="actions actions-item" @click="modal.close">

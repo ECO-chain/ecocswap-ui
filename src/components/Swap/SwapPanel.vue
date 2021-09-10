@@ -82,7 +82,7 @@
       v-model:txid="swap.result.txid"
       v-model:errorMsg="swap.result.errorMsg"
       v-model:loadingMsg="swap.result.loadingMsg"
-      txType="ecoc"
+      :txType="swap.result.txType"
     />
   </div>
 </template>
@@ -137,11 +137,7 @@ export default class SwapPanel extends Vue {
 
   swap = setup(() => {
     const { address: ecocAddress } = useEcocWallet()
-    const {
-      address: ethAddress,
-      state: ethState,
-      selectedAsset: ethSelectedAsset,
-    } = useEthWallet()
+    const { address: ethAddress, state: ethState, selectedAsset: ethSelectedAsset } = useEthWallet()
     const {
       supportedAssets,
       swapPairs,
@@ -154,6 +150,7 @@ export default class SwapPanel extends Vue {
       ethSwapSupported,
       getEcocFee,
       lockEcocAsset,
+      burnErc20Asset,
     } = useCrossSwap()
     const { amount: ecocAmount } = useCrossSwap()
     const { amount: wrapAmount } = useCrossSwap()
@@ -265,6 +262,25 @@ export default class SwapPanel extends Vue {
         }
 
         confirmation.open()
+      } else if (fromAsset.value.type === constants.TYPE_ERC20) {
+        result.setLoading(`Converting from ${fromAsset.value.symbol} to\n ${toAsset.value.symbol}`)
+        result.open('eth')
+
+        const payload = {
+          asset: fromAsset.value,
+          fromAddress: ethAddress.value,
+          destination: toAddress.value,
+          amount: Number(amount.value),
+        }
+
+        burnErc20Asset(payload).then((txid) => {
+          setTimeout(() => {
+            result.success(txid)
+          }, 2000)
+        })
+        .catch((error) => {
+          result.error(error.message ? error.message : error)
+        })
       } else {
         //
       }

@@ -6,10 +6,12 @@ export default function useTxResult() {
     txid: '',
     loadingMsg: '',
     errorMsg: '',
+    txType: 'ecoc',
   })
 
-  const open = () => {
+  const open = (txType = 'ecoc') => {
     state.isOpen = true
+    state.txType = txType
   }
 
   const close = () => {

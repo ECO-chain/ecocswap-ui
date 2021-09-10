@@ -1,3 +1,4 @@
+import { TransactionConfig } from 'web3-eth'
 import * as constants from '@/constants'
 import EcocWallet from '@/services/ecoc/ecoc-wallet'
 import { web3 } from '@/services/eth/web3'
@@ -220,8 +221,31 @@ export namespace Eth {
       style: Object.prototype.hasOwnProperty.call(constants.KNOWN_CURRENCY, tokenInfo.symbol)
         ? constants.KNOWN_CURRENCY[tokenInfo.symbol]
         : constants.KNOWN_CURRENCY['DEFAULT'],
+      tokenInfo: tokenInfo,
     } as Asset
 
     return asset
+  }
+
+  export const waitForConfirmation = (txid: string) => {
+    return new Promise((resolve, reject) => {
+      let txResult
+      setInterval(async () => {
+        try {
+          txResult = await web3.eth.getTransactionReceipt(txid)
+          if (txResult !== null) {
+            return resolve(true)
+          }
+        } catch (error) {
+          reject(error)
+        }
+      }, 10000)
+    })
+  }
+
+  export const sendRawTx = async (rawTransaction: TransactionConfig) => {
+    const transactionReceipt = await web3.eth.sendTransaction(rawTransaction)
+    const txid = transactionReceipt.transactionHash
+    return txid
   }
 }

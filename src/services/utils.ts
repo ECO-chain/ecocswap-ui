@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js'
+import bs58 from 'bs58'
 import { Decoder } from 'ecoweb3'
 import { ECOC_MAINNET } from './ecoc/constants'
 import EcocWallet from '@/services/ecoc/ecoc-wallet'
@@ -87,6 +88,18 @@ export const toEcocAddress = (addressHex: string): string => {
     return Decoder.toEcoAddress(addressHex, isMainnet)
   } catch (error) {
     return addressHex
+  }
+}
+
+export const toHexAddress = (address: string): string => {
+  try {
+    let hexAddr
+    const bytes = bs58.decode(address)
+    hexAddr = bytes.toString('hex')
+    hexAddr = hexAddr.slice(2, 42)
+    return hexAddr
+  } catch (error) {
+    return address
   }
 }
 

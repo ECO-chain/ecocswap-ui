@@ -1,6 +1,6 @@
 <template>
   <transition name="modal">
-    <div class="mask" v-if="isOpen">
+    <div v-if="isOpen" class="mask">
       <div class="modal">
         <div class="modal-header">
           <div class="actions actions-item" @click="conversion.close">
@@ -15,7 +15,7 @@
             <div class="conversion-asset">
               <img class="logo" :src="fromAsset.style.icon" />
               <div class="name">{{ fromAsset.symbol }}</div>
-              <div class="amount">{{ numberWithCommas(amount, { fixed: [0, 8] }) }}</div>
+              <div class="amount">{{ numberWithCommas(Number(amount), { fixed: [0, 8] }) }}</div>
             </div>
 
             <img class="arrow" src="@/assets/img/ios-arrow-down.svg" />
@@ -23,17 +23,17 @@
             <div class="conversion-asset">
               <img class="logo" :src="toAsset.style.icon" />
               <div class="name">{{ toAsset.symbol }}</div>
-              <div class="amount">{{ numberWithCommas(amount, { fixed: [0, 8] }) }}</div>
+              <div class="amount">{{ numberWithCommas(Number(amount), { fixed: [0, 8] }) }}</div>
             </div>
           </div>
 
           <div class="estimation-panel">
-            <div class="estimation-panel-wraper" v-if="conversion.isLoading">
+            <div v-if="conversion.isLoading" class="estimation-panel-wraper">
               <easy-spinner class="spinner" size="50" type="dots" />
             </div>
-            <div class="estimation-panel-wraper" v-else>
+            <div v-else class="estimation-panel-wraper">
               <div class="estimation-field">
-                <div class="field-name">Gas Cost</div>
+                <div class="field-name">Extra Gas Cost</div>
                 <div class="field-data">
                   {{ numberWithCommas(conversion.estimationFee, { fixed: [0, 8] }) }}
                   {{ conversion.feeUnit }}
@@ -69,12 +69,12 @@
             </div>
             <div class="destination-wraper">
               <input
+                ref="addressInput"
                 class="address-textbox"
                 placeholder="Destination Address"
-                ref="addressInput"
                 :value="toAddress"
                 :disabled="conversion.readonlyAddress"
-                @input="$emit('update:toAddress', $event.target.value)"
+                @input="$emit('update:toAddress', $event.target?.value)"
               />
 
               <span class="change link" @click="conversion.changeAddress">Change</span>

@@ -3,8 +3,8 @@
     <img class="logo" :src="selectedData.logo" />
     <div class="name">{{ selectedData.name }}</div>
     <div class="amount">
-      <div class="balance">{{ selectedData.balance }}</div>
-      <div class="value">~ ${{ selectedData.value }}</div>
+      <div class="balance">{{ numberWithCommas(selectedData.balance, { fixed: [0, 5] }) }}</div>
+      <div class="value">~ ${{ numberWithCommas(selectedData.value, { fixed: [0, 4] }) }}</div>
     </div>
 
     <img class="arrow" src="@/assets/img/ios-arrow-down.svg" />
@@ -31,8 +31,8 @@
                 <img class="logo" :src="item.logo" />
                 <div class="name">{{ item.name }}</div>
                 <div class="amount">
-                  <div class="balance">{{ item.balance }}</div>
-                  <div class="value">~ ${{ item.value }}</div>
+                  <div class="balance">{{ numberWithCommas(item.balance, { fixed: [0, 8] }) }}</div>
+                  <div class="value">~ ${{ numberWithCommas(item.value, { fixed: [0, 4] }) }}</div>
                 </div>
               </div>
             </a>
@@ -49,6 +49,7 @@ import { watchEffect, watch } from 'vue'
 import { Asset } from '@/services/currency/types'
 import { getEstimatedValue } from '@/services/utils'
 import useSelection from '@/components/composables/use-selection'
+import { numberWithCommas } from '@/utils'
 
 class Props {
   bg = prop<string>({ default: 'bg-purple' })
@@ -60,6 +61,7 @@ class Props {
   emits: ['onSelect'],
 })
 export default class AssetSelection extends Vue.with(Props) {
+  numberWithCommas = numberWithCommas
   selection = setup(() => {
     const { showSelection, selectedIndex, selectedData, dataList, open, close, select } =
       useSelection(this.selectedIndex)

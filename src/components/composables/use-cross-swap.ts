@@ -4,6 +4,8 @@ import { Asset } from '@/services/currency/types'
 import { WalletParams } from '@/services/ecoc/types'
 import * as utils from '@/services/utils'
 import { Ecoc as EcocWallet } from '@/services/wallet'
+import { Eth as EthWallet } from '@/services/wallet'
+import { Erc20 } from '@/services/erc20'
 import { Ecrc20 } from '@/services/ecrc20'
 import { ecocswap } from '@/services/ecocswap'
 import useEcocWallet from './use-ecoc-wallet'
@@ -24,6 +26,13 @@ interface lockAssetPayload {
   amount: number
   gasCost: number
   walletParams: WalletParams
+}
+
+interface burnAssetPayload {
+  asset: Asset
+  fromAddress: string
+  destination: string
+  amount: number
 }
 
 const ecocSwapSupported = ['ECOC', 'EFG', 'GPT']
@@ -111,6 +120,23 @@ export default function useCrossSwap() {
     return txid
   }
 
+  const burnErc20Asset = async (payload: burnAssetPayload) => {
+    const { asset, fromAddress, destination, amount } = payload
+    let rawTx
+    const destinationHex = '0x' + utils.toHexAddress(destination)
+
+    if (asset.tokenInfo) {
+      const token = new Erc20(asset.tokenInfo)
+      rawTx = await token.burn(fromAddress, destinationHex, amount)
+    } else {
+      throw new Error(`Invalid Asset`)
+    }
+
+    const txid = await EthWallet.sendRawTx(rawTx)
+
+    return txid
+  }
+
   return {
     fromAsset,
     toAsset,
@@ -123,5 +149,6 @@ export default function useCrossSwap() {
     ethSwapSupported,
     getEcocFee,
     lockEcocAsset,
+    burnErc20Asset,
   }
 }

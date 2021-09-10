@@ -71,4 +71,15 @@ export class Erc20 {
     }
     return rawTx
   }
+
+  async burn(owner: string, destination: string, amount: number) {
+    const decimals = Number(this.tokenInfo.decimals)
+    const fullAmount = fromDecimals(amount, decimals).toNumber()
+    const rawTx = {
+      from: owner,
+      to: this.tokenInfo.address,
+      data: this.contract.methods.burn(destination, fullAmount.toString()).encodeABI(),
+    }
+    return rawTx
+  }
 }
