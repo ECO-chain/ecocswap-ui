@@ -183,12 +183,12 @@ export default class SwapPanel extends Vue {
 
     watch(ecocAmount, (_amount) => {
       if (_amount > 0) {
-        wrapAmount.value = 0
+        wrapAmount.value = ''
       }
     })
     watch(wrapAmount, (_amount) => {
       if (_amount > 0) {
-        ecocAmount.value = 0
+        ecocAmount.value = ''
       }
     })
 
@@ -276,6 +276,7 @@ export default class SwapPanel extends Vue {
         burnErc20Asset(payload).then((txid) => {
           setTimeout(() => {
             result.success(txid)
+            wrapAmount.value = ''
           }, 2000)
         })
         .catch((error) => {
@@ -310,6 +311,7 @@ export default class SwapPanel extends Vue {
         .then((txid) => {
           setTimeout(() => {
             result.success(txid)
+            ecocAmount.value = ''
           }, 2000)
         })
         .catch((error) => {
