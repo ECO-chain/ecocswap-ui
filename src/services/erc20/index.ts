@@ -19,14 +19,14 @@ export class Erc20 {
   }
 
   async totalSupply() {
-    const result = await this.contract.methods.totalSupply.call()
+    const result = await this.contract.methods.totalSupply().call()
     const decimals = Number(this.tokenInfo.decimals)
     const amount = toDecimals(Number(result), decimals).toNumber()
     return amount
   }
 
   async decimals() {
-    const result = await this.contract.methods.decimals.call()
+    const result = await this.contract.methods.decimals().call()
     const amount = Number(result)
     return amount
   }
@@ -39,7 +39,7 @@ export class Erc20 {
   }
 
   async symbol() {
-    const result = await this.contract.methods.symbol.call()
+    const result = await this.contract.methods.symbol().call()
     return result
   }
 

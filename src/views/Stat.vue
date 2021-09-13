@@ -15,10 +15,10 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(item, index) in statistic.dataList" :key="index + item.name">
+              <tr v-for="(item, index) in statistic.dataList" :key="index + item.symbol">
                 <td class="text-left">{{ index + 1 }}</td>
-                <td class="text-left">${{ item.name }}</td>
-                <td class="text-left">{{ item.price }}</td>
+                <td class="text-left">{{ item.symbol }}</td>
+                <td class="text-left">${{ item.price }}</td>
                 <td>{{ item.locked }}</td>
                 <td>{{ item.circulation }}</td>
               </tr>
@@ -37,36 +37,21 @@
 
 <script lang="ts">
 import { Options, Vue, setup } from 'vue-class-component'
-import { ref, computed } from 'vue'
+import useStatistic from '@/components/composables/use-statistic'
+import { onMounted } from 'vue'
 
 @Options({})
 export default class Stat extends Vue {
   statistic = setup(() => {
-    const dataList = ref([
-      {
-        name: 'ECOC',
-        price: 0.09,
-        locked: 296524,
-        circulation: 126524,
-      },
+    const { dataList, updateData } = useStatistic()
 
-      {
-        name: 'EFG',
-        price: 125,
-        locked: 124153,
-        circulation: 24542,
-      },
-
-      {
-        name: 'GPT',
-        price: 958,
-        locked: 4574,
-        circulation: 1323,
-      },
-    ])
+    onMounted(() => {
+      updateData()
+    })
 
     return {
-      dataList: computed(() => dataList.value),
+      dataList,
+      updateData,
     }
   })
 }

@@ -189,6 +189,7 @@ export default class SwapPanel extends Vue {
     watch(wrapAmount, (_amount) => {
       if (_amount > 0) {
         ecocAmount.value = ''
+        altAmount.value = ''
       }
     })
 
@@ -243,6 +244,17 @@ export default class SwapPanel extends Vue {
     }
 
     const altSwap = () => {
+      if (wrapAmount.value > 0) {
+        fromAsset.value = altAsset.value
+        toAsset.value = ethSelectedAsset.value
+        amount.value = wrapAmount.value
+      } else if (altAmount.value > 0) {
+        fromAsset.value = ethSelectedAsset.value
+        toAsset.value = altAsset.value
+        amount.value = altAmount.value
+      }
+
+      toAddress.value = ethAddress.value
       altSwapping.open()
     }
 
@@ -288,6 +300,7 @@ export default class SwapPanel extends Vue {
     }
 
     const swapConfirm = () => {
+      altSwapping.close()
       console.log(`Swapping ${fromAsset.value.symbol} to ${toAsset.value.symbol}`)
     }
 

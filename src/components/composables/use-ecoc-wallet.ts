@@ -34,11 +34,7 @@ export default function useEcocWallet() {
   const lastBlock = computed(() => state.lastBlock)
 
   const _getAssetPrice = async (symbol: string) => {
-    if (symbol) {
-      return 0
-    }
-
-    return 1
+    return await EcocAsset.getPrice(symbol)
   }
 
   const _updateAsset = (assetData: Asset) => {
@@ -175,12 +171,12 @@ export default function useEcocWallet() {
     if (!isLogedIn.value) return
 
     try {
-      state.assets.forEach(async (asset) => {
+      state.assets.forEach(async (asset, index) => {
         const assetPrice = asset.price
         const newPrice = await _getAssetPrice(asset.symbol)
 
-        if (newPrice !== assetPrice) {
-          asset.price = newPrice
+        if (newPrice !== 0 && newPrice !== assetPrice) {
+          state.assets[index].price = newPrice
           _updateTime()
         }
       })

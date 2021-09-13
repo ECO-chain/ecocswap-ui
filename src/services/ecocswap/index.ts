@@ -19,8 +19,9 @@ export namespace ecocswap {
   export const address = contract.address
 
   export const getAssetInfo = async (assetAddress: string): Promise<AssetInfo> => {
+    const tokenAddr = Decoder.toEcoAddress(Decoder.removeHexPrefix(assetAddress), isMainnet)
     const params = {
-      methodArgs: [assetAddress],
+      methodArgs: [tokenAddr],
     } as Params
 
     const result = await contract.call('getAssetInfo', params)

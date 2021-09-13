@@ -1,3 +1,4 @@
+import axios from 'axios'
 import * as constants from '@/constants'
 import { Asset } from './types'
 import { defaultNetwork } from '@/services/ecoc/config'
@@ -51,6 +52,24 @@ export namespace Ecoc {
 
     return [ECOC, ...Ecrc20AssetsTestnet] as Asset[]
   }
+
+  export const getKnownAssetInfo = (symbol: string) => {
+    if (defaultNetwork === ECOC_MAINNET) {
+      return knownEcrc20Info.find((token) => token.symbol === symbol)
+    }
+
+    return knownEcrc20InfoTestnet.find((token) => token.symbol === symbol)
+  }
+
+  export const getPrice = async (symbol: string): Promise<number> => {
+    try {
+      const result = await axios.get(`https://ecocwallet.ecoc.io/api/token?symbol=${symbol}`)
+      const data = result.data
+      return Number(data.price)
+    } catch (error) {
+      return 0
+    }
+  }
 }
 
 export namespace Eth {
@@ -99,5 +118,23 @@ export namespace Eth {
       default:
         return [ETH, ...Erc20Assets] as Asset[]
     }
+  }
+
+  export const getKnownAssetInfo = (symbol: string) => {
+    switch (defaultChainID) {
+      case ethConst.chainId.ETHEREUM_MAINNET:
+        return knownErc20Info.find((token) => token.symbol === symbol)
+
+      case ethConst.chainId.ETHEREUM_GOR:
+        return knownErc20InfoGor.find((token) => token.symbol === symbol)
+
+      default:
+        return knownErc20Info.find((token) => token.symbol === symbol)
+    }
+  }
+
+  export const getPrice = async (symbol: string) => {
+    if (symbol === constants.ETH) return 3261.4
+    return 0
   }
 }

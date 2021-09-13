@@ -3,7 +3,7 @@
     <div v-if="isOpen" class="mask">
       <div class="modal">
         <div class="modal-header">
-          <div class="actions actions-item" @click="conversion.close">
+          <div class="actions actions-item" @click="swap.close">
             <img class="icon" src="@/assets/img/cancel.png" alt="close" />
           </div>
         </div>
@@ -23,71 +23,65 @@
             <div class="conversion-asset">
               <img class="logo" :src="toAsset.style.icon" />
               <div class="name">{{ toAsset.symbol }}</div>
-              <div class="amount">{{ numberWithCommas(Number(amount), { fixed: [0, 8] }) }}</div>
+              <div class="amount">
+                {{ numberWithCommas(swap.destinationAmount, { fixed: [0, 8] }) }}
+              </div>
             </div>
           </div>
 
           <div class="estimation-panel">
-            <div v-if="conversion.isLoading" class="estimation-panel-wraper">
+            <div v-if="swap.isLoading" class="estimation-panel-wraper">
               <easy-spinner class="spinner" size="50" type="dots" />
             </div>
             <div v-else class="estimation-panel-wraper">
               <div class="estimation-field">
-                <div class="field-name">Extra Gas Cost</div>
+                <div class="field-name">Price</div>
                 <div class="field-data">
-                  {{ numberWithCommas(conversion.estimationFee, { fixed: [0, 8] }) }}
-                  {{ conversion.feeUnit }}
+                  {{ 1 }} {{ toAsset.symbol }} =
+                  {{ numberWithCommas(swap.destinationPrice, { fixed: [0, 8] }) }}
+                  {{ fromAsset.symbol }}
                 </div>
               </div>
 
               <div class="estimation-field">
-                <div class="field-name">Admin Fee charge</div>
+                <div class="field-name">Liquidity Provider Fee</div>
                 <div class="field-data">
-                  {{ numberWithCommas(conversion.adminFee, { fixed: [0, 8] }) }}
-                  {{ toAsset.symbol }}
+                  {{ numberWithCommas(swap.liquidityFee, { fixed: [0, 8] }) }}
+                  {{ fromAsset.symbol }}
                 </div>
               </div>
 
               <div class="estimation-field">
-                <div class="field-name">You will receive</div>
+                <div class="field-name">Price Impact</div>
+                <div class="field-data">
+                  -{{ numberWithCommas(swap.priceImpact, { fixed: [0, 8] }) }}%
+                </div>
+              </div>
+
+              <div class="estimation-field">
+                <div class="field-name">Minimum received</div>
                 <div class="field-data">
                   {{
-                    numberWithCommas(Number(amount) - conversion.adminFee, {
+                    numberWithCommas(swap.minimumReceived, {
                       fixed: [0, 8],
                     })
                   }}
                   {{ toAsset.symbol }}
                 </div>
               </div>
-            </div>
-          </div>
 
-          <div class="destination">
-            <div class="destination-header">
-              <div class="text">Recipient's Address</div>
-              <hr class="line" />
-            </div>
-            <div class="destination-wraper">
-              <input
-                ref="addressInput"
-                class="address-textbox"
-                placeholder="Destination Address"
-                :value="toAddress"
-                :disabled="conversion.readonlyAddress"
-                @input="$emit('update:toAddress', $event.target?.value)"
-              />
-
-              <span class="change link" @click="conversion.changeAddress">Change</span>
+              <div class="estimation-field">
+                <div class="field-name">Slippage tolerance</div>
+                <div class="field-data">
+                  {{ numberWithCommas(swap.slippageTolerance, { fixed: [0, 8] }) }}%
+                </div>
+              </div>
             </div>
           </div>
 
           <div class="conversion-actions">
-            <div
-              :class="
-                Number(amount) - conversion.adminFee > 0 && toAddress.length > 0 ? '' : 'disable'
-              "
-            >
-              <div class="btn btn-bg-puple" @click="conversion.confirm">
+            <div :class="Number(amount) > 0 ? '' : 'disable'">
+              <div class="btn btn-bg-puple" @click="swap.confirm">
                 <div class="name">Confirm</div>
               </div>
             </div>
@@ -103,15 +97,11 @@ import { Options, Vue, setup, prop } from 'vue-class-component'
 import { ref, computed, inject, onMounted } from 'vue'
 import { Asset } from '@/services/currency/types'
 import { numberWithCommas } from '@/utils'
-import * as constants from '@/constants'
-import useEthWallet from '@/components/composables/use-eth-wallet'
-import useCrossSwap from '@/components/composables/use-cross-swap'
 
 class Props {
   isOpen = prop<boolean>({ default: false })
   fromAsset = prop<Asset>({ required: true })
   toAsset = prop<Asset>({ required: true })
-  toAddress = prop<string>({ required: true })
   amount = prop<string | number>({ required: true })
 }
 
@@ -122,30 +112,26 @@ export default class SwapConfirmation extends Vue.with(Props) {
   numberWithCommas = numberWithCommas
   addressInput = ref(null as any)
 
-  conversion = setup(() => {
-    const { getEcocFee } = useCrossSwap()
-    const { state: ethState } = useEthWallet()
+  swap = setup(() => {
     const fromAsset = ref<Asset>(inject('fromAsset', this.fromAsset))
     const toAsset = ref<Asset>(inject('toAsset', this.toAsset))
-    const toAddress = ref<string>(inject('toAddress', this.toAddress))
     const isLoading = ref(true)
     const readonlyAddress = ref(true)
-    const adminFee = ref(0)
-    const estimationFee = ref(0)
-    const feeUnit = ref('')
+    const destinationPrice = ref(0)
+    const destinationAmount = ref(0)
+    const liquidityFee = ref(0)
+    const priceImpact = ref(0)
+    const minimumReceived = ref(0)
+    const slippageTolerance = ref(0)
 
     const calculate = () => {
       setTimeout(async () => {
-        if (
-          toAsset.value.type === constants.TYPE_ETH ||
-          toAsset.value.type === constants.TYPE_ERC20
-        ) {
-          const networkId = parseInt(ethState.chainId, 16)
-          estimationFee.value = await getEcocFee(networkId)
-          feeUnit.value = constants.TYPE_ECOC
-        } else {
-          feeUnit.value = constants.TYPE_ETH
-        }
+        destinationPrice.value = 1.1
+        destinationAmount.value = Number(this.amount) / destinationPrice.value
+        liquidityFee.value = 0.0003
+        priceImpact.value = 0.05
+        minimumReceived.value = destinationAmount.value
+        slippageTolerance.value = 0.5
         isLoading.value = false
       }, 1000)
     }
@@ -166,6 +152,10 @@ export default class SwapConfirmation extends Vue.with(Props) {
       }, 200)
     }
 
+    const updateAddress = (event: Event) => {
+      this.$emit('update:toAddress', (event.target as HTMLInputElement).value)
+    }
+
     onMounted(() => {
       calculate()
     })
@@ -175,14 +165,17 @@ export default class SwapConfirmation extends Vue.with(Props) {
       toAsset: computed(() => toAsset.value),
       isLoading: computed(() => isLoading.value),
       readonlyAddress: computed(() => readonlyAddress.value),
-      toAddress,
-      adminFee,
-      estimationFee,
-      feeUnit,
+      destinationPrice,
+      destinationAmount,
+      liquidityFee,
+      priceImpact,
+      minimumReceived,
+      slippageTolerance,
       confirm,
       close,
       changeAddress,
       calculate,
+      updateAddress,
     }
   })
 }
