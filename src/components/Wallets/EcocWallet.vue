@@ -59,6 +59,12 @@
                           class="textbox"
                           placeholder="Amount"
                           type="number"
+                          @keypress="
+                            restrictNumberDecimals(
+                              $event,
+                              Number(wallet.selectedAsset.tokenInfo?.decimals || 8)
+                            )
+                          "
                         />
                         <div v-show="transaction.errorMsg" class="error-message">
                           {{ transaction.errorMsg }}
@@ -120,7 +126,7 @@ import Tabs from '@/components/Tabs.vue'
 import Tab from '@/components/Tab.vue'
 import TxResult from '@/components/Modals/TxResult.vue'
 import TxConfirmation from '@/components/Modals/TxConfirmation.vue'
-import { copyToClipboard } from '@/utils'
+import { copyToClipboard, restrictNumberDecimals } from '@/utils'
 import AssetsSelection from './AssetsSelection.vue'
 import EcocConnectWallet from './EcocConnectWallet.vue'
 
@@ -136,6 +142,7 @@ import EcocConnectWallet from './EcocConnectWallet.vue'
   },
 })
 export default class EcocWallet extends Vue {
+  restrictNumberDecimals = restrictNumberDecimals
   transaction = setup(() => {
     const { selectedAsset, sendAsset, updateAssetsBalance } = useEcocWallet()
     const result = useTxResult()

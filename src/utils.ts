@@ -38,19 +38,20 @@ export const truncate = (msg: string, charsToShow = 20) => {
   return msg.substr(0, frontChars) + separator + msg.substr(msg.length - backChars)
 }
 
-export const restrictNumberDecimals = ($event: any, input: any, decimals: number) => {
+export const restrictNumberDecimals = ($event: any, decimals: number) => {
   const keyCode = $event.keyCode ? $event.keyCode : $event.which
+  const value = $event.target?.value
 
-  input = input.toString()
-
-  // only allow number and one dot
-  if ((keyCode < 48 || keyCode > 57) && (keyCode !== 46 || input.indexOf('.') != -1)) {
-    // 46 is dot
-    $event.preventDefault()
-  }
-  // restrict to 2 decimal places
-  if (input != null && input.indexOf('.') > -1 && input.split('.')[1].length > decimals - 1) {
-    $event.preventDefault()
+  if (value && typeof value == 'string') {
+    // only allow number and one dot
+    if ((keyCode < 48 || keyCode > 57) && (keyCode !== 46 || value.indexOf('.') != -1)) {
+      // 46 is dot
+      $event.preventDefault()
+    }
+    // restrict to 2 decimal places
+    if (value != null && value.indexOf('.') > -1 && value.split('.')[1].length > decimals - 1) {
+      $event.preventDefault()
+    }
   }
 }
 

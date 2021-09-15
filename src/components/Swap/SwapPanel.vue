@@ -7,7 +7,13 @@
           :selectedIndex="swap.ecocSelectedIndex"
           @onSelect="swap.selectEcocIndex"
         />
-        <SwapInput v-model:amount="swap.ecocAmount" class="input ecoc" @onMax="swap.onEcocMax" />
+        <SwapInput
+          v-model:amount="swap.ecocAmount"
+          :decimal="swap.ecocAsset.tokenInfo?.decimals"
+          :price="swap.ecocAsset.price"
+          class="input ecoc"
+          @onMax="swap.onEcocMax"
+        />
       </div>
     </div>
 
@@ -19,7 +25,13 @@
             :selectedIndex="swap.altSelectedIndex"
             @onSelect="swap.selectAltIndex"
           />
-          <SwapInput v-model:amount="swap.wrapAmount" class="input alt" @onMax="swap.onWrapMax" />
+          <SwapInput
+            v-model:amount="swap.wrapAmount"
+            :decimal="swap.altAsset.tokenInfo?.decimals"
+            :price="swap.altAsset.price"
+            class="input alt"
+            @onMax="swap.onWrapMax"
+          />
         </div>
 
         <div class="alt-swap">
@@ -34,7 +46,13 @@
             :assets="wallet.altAssets"
             @onSelect="wallet.selectAltAssets"
           />
-          <SwapInput v-model:amount="swap.altAmount" class="input alt" @onMax="swap.onAltMax" />
+          <SwapInput
+            v-model:amount="swap.altAmount"
+            :decimal="wallet.altSelectedAsset.tokenInfo?.decimals"
+            :price="wallet.altSelectedAsset.price"
+            class="input alt"
+            @onMax="swap.onAltMax"
+          />
         </div>
       </div>
 
@@ -125,6 +143,7 @@ export default class SwapPanel extends Vue {
       isLogedIn: isAltLogedIn,
       assets: ethAssets,
       selectAsset: selectEthAsset,
+      selectedAsset: ethSelectedAsset,
     } = useEthWallet()
 
     return {
@@ -132,6 +151,7 @@ export default class SwapPanel extends Vue {
       isAltLogedIn,
       altAssets: ethAssets,
       selectAltAssets: selectEthAsset,
+      altSelectedAsset: ethSelectedAsset,
     }
   })
 
@@ -285,15 +305,16 @@ export default class SwapPanel extends Vue {
           amount: Number(amount.value),
         }
 
-        burnErc20Asset(payload).then((txid) => {
-          setTimeout(() => {
-            result.success(txid)
-            wrapAmount.value = ''
-          }, 2000)
-        })
-        .catch((error) => {
-          result.error(error.message ? error.message : error)
-        })
+        burnErc20Asset(payload)
+          .then((txid) => {
+            setTimeout(() => {
+              result.success(txid)
+              wrapAmount.value = ''
+            }, 2000)
+          })
+          .catch((error) => {
+            result.error(error.message ? error.message : error)
+          })
       } else {
         //
       }
@@ -350,7 +371,9 @@ export default class SwapPanel extends Vue {
       altSwapping: altSwapping.state,
       conversion: conversion.state,
       ecocSupportedAssets,
+      ecocAsset,
       altSupportedAssets,
+      altAsset,
       fromAsset,
       toAsset,
       amount,
