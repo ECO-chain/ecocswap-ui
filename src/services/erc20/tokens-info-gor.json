@@ -19,5 +19,12 @@
     "address": "0x5c242f1E37464853295E8C945C32992FC3dD6c5A",
     "decimals": "4",
     "totalSupply": "100000000"
+  },
+  {
+    "name": "WBCST",
+    "symbol": "BCST",
+    "address": "0x1Ba81E9C43E0574D79C6C7fe79BdbC30DD4DdFFa",
+    "decimals": "8",
+    "totalSupply": "10000000000000000"
   }
 ]

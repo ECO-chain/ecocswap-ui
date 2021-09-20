@@ -1,23 +1,30 @@
 [
   {
-    "name": "ECOC",
-    "symbol": "ECOC",
-    "address": "b9e9717937bdd93eb149b4fe8089712aea156865",
+    "name": "WECOC",
+    "symbol": "WECOC",
+    "address": "0xE855d0A10E730a66BA76C8e0B09D9E2bF1B25C7F",
     "decimals": "8",
     "totalSupply": "100000000000000"
   },
   {
-    "name": "EFG",
-    "symbol": "EFG",
-    "address": "b9e9717937bdd93eb149b4fe8089712aea156865",
+    "name": "WEFG",
+    "symbol": "WEFG",
+    "address": "0x005c16Da38F4D0cBE959Bcc8C0fd668dca51dC2B",
     "decimals": "8",
     "totalSupply": "100000000000000"
   },
   {
-    "name": "GPT",
-    "symbol": "GPT",
-    "address": "d80ec3f88b75c2e1b60db9125aa8e3f91688174b",
+    "name": "WGPT",
+    "symbol": "WGPT",
+    "address": "0x5c242f1E37464853295E8C945C32992FC3dD6c5A",
     "decimals": "4",
     "totalSupply": "100000000"
+  },
+  {
+    "name": "WBCST",
+    "symbol": "BCST",
+    "address": "0x1Ba81E9C43E0574D79C6C7fe79BdbC30DD4DdFFa",
+    "decimals": "8",
+    "totalSupply": "10000000000000000"
   }
 ]

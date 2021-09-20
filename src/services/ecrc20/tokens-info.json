@@ -12,5 +12,12 @@
     "address": "1c6415621c603ef258c184d85a55d2c0b3570167",
     "decimals": "4",
     "totalSupply": "100000000"
+  },
+  {
+    "name": "BlockChainStore Token",
+    "symbol": "BCST",
+    "address": "1c6415621c603ef258c184d85a55d2c0b3570167",
+    "decimals": "8",
+    "totalSupply": "10000000000000000"
   }
 ]

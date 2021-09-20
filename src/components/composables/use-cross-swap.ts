@@ -35,8 +35,8 @@ interface burnAssetPayload {
   amount: number
 }
 
-const ecocSwapSupported = ['ECOC', 'EFG', 'GPT']
-const ethSwapSupported = ['WECOC', 'WEFG', 'WGPT']
+const ecocSwapSupported = ['ECOC', 'EFG', 'GPT', 'BCST']
+const ethSwapSupported = ['WECOC', 'WEFG', 'WGPT', 'WBCST']
 
 const swapPairs = {
   ['ECOC']: 'WECOC',

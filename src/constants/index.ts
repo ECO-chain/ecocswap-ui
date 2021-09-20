@@ -31,6 +31,10 @@ export const KNOWN_CURRENCY = {
     icon: require('@/assets/img/currencies/gpt.svg'),
     color: '#7f4ab2',
   },
+  BCST: {
+    icon: require('@/assets/img/currencies/bcst.svg'),
+    color: '#7f4ab2',
+  },
   WECOC: {
     icon: require('@/assets/img/currencies/ecoc.svg'),
     color: '#7f4ab2',
@@ -41,6 +45,10 @@ export const KNOWN_CURRENCY = {
   },
   WGPT: {
     icon: require('@/assets/img/currencies/gpt.svg'),
+    color: '#7f4ab2',
+  },
+  WBCST: {
+    icon: require('@/assets/img/currencies/bcst.svg'),
     color: '#7f4ab2',
   },
   USDT: {
