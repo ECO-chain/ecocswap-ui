@@ -3,16 +3,45 @@
     <div class="menu-layout">
       <div class="menu">
         <ul class="menu-list">
-          <li class="menu-item">Introduction</li>
-          <li class="menu-item">Guides</li>
+          <li class="menu-item" @click="showIt('intro')">{{ $t('info.introduction') }}</li>
+          <li class="menu-item" @click="showIt('whatIs')">{{ $t('info.whatIs') }}</li>
+          <li class="menu-item" @click="showIt('ccTypes')">{{ $t('info.ccTypes') }}</li>
+          <li class="menu-item" @click="showIt('how')">{{ $t('info.how') }}</li>
+          <li class="menu-item" @click="showIt('example')">{{ $t('info.example') }}</li>
+          <li class="menu-item" @click="showIt('prosCons')">{{ $t('info.prosCons') }}</li>
+          <li class="menu-item" @click="showIt('future')">{{ $t('info.future') }}</li>
         </ul>
       </div>
     </div>
 
     <div class="content-layout">
-      <div class="content">
-        <div class="content-title">{{ introContent.title }}</div>
-        <div class="content-body">{{ introContent.body }}</div>
+      <div ref="intro" class="content show">
+        <div class="content-title">{{ $t('info.title.introduction') }}</div>
+        <div class="content-body">{{ $t('info.body.introduction') }}</div>
+      </div>
+      <div ref="whatIs" class="content hide">
+        <div class="content-title">{{ $t('info.title.whatIs') }}</div>
+        <div class="content-body">{{ $t('info.body.whatIs') }}</div>
+      </div>
+      <div ref="ccTypes" class="content hide">
+        <div class="content-title">{{ $t('info.title.ccTypes') }}</div>
+        <div class="content-body">{{ $t('info.body.ccTypes') }}</div>
+      </div>
+      <div ref="how" class="content hide">
+        <div class="content-title">{{ $t('info.title.how') }}</div>
+        <div class="content-body">{{ $t('info.body.how') }}</div>
+      </div>
+      <div ref="example" class="content hide">
+        <div class="content-title">{{ $t('info.title.example') }}</div>
+        <div class="content-body">{{ $t('info.body.example') }}</div>
+      </div>
+      <div ref="prosCons" class="content hide">
+        <div class="content-title">{{ $t('info.title.prosCons') }}</div>
+        <div class="content-body">{{ $t('info.body.prosCons') }}</div>
+      </div>
+      <div ref="future" class="content hide">
+        <div class="content-title">{{ $t('info.title.future') }}</div>
+        <div class="content-body">{{ $t('info.body.future') }}</div>
       </div>
     </div>
   </div>
@@ -25,14 +54,31 @@ import { Options, Vue } from 'vue-class-component'
   components: {},
 })
 export default class Info extends Vue {
-  introContent = {
-    title: 'Introduction',
-    body: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.',
+  showIt(element: string) {
+    /* hide all*/
+    let shown = document.querySelectorAll('.show')
+    for (var i = 0; i < shown.length; i++) {
+      shown[i].classList.remove('show')
+      shown[i].classList.add('hide')
+    }
+
+    /* display current element*/
+    const el: any = this.$refs[element]
+    el.classList.remove('hide')
+    el.classList.add('show')
   }
 }
 </script>
 
 <style scoped lang="scss">
+.hide {
+  display: none;
+}
+
+.show {
+  display: block;
+}
+
 .info {
   background: #ffffff;
   display: flex;
