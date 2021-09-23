@@ -5,8 +5,8 @@
         <li
           v-for="(tab, index) in tabs.dataList"
           :key="tab.name"
-          @click="tabs.selectTab(index)"
           :class="{ tab__selected: index == tabs.currentTab }"
+          @click="tabs.selectTab(index)"
         >
           <font-awesome-icon :icon="['far', tab.icon]" class="icon" />
           {{ tab.name }}

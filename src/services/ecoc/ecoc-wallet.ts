@@ -48,11 +48,11 @@ export default class EcocWallet implements EWallet {
   getPrivKey() {
     try {
       return this.keypair.toWIF()
-    } catch (e) {
-      if (e.toString() === 'Error: Missing private key') {
+    } catch (error: any) {
+      if (error.toString() === 'Error: Missing private key') {
         return null
       } else {
-        throw e
+        throw error
       }
     }
   }

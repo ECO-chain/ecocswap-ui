@@ -73,7 +73,7 @@
               <div class="estimation-field">
                 <div class="field-name">Slippage tolerance</div>
                 <div class="field-data">
-                  {{ numberWithCommas(swap.slippageTolerance, { fixed: [0, 8] }) }}%
+                  {{ numberWithCommas(Number(swap.slippageTolerance), { fixed: [0, 8] }) }}%
                 </div>
               </div>
             </div>
@@ -97,6 +97,7 @@ import { Options, Vue, setup, prop } from 'vue-class-component'
 import { ref, computed, inject, onMounted } from 'vue'
 import { Asset } from '@/services/currency/types'
 import { numberWithCommas } from '@/utils'
+import useUniswap from '@/components/composables/use-uniswap'
 
 class Props {
   isOpen = prop<boolean>({ default: false })
@@ -113,6 +114,7 @@ export default class SwapConfirmation extends Vue.with(Props) {
   addressInput = ref(null as any)
 
   swap = setup(() => {
+    const { getSwapPool, getPrice, getTrade, slippageTolerance } = useUniswap()
     const fromAsset = ref<Asset>(inject('fromAsset', this.fromAsset))
     const toAsset = ref<Asset>(inject('toAsset', this.toAsset))
     const isLoading = ref(true)
@@ -122,18 +124,31 @@ export default class SwapConfirmation extends Vue.with(Props) {
     const liquidityFee = ref(0)
     const priceImpact = ref(0)
     const minimumReceived = ref(0)
-    const slippageTolerance = ref(0)
 
     const calculate = () => {
       setTimeout(async () => {
-        destinationPrice.value = 1.1
-        destinationAmount.value = Number(this.amount) / destinationPrice.value
-        liquidityFee.value = 0.0003
+        const swapPool = await getSwapPool(fromAsset.value, toAsset.value)
+        const trade = await getTrade({
+          fromAsset: fromAsset.value,
+          toAsset: toAsset.value,
+          amount: Number(this.amount),
+        })
+
+        console.log(trade)
+        console.log(
+          trade.executionPrice.toFixed(),
+          trade.outputAmount.toFixed(),
+          trade.priceImpact.toFixed()
+        )
+        console.log(trade.route.midPrice.toFixed())
+        liquidityFee.value = (swapPool.immutables.fee / 1000000) * Number(this.amount)
+        destinationPrice.value = Number(await getPrice(swapPool, fromAsset.value))
+        destinationAmount.value =
+          (Number(this.amount) - liquidityFee.value) / destinationPrice.value
         priceImpact.value = 0.05
         minimumReceived.value = destinationAmount.value
-        slippageTolerance.value = 0.5
         isLoading.value = false
-      }, 1000)
+      }, 500)
     }
 
     const close = () => {

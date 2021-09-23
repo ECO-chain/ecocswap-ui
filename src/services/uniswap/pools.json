@@ -1,0 +1,26 @@
+[
+  {
+    "pair": "WECOC_WETH",
+    "address": "0xA67dB3dBAAD4B45f799a303cFb0fC9b5c2601B9D"
+  },
+  {
+    "pair": "WETH_WGPT",
+    "address": "0xA67dB3dBAAD4B45f799a303cFb0fC9b5c2601B9D"
+  },
+  {
+    "pair": "WEFG_WETH",
+    "address": "0xA67dB3dBAAD4B45f799a303cFb0fC9b5c2601B9D"
+  },
+  {
+    "pair": "WEFG_WGPT",
+    "address": "0xA67dB3dBAAD4B45f799a303cFb0fC9b5c2601B9D"
+  },
+  {
+    "pair": "WECOC_WGPT",
+    "address": "0xA67dB3dBAAD4B45f799a303cFb0fC9b5c2601B9D"
+  },
+  {
+    "pair": "WECOC_WEFG",
+    "address": "0xA67dB3dBAAD4B45f799a303cFb0fC9b5c2601B9D"
+  }
+]

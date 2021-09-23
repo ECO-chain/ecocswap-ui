@@ -5,15 +5,15 @@
     </div>
 
     <transition name="dropdown">
-      <div class="mask" v-if="dropdown.show">
+      <div v-if="dropdown.show" class="mask">
         <div
-          class="dropdown shadow"
-          v-bind:class="{ active: dropdown.show }"
           v-click-outside="dropdown.close"
+          :class="{ active: dropdown.show }"
+          class="dropdown shadow"
         >
           <ul class="dropdown-nav">
-            <li class="dropdown-item" v-for="item in dropdown.dataList" :key="'menu' + item.id">
-              <a @click="item.handler" class="dropdown-link" :title="item.name">
+            <li v-for="item in dropdown.dataList" :key="'menu' + item.id" class="dropdown-item">
+              <a class="dropdown-link" :title="item.name" @click="item.handler">
                 <div class="dropdown-text">
                   {{ item.name }}
                   <span class="dropdown-desc">
@@ -21,13 +21,13 @@
                   </span>
                 </div>
               </a>
-              <div class="dropdown-submenu inset-shadow" v-if="dropdown.selectedSub === item.id">
+              <div v-if="dropdown.selectedSub === item.id" class="dropdown-submenu inset-shadow">
                 <li
-                  class="dropdown-item"
                   v-for="submItem in item.subdata"
                   :key="'sub' + submItem.id"
+                  class="dropdown-item"
                 >
-                  <a @click="submItem.handler" class="dropdown-submenu-link" :title="submItem.name">
+                  <a class="dropdown-submenu-link" :title="submItem.name" @click="submItem.handler">
                     <div class="dropdown-text">{{ submItem.name }}</div>
                   </a>
                 </li>

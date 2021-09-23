@@ -1,5 +1,12 @@
 [
   {
+    "name": "Wrapped Ether",
+    "symbol": "WETH",
+    "address": "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
+    "decimals": "18",
+    "totalSupply": "37887000000000000000000"
+  },
+  {
     "name": "WECOC",
     "symbol": "WECOC",
     "address": "0xE855d0A10E730a66BA76C8e0B09D9E2bF1B25C7F",

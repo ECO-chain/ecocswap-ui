@@ -59,6 +59,10 @@ export const KNOWN_CURRENCY = {
     icon: require('@/assets/img/currencies/eth.svg'),
     color: '#7f4ab2',
   },
+  WETH: {
+    icon: require('@/assets/img/currencies/eth.svg'),
+    color: '#7f4ab2',
+  },
   DEFAULT: {
     icon: require('@/assets/img/currencies/default.svg'),
     color: '#7f4ab2',
