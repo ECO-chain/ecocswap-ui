@@ -145,7 +145,7 @@ export default class SwapConfirmation extends Vue.with(Props) {
         destinationPrice.value = Number(await getPrice(swapPool, fromAsset.value))
         destinationAmount.value =
           (Number(this.amount) - liquidityFee.value) / destinationPrice.value
-        priceImpact.value = 0.05
+        priceImpact.value = Number(trade.priceImpact.toFixed())
         minimumReceived.value = destinationAmount.value
         isLoading.value = false
       }, 500)

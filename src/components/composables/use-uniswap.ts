@@ -4,6 +4,7 @@ import { computed } from 'vue'
 import { Asset } from '@/services/currency/types'
 import { Eth as EthWallet } from '@/services/wallet'
 import { SwapPool, SwapQuoter } from '@/services/uniswap'
+import * as utils from '@/services/utils'
 import useEthWallet from './use-eth-wallet'
 import useWeb3 from './use-web3'
 
@@ -37,18 +38,12 @@ export default function useUniswap() {
 
   const getTrade = async (payload: tradePayload) => {
     const { fromAsset, toAsset, amount } = payload
+    const decimals = fromAsset.tokenInfo?.decimals || 8
+    const fullAmountIn = utils.fromDecimals(amount, decimals).toNumber()
 
+    let tokenA, tokenB
     const swapPool = await getSwapPool(fromAsset, toAsset)
     const pool = swapPool.pool
-    const quoter = new SwapQuoter()
-    const quotedAmountOut = await quoter.quoteExactInputSingle(
-      fromAsset,
-      swapPool.immutables,
-      amount
-    )
-    let tokenA, tokenB
-
-    console.log(quotedAmountOut)
 
     if (fromAsset.tokenInfo?.address === pool.token0.address) {
       tokenA = pool.token0
@@ -58,12 +53,22 @@ export default function useUniswap() {
       tokenB = pool.token0
     }
 
+    const quoter = new SwapQuoter()
+    const quotedAmountOut = await quoter.quoteExactInputSingle(
+      tokenA.address,
+      tokenB.address,
+      swapPool.immutables.fee,
+      fullAmountIn
+    )
+
+    console.log(quotedAmountOut.toString())
+
     const swapRoute = new Route([pool], tokenA, tokenB)
 
     // create an unchecked trade instance
     const uncheckedTrade = Trade.createUncheckedTrade({
       route: swapRoute,
-      inputAmount: CurrencyAmount.fromRawAmount(tokenA, amount.toString()),
+      inputAmount: CurrencyAmount.fromRawAmount(tokenA, fullAmountIn.toString()),
       outputAmount: CurrencyAmount.fromRawAmount(tokenB, quotedAmountOut.toString()),
       tradeType: TradeType.EXACT_INPUT,
     })
