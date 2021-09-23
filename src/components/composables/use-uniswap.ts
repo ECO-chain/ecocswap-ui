@@ -41,7 +41,11 @@ export default function useUniswap() {
     const swapPool = await getSwapPool(fromAsset, toAsset)
     const pool = swapPool.pool
     const quoter = new SwapQuoter()
-    const quotedAmountOut = await quoter.quoteExactInputSingle(swapPool.immutables, amount)
+    const quotedAmountOut = await quoter.quoteExactInputSingle(
+      fromAsset,
+      swapPool.immutables,
+      amount
+    )
     let tokenA, tokenB
 
     console.log(quotedAmountOut)

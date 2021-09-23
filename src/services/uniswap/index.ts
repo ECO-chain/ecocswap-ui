@@ -147,10 +147,19 @@ export class SwapQuoter {
     this.contract = new ethers.Contract(address, QuoterABI, provider)
   }
 
-  async quoteExactInputSingle(immutables: Immutables, amountIn: number) {
+  async quoteExactInputSingle(fromAsset: Asset, immutables: Immutables, amountIn: number) {
+    let tokenIn, tokenOut
+    if (fromAsset.tokenInfo?.address === immutables.token0) {
+      tokenIn = immutables.token0
+      tokenOut = immutables.token1
+    } else {
+      tokenIn = immutables.token1
+      tokenOut = immutables.token0
+    }
+
     const quotedAmountOut = await this.contract.callStatic.quoteExactInputSingle(
-      immutables.token0,
-      immutables.token1,
+      tokenIn,
+      tokenOut,
       immutables.fee,
       amountIn.toString(),
       0
