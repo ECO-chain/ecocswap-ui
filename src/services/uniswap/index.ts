@@ -40,14 +40,19 @@ export class SwapPool {
   pool: Pool
 
   constructor(chainId: string, assetA: Asset, assetB: Asset) {
-    const pair = `${assetA.symbol}_${assetB.symbol}`
-    const poolAddress = uniswap.getPool(pair)?.address
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    let pair = `${assetA.symbol}_${assetB.symbol}`
+    let poolAddress = uniswap.getPool(pair)?.address
+
+    if (!poolAddress) {
+      pair = `${assetB.symbol}_${assetA.symbol}`
+      poolAddress = uniswap.getPool(pair)?.address
+    }
 
     if (!poolAddress) {
       throw new Error(`Invalid Asset`)
     }
 
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
     this.chainId = Number(chainId)
     this.contract = new ethers.Contract(poolAddress, IUniswapV3PoolABI, provider)
     this.state = {} as State

@@ -61,8 +61,6 @@ export default function useUniswap() {
       fullAmountIn
     )
 
-    console.log(quotedAmountOut.toString())
-
     const swapRoute = new Route([pool], tokenA, tokenB)
 
     // create an unchecked trade instance

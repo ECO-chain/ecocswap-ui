@@ -114,7 +114,7 @@ export default class SwapConfirmation extends Vue.with(Props) {
   addressInput = ref(null as any)
 
   swap = setup(() => {
-    const { getSwapPool, getPrice, getTrade, slippageTolerance } = useUniswap()
+    const { getSwapPool, getTrade, slippageTolerance } = useUniswap()
     const fromAsset = ref<Asset>(inject('fromAsset', this.fromAsset))
     const toAsset = ref<Asset>(inject('toAsset', this.toAsset))
     const isLoading = ref(true)
@@ -134,19 +134,11 @@ export default class SwapConfirmation extends Vue.with(Props) {
           amount: Number(this.amount),
         })
 
-        console.log(trade)
-        console.log(
-          trade.executionPrice.toFixed(),
-          trade.outputAmount.toFixed(),
-          trade.priceImpact.toFixed()
-        )
-        console.log(trade.route.midPrice.toFixed())
         liquidityFee.value = (swapPool.immutables.fee / 1000000) * Number(this.amount)
-        destinationPrice.value = Number(await getPrice(swapPool, fromAsset.value))
-        destinationAmount.value =
-          (Number(this.amount) - liquidityFee.value) / destinationPrice.value
+        destinationPrice.value = Number(trade.executionPrice.invert().toFixed())
+        destinationAmount.value = Number(trade.outputAmount.toFixed())
         priceImpact.value = Number(trade.priceImpact.toFixed())
-        minimumReceived.value = destinationAmount.value
+        minimumReceived.value = Number(trade.outputAmount.toFixed())
         isLoading.value = false
       }, 500)
     }
