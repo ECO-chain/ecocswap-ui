@@ -7,7 +7,7 @@
         type="number"
         placeholder="0"
         :value="amount"
-        @input="$emit('update:amount', $event.target?.value)"
+        @input="updateAmount($event)"
         @keypress="restrictNumberDecimals($event, Number(decimal))"
       />
       <div class="value">~ ${{ numberWithCommas(value, { fixed: [0, 4] }) }}</div>
@@ -39,6 +39,10 @@ export default class SwapInput extends Vue.with(Props) {
 
   restrictNumberDecimals = restrictNumberDecimals
   numberWithCommas = numberWithCommas
+
+  updateAmount(event: Event) {
+    this.$emit('update:amount', (event.target as HTMLInputElement).value)
+  }
 
   onMax() {
     this.$emit('onMax')

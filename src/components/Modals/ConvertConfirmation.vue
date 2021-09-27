@@ -74,7 +74,7 @@
                 placeholder="Destination Address"
                 :value="toAddress"
                 :disabled="conversion.readonlyAddress"
-                @input="$emit('update:toAddress', $event.target?.value)"
+                @input="conversion.updateAddress($event)"
               />
 
               <span class="change link" @click="conversion.changeAddress">Change</span>
@@ -166,6 +166,10 @@ export default class ConvertConfirmation extends Vue.with(Props) {
       }, 200)
     }
 
+    const updateAddress = (event: Event) => {
+      this.$emit('update:toAddress', (event.target as HTMLInputElement).value)
+    }
+
     onMounted(() => {
       calculate()
     })
@@ -182,6 +186,7 @@ export default class ConvertConfirmation extends Vue.with(Props) {
       confirm,
       close,
       changeAddress,
+      updateAddress,
       calculate,
     }
   })
