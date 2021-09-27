@@ -41,6 +41,12 @@ export default function useStatistic() {
         locked: 0,
         circulation: 0,
       })
+      state.dataList.push({
+        symbol: constants.BCST,
+        price: 0,
+        locked: 0,
+        circulation: 0,
+      })
     }
   }
 

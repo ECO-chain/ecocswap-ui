@@ -52,33 +52,34 @@ export class Erc20 {
 
   async transfer(from: string, to: string, amount: number) {
     const decimals = Number(this.tokenInfo.decimals)
-    const fullAmount = fromDecimals(amount, decimals).toNumber()
+    const fullAmount = fromDecimals(amount, decimals)
     const rawTx = {
       from: from,
       to: this.tokenInfo.address,
-      data: this.contract.methods.transfer(to, fullAmount.toString()).encodeABI(),
+      data: this.contract.methods.transfer(to, fullAmount.toFixed()).encodeABI(),
     }
     return rawTx
   }
 
   async approve(owner: string, spender: string, amount: number) {
     const decimals = Number(this.tokenInfo.decimals)
-    const fullAmount = fromDecimals(amount, decimals).toNumber()
+    const fullAmount = fromDecimals(amount, decimals)
+
     const rawTx = {
       from: owner,
       to: this.tokenInfo.address,
-      data: this.contract.methods.approve(spender, fullAmount.toString()).encodeABI(),
+      data: this.contract.methods.approve(spender, fullAmount.toFixed()).encodeABI(),
     }
     return rawTx
   }
 
   async burn(owner: string, destination: string, amount: number) {
     const decimals = Number(this.tokenInfo.decimals)
-    const fullAmount = fromDecimals(amount, decimals).toNumber()
+    const fullAmount = fromDecimals(amount, decimals)
     const rawTx = {
       from: owner,
       to: this.tokenInfo.address,
-      data: this.contract.methods.burn(destination, fullAmount.toString()).encodeABI(),
+      data: this.contract.methods.burn(destination, fullAmount.toFixed()).encodeABI(),
     }
     return rawTx
   }

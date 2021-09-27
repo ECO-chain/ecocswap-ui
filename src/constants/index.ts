@@ -4,6 +4,7 @@ export const ECOC = 'ECOC'
 export const ETH = 'ETH'
 export const EFG = 'EFG'
 export const GPT = 'GPT'
+export const BCST = 'BCST'
 
 export const TYPE_ECOC = 'ECOC'
 export const TYPE_ECRC20 = 'ECRC-20'

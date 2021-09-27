@@ -86,7 +86,13 @@
               </div>
             </div>
 
-            <div :class="Number(amount) > 0 && swap.isFromAssetApproved ? '' : 'disable'">
+            <div v-if="swap.errorMsg" class="disable">
+              <div class="btn btn-bg-puple" @click="swap.confirm">
+                <div class="name">{{ swap.errorMsg }}</div>
+              </div>
+            </div>
+
+            <div v-else :class="Number(amount) > 0 && swap.isFromAssetApproved ? '' : 'disable'">
               <div class="btn btn-bg-puple" @click="swap.confirm">
                 <div class="name">Confirm</div>
               </div>
@@ -131,23 +137,30 @@ export default class SwapConfirmation extends Vue.with(Props) {
     const priceImpact = ref(0)
     const minimumReceived = ref(0)
     const isFromAssetApproved = ref(true)
+    const errorMsg = ref('')
 
     const calculate = () => {
       setTimeout(async () => {
-        const swapPool = await getSwapPool(fromAsset.value, toAsset.value)
-        const trade = await getTrade({
-          fromAsset: fromAsset.value,
-          toAsset: toAsset.value,
-          amount: Number(this.amount),
-        })
+        getSwapPool(fromAsset.value, toAsset.value)
+          .then(async (swapPool) => {
+            const trade = await getTrade({
+              fromAsset: fromAsset.value,
+              toAsset: toAsset.value,
+              amount: Number(this.amount),
+            })
 
-        isFromAssetApproved.value = await isAssetApproved(fromAsset.value, this.amount)
-        liquidityFee.value = (swapPool.immutables.fee / 1000000) * Number(this.amount)
-        destinationPrice.value = Number(trade.executionPrice.invert().toFixed())
-        destinationAmount.value = Number(trade.outputAmount.toFixed())
-        priceImpact.value = Number(trade.priceImpact.toFixed())
-        minimumReceived.value = Number(trade.outputAmount.toFixed())
-        isLoading.value = false
+            isFromAssetApproved.value = await isAssetApproved(fromAsset.value, this.amount)
+            liquidityFee.value = (swapPool.immutables.fee / 1000000) * Number(this.amount)
+            destinationPrice.value = Number(trade.executionPrice.invert().toFixed())
+            destinationAmount.value = Number(trade.outputAmount.toFixed())
+            priceImpact.value = Number(trade.priceImpact.toFixed())
+            minimumReceived.value = Number(trade.outputAmount.toFixed())
+            isLoading.value = false
+          })
+          .catch(() => {
+            errorMsg.value = 'Invalid Pair'
+            isLoading.value = false
+          })
       }, 500)
     }
 
@@ -193,6 +206,7 @@ export default class SwapConfirmation extends Vue.with(Props) {
       minimumReceived,
       slippageTolerance,
       isFromAssetApproved,
+      errorMsg,
       confirm,
       close,
       changeAddress,

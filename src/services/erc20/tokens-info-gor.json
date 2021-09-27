@@ -29,7 +29,7 @@
   },
   {
     "name": "WBCST",
-    "symbol": "BCST",
+    "symbol": "WBCST",
     "address": "0x1Ba81E9C43E0574D79C6C7fe79BdbC30DD4DdFFa",
     "decimals": "8",
     "totalSupply": "10000000000000000"
