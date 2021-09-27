@@ -45,11 +45,11 @@ export class SwapPool {
 
   constructor(chainId: string, assetA: Asset, assetB: Asset) {
     let pair = `${assetA.symbol}_${assetB.symbol}`
-    let poolAddress = uniswap.getPool(pair)?.address
+    let poolAddress = uniswap.getPool(chainId, pair)?.address
 
     if (!poolAddress) {
       pair = `${assetB.symbol}_${assetA.symbol}`
-      poolAddress = uniswap.getPool(pair)?.address
+      poolAddress = uniswap.getPool(chainId, pair)?.address
     }
 
     if (!poolAddress) {
@@ -205,8 +205,8 @@ export namespace uniswap {
   const ONE_HUNDRED_PERCENT = new Percent(JSBI.BigInt(10000), JSBI.BigInt(10000))
   const ZERO_PERCENT = new Percent('0')
 
-  export const getPool = (pair: string) => {
-    switch (pair) {
+  export const getPool = (chainId: string, pair: string) => {
+    switch (chainId) {
       case ethConst.chainId.ETHEREUM_MAINNET:
         return poolPairs.find((pool) => pool.pair === pair)
 

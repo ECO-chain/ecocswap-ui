@@ -215,6 +215,12 @@ export default class SwapPanel extends Vue {
       }
     })
 
+    watch(altAmount, (_amount) => {
+      if (_amount > 0) {
+        wrapAmount.value = ''
+      }
+    })
+
     watchEffect(() => {
       ecocSupportedAssets.value = supportedAssets.ECOC
       altSupportedAssets.value = supportedAssets.ETH
@@ -335,7 +341,8 @@ export default class SwapPanel extends Vue {
       swapAsset(payload).then((txid) => {
           setTimeout(() => {
             result.success(txid)
-            ecocAmount.value = ''
+            wrapAmount.value = ''
+            altAmount.value = ''
           }, 1000)
         })
         .catch((error) => {
