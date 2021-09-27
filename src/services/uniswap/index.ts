@@ -1,9 +1,10 @@
 declare let window: any
 
+import JSBI from 'jsbi'
 import { ethers } from 'ethers'
 import { AbiItem } from 'web3-utils'
-import { Token } from '@uniswap/sdk-core'
-import { Pool } from '@uniswap/v3-sdk'
+import { Token, Currency, Fraction, Percent, TradeType } from '@uniswap/sdk-core'
+import { Pool, Trade as V3Trade } from '@uniswap/v3-sdk'
 import { abi as IUniswapV3PoolABI } from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json'
 import { abi as QuoterABI } from '@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json'
 import { abi as RouterABI } from '@uniswap/v3-periphery/artifacts/contracts/SwapRouter.sol/SwapRouter.json'
@@ -201,6 +202,9 @@ export class SwapRouter {
 }
 
 export namespace uniswap {
+  const ONE_HUNDRED_PERCENT = new Percent(JSBI.BigInt(10000), JSBI.BigInt(10000))
+  const ZERO_PERCENT = new Percent('0')
+
   export const getPool = (pair: string) => {
     switch (pair) {
       case ethConst.chainId.ETHEREUM_MAINNET:
@@ -212,6 +216,32 @@ export namespace uniswap {
       default:
         return poolPairs.find((pool) => pool.pair === pair)
     }
+  }
+
+  export const computeRealizedLPFeePercent = (
+    trade: V3Trade<Currency, Currency, TradeType>
+  ): Percent => {
+    let percent: Percent
+
+    percent = ZERO_PERCENT
+    for (const swap of trade.swaps) {
+      const { numerator, denominator } = swap.inputAmount.divide(trade.inputAmount)
+      const overallPercent = new Percent(numerator, denominator)
+
+      const routeRealizedLPFeePercent = overallPercent.multiply(
+        ONE_HUNDRED_PERCENT.subtract(
+          swap.route.pools.reduce<Percent>(
+            (currentFee: Percent, pool): Percent =>
+              currentFee.multiply(ONE_HUNDRED_PERCENT.subtract(new Fraction(pool.fee, 1_000_000))),
+            ONE_HUNDRED_PERCENT
+          )
+        )
+      )
+
+      percent = percent.add(routeRealizedLPFeePercent)
+    }
+
+    return new Percent(percent.numerator, percent.denominator)
   }
 
   export const getQuoterAddress = () => {

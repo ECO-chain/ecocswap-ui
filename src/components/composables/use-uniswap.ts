@@ -131,6 +131,8 @@ export default function useUniswap() {
     return txid
   }
 
+  const computeRealizedLPFeePercent = uniswap.computeRealizedLPFeePercent
+
   return {
     slippageTolerance: computed(() => slippageTolerance.toFixed(2)),
     isAssetApproved,
@@ -139,5 +141,6 @@ export default function useUniswap() {
     getPrice,
     getTrade,
     swapAsset,
+    computeRealizedLPFeePercent,
   }
 }
