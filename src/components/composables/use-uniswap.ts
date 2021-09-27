@@ -3,10 +3,10 @@ import { Route, Trade } from '@uniswap/v3-sdk'
 import { computed } from 'vue'
 import { Asset } from '@/services/currency/types'
 import { Eth as EthWallet } from '@/services/wallet'
-import { SwapPool, SwapQuoter } from '@/services/uniswap'
+import { Erc20 } from '@/services/erc20'
+import { SwapPool, SwapQuoter, SwapRouter, uniswap } from '@/services/uniswap'
 import * as utils from '@/services/utils'
 import useEthWallet from './use-eth-wallet'
-import useWeb3 from './use-web3'
 
 interface tradePayload {
   fromAsset: Asset
@@ -15,7 +15,6 @@ interface tradePayload {
 }
 
 export default function useUniswap() {
-  const { web3 } = useWeb3()
   const { state: ethState } = useEthWallet()
   const slippageTolerance = new Percent('50', '10000') // 50 bips, or 0.50%
 
@@ -75,38 +74,67 @@ export default function useUniswap() {
   }
 
   const swapAsset = async (payload: tradePayload) => {
-    // create an unchecked trade instance
     const uncheckedTrade = await getTrade(payload)
+    const routerAddress = uniswap.getSwapRouterAddress()
+    const router = new SwapRouter()
+    const fee = uncheckedTrade.route.pools[0].fee
 
-    console.log('The unchecked trade object is', uncheckedTrade)
+    const tradeEncoded = router.exactInputSingle(
+      uncheckedTrade.inputAmount.currency.address,
+      uncheckedTrade.outputAmount.currency.address,
+      fee,
+      uncheckedTrade.inputAmount.numerator.toString(),
+      ethState.address
+    )
 
-    // const chainId = Number(ethState.chainId)
-    // const pair = await getPair(asset)
-    // const route = getRoute(pair)
-    // const trade = getTrade(route, fullamount)
+    const rawTx = {
+      from: ethState.address,
+      to: routerAddress,
+      data: tradeEncoded,
+    }
+    const txid = await EthWallet.sendRawTx(rawTx)
 
-    // const amountOutMin = trade.minimumAmountOut(slippageTolerance).raw
-    // const path = [WETH[chainId as ChainId].address, asset.tokenInfo.address]
-    // const to = ethState.address
-    // const deadline = Math.floor(Date.now() / 1000) + 60 * 20
-    // const value = trade.inputAmount.raw
-    // const data = contract.methods
-    //   .swapExactETHForTokens(web3.utils.toHex(amountOutMin.toString()), path, to, deadline)
-    //   .encodeABI()
+    return txid
+  }
 
-    // const rawTx = {
-    //   from: ethState.address,
-    //   to: address,
-    //   data: data,
-    //   value: web3.utils.toHex(value.toString()),
-    // }
-    // const txid = await EthWallet.sendRawTx(rawTx)
+  const isAssetApproved = async (asset: Asset, amount: number | string) => {
+    if (!asset.tokenInfo) {
+      throw new Error(`Invalid Asset`)
+    }
 
-    // return txid
+    const routerAddress = uniswap.getSwapRouterAddress()
+    const erc20 = new Erc20(asset.tokenInfo)
+    const allowance = await erc20.allowance(ethState.address, routerAddress)
+
+    return allowance >= Number(amount)
+  }
+
+  const approveAsset = async (asset: Asset) => {
+    if (!asset.tokenInfo) {
+      throw new Error(`Invalid Asset`)
+    }
+
+    const routerAddress = uniswap.getSwapRouterAddress()
+    const erc20 = new Erc20(asset.tokenInfo)
+    const totalSupply = await erc20.totalSupply()
+    const allowance = await erc20.allowance(ethState.address, routerAddress)
+
+    if (allowance >= totalSupply) {
+      throw new Error(`Asset Already approved`)
+    }
+
+    const rawTx = await erc20.approve(ethState.address, routerAddress, totalSupply)
+    const txid = await EthWallet.sendRawTx(rawTx)
+
+    await EthWallet.waitForConfirmation(txid)
+
+    return txid
   }
 
   return {
     slippageTolerance: computed(() => slippageTolerance.toFixed(2)),
+    isAssetApproved,
+    approveAsset,
     getSwapPool,
     getPrice,
     getTrade,

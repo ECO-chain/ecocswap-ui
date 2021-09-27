@@ -80,7 +80,13 @@
           </div>
 
           <div class="conversion-actions">
-            <div :class="Number(amount) > 0 ? '' : 'disable'">
+            <div v-show="!swap.isFromAssetApproved">
+              <div class="btn btn-bg-puple mb-8" @click="swap.approve">
+                <div class="name">Approve</div>
+              </div>
+            </div>
+
+            <div :class="Number(amount) > 0 && swap.isFromAssetApproved ? '' : 'disable'">
               <div class="btn btn-bg-puple" @click="swap.confirm">
                 <div class="name">Confirm</div>
               </div>
@@ -114,7 +120,7 @@ export default class SwapConfirmation extends Vue.with(Props) {
   addressInput = ref(null as any)
 
   swap = setup(() => {
-    const { getSwapPool, getTrade, slippageTolerance } = useUniswap()
+    const { getSwapPool, getTrade, slippageTolerance, isAssetApproved, approveAsset } = useUniswap()
     const fromAsset = ref<Asset>(inject('fromAsset', this.fromAsset))
     const toAsset = ref<Asset>(inject('toAsset', this.toAsset))
     const isLoading = ref(true)
@@ -124,6 +130,7 @@ export default class SwapConfirmation extends Vue.with(Props) {
     const liquidityFee = ref(0)
     const priceImpact = ref(0)
     const minimumReceived = ref(0)
+    const isFromAssetApproved = ref(true)
 
     const calculate = () => {
       setTimeout(async () => {
@@ -134,6 +141,7 @@ export default class SwapConfirmation extends Vue.with(Props) {
           amount: Number(this.amount),
         })
 
+        isFromAssetApproved.value = await isAssetApproved(fromAsset.value, this.amount)
         liquidityFee.value = (swapPool.immutables.fee / 1000000) * Number(this.amount)
         destinationPrice.value = Number(trade.executionPrice.invert().toFixed())
         destinationAmount.value = Number(trade.outputAmount.toFixed())
@@ -163,6 +171,12 @@ export default class SwapConfirmation extends Vue.with(Props) {
       this.$emit('update:toAddress', (event.target as HTMLInputElement).value)
     }
 
+    const approve = async () => {
+      approveAsset(fromAsset.value).then(async () => {
+        isFromAssetApproved.value = await isAssetApproved(fromAsset.value, this.amount)
+      })
+    }
+
     onMounted(() => {
       calculate()
     })
@@ -178,11 +192,13 @@ export default class SwapConfirmation extends Vue.with(Props) {
       priceImpact,
       minimumReceived,
       slippageTolerance,
+      isFromAssetApproved,
       confirm,
       close,
       changeAddress,
       calculate,
       updateAddress,
+      approve,
     }
   })
 }

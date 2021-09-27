@@ -115,6 +115,7 @@ import * as constants from '@/constants'
 import useEcocWallet from '@/components/composables/use-ecoc-wallet'
 import useEthWallet from '@/components/composables/use-eth-wallet'
 import useCrossSwap from '@/components/composables/use-cross-swap'
+import useUniswap from '@/components/composables/use-uniswap'
 import useTxResult from '@/components/composables/modals/use-tx-result'
 import useModal from '@/components/composables/modals/use-modal'
 import AssetsSelection from '@/components/Wallets/AssetsSelection.vue'
@@ -156,6 +157,7 @@ export default class SwapPanel extends Vue {
   })
 
   swap = setup(() => {
+    const { swapAsset } = useUniswap()
     const { address: ecocAddress } = useEcocWallet()
     const { address: ethAddress, state: ethState, selectedAsset: ethSelectedAsset } = useEthWallet()
     const {
@@ -322,7 +324,23 @@ export default class SwapPanel extends Vue {
 
     const swapConfirm = () => {
       altSwapping.close()
-      console.log(`Swapping ${fromAsset.value.symbol} to ${toAsset.value.symbol}`)
+      result.setLoading(`Converting from ${fromAsset.value.symbol} to\n ${toAsset.value.symbol}`)
+      result.open('eth')
+
+      const payload = {
+        fromAsset: fromAsset.value,
+        toAsset: toAsset.value,
+        amount: Number(amount.value),
+      }
+      swapAsset(payload).then((txid) => {
+          setTimeout(() => {
+            result.success(txid)
+            ecocAmount.value = ''
+          }, 1000)
+        })
+        .catch((error) => {
+          result.error(error.message ? error.message : error)
+        })
     }
 
     const onEcocConfirm = (walletParams: WalletParams) => {

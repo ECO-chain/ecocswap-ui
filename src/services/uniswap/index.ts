@@ -1,11 +1,14 @@
 declare let window: any
 
 import { ethers } from 'ethers'
+import { AbiItem } from 'web3-utils'
 import { Token } from '@uniswap/sdk-core'
 import { Pool } from '@uniswap/v3-sdk'
 import { abi as IUniswapV3PoolABI } from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json'
 import { abi as QuoterABI } from '@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json'
+import { abi as RouterABI } from '@uniswap/v3-periphery/artifacts/contracts/SwapRouter.sol/SwapRouter.json'
 import * as ethConst from '@/services/eth/constants'
+import { web3 } from '@/services/eth/web3'
 import { Asset } from '@/services/currency/types'
 import poolPairs from './pools.json'
 import poolPairsGor from './pools-gor.json'
@@ -162,6 +165,38 @@ export class SwapQuoter {
     )
 
     return quotedAmountOut
+  }
+}
+
+export class SwapRouter {
+  contract
+
+  constructor() {
+    const address = uniswap.getSwapRouterAddress()
+    this.contract = new web3.eth.Contract(RouterABI as AbiItem[], address)
+  }
+
+  exactInputSingle(
+    tokenIn: string,
+    tokenOut: string,
+    fee: number,
+    amountIn: string,
+    recipient: string
+  ) {
+    const expiryDate = Math.floor(Date.now() / 1000) + 900
+    const param = {
+      tokenIn: tokenIn,
+      tokenOut: tokenOut,
+      fee: fee,
+      recipient: recipient,
+      deadline: expiryDate,
+      amountIn: amountIn,
+      amountOutMinimum: 0,
+      sqrtPriceLimitX96: 0,
+    }
+
+    const encodedTx = this.contract.methods.exactInputSingle(param).encodeABI()
+    return encodedTx
   }
 }
 
