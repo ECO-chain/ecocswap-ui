@@ -110,6 +110,7 @@ import { ref, computed, inject, onMounted } from 'vue'
 import { Asset } from '@/services/currency/types'
 import { numberWithCommas } from '@/utils'
 import useUniswap from '@/components/composables/use-uniswap'
+import messages from '@/locales/en.json'
 
 class Props {
   isOpen = prop<boolean>({ default: false })
@@ -166,8 +167,23 @@ export default class SwapConfirmation extends Vue.with(Props) {
             minimumReceived.value = Number(trade.outputAmount.toFixed())
             isLoading.value = false
           })
-          .catch(() => {
-            errorMsg.value = 'Invalid Pair'
+          .catch((e) => {
+            const errorMessages = messages.errors
+            let errorMessage: string
+            /* for later, must also detect language and import the messages of current locale */
+
+            switch (e.message) {
+              case 'Invalid Asset':
+                errorMessage = errorMessages.nonExistingPair
+                break
+              case '[big.js] Division by zero':
+                errorMessage = errorMessages.priceOutOfRange
+                break
+              default:
+                errorMessage = errorMessages.unknown
+                break
+            }
+            errorMsg.value = errorMessage
             isLoading.value = false
           })
       }, 500)

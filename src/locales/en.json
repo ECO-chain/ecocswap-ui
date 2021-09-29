@@ -25,5 +25,10 @@
       "prosCons": "The advantage of the above solution is fast transfer between chains and low gas costs because the transfer completes in one step. The only drawback is that it is not completely trustless (not fully decentralized).",
       "future": "The bridging will involve all major chains. Technically all chains that run a VM (they have smart contracts) can be bridged to Ecochain. We prioritize the chains which have the highest users, starting with Ethereum. This is the fastest way to achieve a large size for the total ecosystem for Ecochain assets."
     }
+  },
+  "errors": {
+    "nonExistingPair": "Invalid pair",
+    "priceOutOfRange": "Price out of range",
+    "unknown": "Unknown error"
   }
 }
