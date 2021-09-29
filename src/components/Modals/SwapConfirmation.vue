@@ -110,7 +110,6 @@ import { ref, computed, inject, onMounted } from 'vue'
 import { Asset } from '@/services/currency/types'
 import { numberWithCommas } from '@/utils'
 import useUniswap from '@/components/composables/use-uniswap'
-import messages from '@/locales/en.json'
 
 class Props {
   isOpen = prop<boolean>({ default: false })
