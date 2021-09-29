@@ -56,8 +56,6 @@ export class SwapPool {
       throw new Error(`Invalid Asset`)
     }
 
-    console.log(poolAddress)
-
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     this.chainId = Number(chainId)
     this.contract = new ethers.Contract(poolAddress, IUniswapV3PoolABI, provider)
