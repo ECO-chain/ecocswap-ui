@@ -42,6 +42,7 @@ const swapPairs = {
   ['ECOC']: 'WECOC',
   ['EFG']: 'WEFG',
   ['GPT']: 'WGPT',
+  ['BCST']: 'WBCST',
 } as SwapPairs
 
 export default function useCrossSwap() {

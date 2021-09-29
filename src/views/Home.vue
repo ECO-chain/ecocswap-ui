@@ -6,10 +6,10 @@
 
     <div class="ecoc-lastblock">
       <span class="dot"></span>
-      <span>{{ home.ecocLastBlock }}</span>
+      <span>{{ home.ecocLastBlock.toLocaleString() }}</span>
     </div>
     <div class="alt-lastblock">
-      <span>{{ home.ethLastBlock }}</span>
+      <span>{{ home.ethLastBlock.toLocaleString() }}</span>
       <span class="dot"></span>
     </div>
 

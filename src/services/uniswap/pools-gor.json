@@ -22,5 +22,21 @@
   {
     "pair": "WECOC_WEFG",
     "address": "0xb4cb953496F4ba4dA48324e06EE36261C6877d3A"
+  },
+  {
+    "pair": "WEFG_WETH",
+    "address": "0x4b15388f5CfAA7a660d4e82bBbaC4DbdBE9286c3"
+  },
+  {
+    "pair": "WEFG_WBCST",
+    "address": "0x5FE3A96aD12E12DF3EF4Af07792cbA313Ca78A98"
+  },
+  {
+    "pair": "WBCST_WECOC",
+    "address": "0x40BbDdb5B0d19A6176f8C5E65CB50fb88A05Ed9A"
+  },
+  {
+    "pair": "WBCST_WGPT",
+    "address": "0xcbc1dDFbeA47b8d35E88976dE78Bd7B4F4902083"
   }
 ]
