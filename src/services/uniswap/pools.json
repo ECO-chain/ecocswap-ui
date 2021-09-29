@@ -28,6 +28,10 @@
     "address": "0x4b15388f5CfAA7a660d4e82bBbaC4DbdBE9286c3"
   },
   {
+    "pair": "WBCST_WETH",
+    "address": "0x508295A0BC86A88047e3556Ea9949b4E79163Bf8"
+  },
+  {
     "pair": "WEFG_WBCST",
     "address": "0x5FE3A96aD12E12DF3EF4Af07792cbA313Ca78A98"
   },
