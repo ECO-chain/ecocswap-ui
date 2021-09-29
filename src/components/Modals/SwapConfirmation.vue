@@ -88,7 +88,7 @@
 
             <div v-if="swap.errorMsg" class="disable">
               <div class="btn btn-bg-puple" @click="swap.confirm">
-                <div class="name">{{ swap.errorMsg }}</div>
+                <div class="name">{{ $t('errors.' + `${swap.errorMsg}`) }}</div>
               </div>
             </div>
 
@@ -168,19 +168,17 @@ export default class SwapConfirmation extends Vue.with(Props) {
             isLoading.value = false
           })
           .catch((e) => {
-            const errorMessages = messages.errors
             let errorMessage: string
-            /* for later, must also detect language and import the messages of current locale */
 
             switch (e.message) {
               case 'Invalid Asset':
-                errorMessage = errorMessages.nonExistingPair
+                errorMessage = 'nonExistingPair'
                 break
               case '[big.js] Division by zero':
-                errorMessage = errorMessages.priceOutOfRange
+                errorMessage = 'priceOutOfRange'
                 break
               default:
-                errorMessage = errorMessages.unknown
+                errorMessage = 'unknown'
                 break
             }
             errorMsg.value = errorMessage
