@@ -71,6 +71,9 @@ export default class Nav extends Vue {
     addData('Statistics', '', () => {
       router.push('/stat')
     })
+    addData('Tutorial', '', () => {
+      router.push('/tutorial')
+    })
 
     supportedLanguages.forEach((lan) => {
       addSubData('Languages', lan.localizedName, () => {
